@@ -1,0 +1,24 @@
+# VS + Rider
+**/.vs/
+**/.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# .NET build
+**/bin/
+**/obj/
+**/Debug/
+**/Release/
+**/TestResults/
+
+# Logs / caches
+*.log
+*.db
+*.db-shm
+*.db-wal
+
+# Others
+*.cache
+*.DS_Store
