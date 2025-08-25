@@ -1,0 +1,1 @@
+namespace JobPortal.Infrastructure.Persistence.Configurations { public class JobApplicationConfiguration { } }

@@ -1,0 +1,1 @@
+namespace JobPortal.Infrastructure.Persistence.Interceptors { public class DispatchDomainEventsInterceptor { } }
