@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/api-dotnet/src/JobPortal.Api/appsettings.Development.json
+/api-dotnet/src/JobPortal.Api/appsettings.json
+**/appsettings.json
+**/appsettings.*.json
+**/appsettings.Development.json

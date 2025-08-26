@@ -24,6 +24,5 @@
 *.DS_Store
 
 # App settings (sensitive config)
-**/appsettings.json
-**/appsettings.*.json
-**/appsettings.Development.json
+src/JobPortal.Api/appsettings.json
+src/JobPortal.Api/appsettings.*.json
