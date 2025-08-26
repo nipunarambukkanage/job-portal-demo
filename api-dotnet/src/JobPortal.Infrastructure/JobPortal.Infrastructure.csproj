@@ -23,4 +23,7 @@
 		<ProjectReference Include="..\JobPortal.Application\JobPortal.Application.csproj" />
 		<ProjectReference Include="..\JobPortal.Domain\JobPortal.Domain.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Messaging\IntegrationEvents\" />
+	</ItemGroup>
 </Project>

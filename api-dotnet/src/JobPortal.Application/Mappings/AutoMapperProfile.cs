@@ -1,4 +1,3 @@
-// src/JobPortal.Application/Mappings/AutoMapperProfile.cs
 using AutoMapper;
 using JobPortal.Application.DTO.Applications;
 using JobPortal.Application.DTO.Jobs;
@@ -16,13 +15,12 @@ namespace JobPortal.Application.Mappings
 
             // Jobs
             CreateMap<Job, JobDto>().ReverseMap();
-            CreateMap<CreateJobRequest, Job>(); // one-way, create only
+            CreateMap<CreateJobRequest, Job>();
 
             // Organizations
             CreateMap<Organization, OrgDto>().ReverseMap();
-            CreateMap<CreateOrgRequest, Organization>(); // one-way, create only
+            CreateMap<CreateOrgRequest, Organization>();
 
-            // For PATCH/PUT updates: copy ONLY non-null fields from UpdateOrgRequest
             CreateMap<UpdateOrgRequest, Organization>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }

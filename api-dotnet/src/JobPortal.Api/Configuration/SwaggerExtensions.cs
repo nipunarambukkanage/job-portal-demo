@@ -14,9 +14,6 @@ namespace JobPortal.Api.Configuration
         private const string ApiVersion = "v1";
         private const string BearerScheme = "Bearer";
 
-        /// <summary>
-        /// Registers Swagger & OpenAPI with JWT Bearer support.
-        /// </summary>
         public static IServiceCollection AddAppSwagger(this IServiceCollection services, IConfiguration _)
         {
             services.AddEndpointsApiExplorer();
@@ -51,7 +48,6 @@ namespace JobPortal.Api.Configuration
                     { securityScheme, Array.Empty<string>() }
                 });
 
-                // XML Comments (optional – enable GenerateDocumentationFile in .csproj)
                 var xmlName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlName);
                 if (File.Exists(xmlPath))
@@ -59,16 +55,11 @@ namespace JobPortal.Api.Configuration
                     c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
                 }
 
-                // If you use [SwaggerOperation] etc., uncomment:
-                // c.EnableAnnotations();
             });
 
             return services;
         }
 
-        /// <summary>
-        /// Enables Swagger UI. In production, you can gate with config if desired.
-        /// </summary>
         public static WebApplication UseAppSwagger(this WebApplication app)
         {
             app.UseSwagger();

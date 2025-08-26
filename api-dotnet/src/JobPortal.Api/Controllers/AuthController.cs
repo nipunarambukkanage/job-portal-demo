@@ -18,7 +18,6 @@ namespace JobPortal.Api.Controllers
             _current = current;
         }
 
-        /// <summary>Return the current authenticated user (from Clerk JWT).</summary>
         [HttpGet("me")]
         [Authorize]
         public ActionResult<CurrentUserDto> Me()
@@ -32,11 +31,10 @@ namespace JobPortal.Api.Controllers
                 Email = _current.Email,
                 Name = _current.Name,
                 Roles = _current.Roles.ToArray(),
-                Claims = _current.Claims // helpful for debugging UI/auth flows
+                Claims = _current.Claims 
             });
         }
 
-        /// <summary>Return raw claims (dev/debug). Remove or protect in prod.</summary>
         [HttpGet("claims")]
         [Authorize]
         public ActionResult<object> Claims()

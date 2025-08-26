@@ -8,13 +8,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace JobPortal.Api.Configuration
 {
-    /// <summary>
-    /// Authentication/Authorization setup for Clerk (OIDC/JWT).
-    /// Uses config keys:
-    ///   Clerk:Issuer   (default: https://trusted-swan-44.clerk.accounts.dev)
-    ///   Clerk:Audience (default: jobportal-api)
-    ///   Clerk:ClockSkewSeconds (default: 5)
-    /// </summary>
     public static class AuthExtensions
     {
         public static IServiceCollection AddAppAuthentication(this IServiceCollection services, IConfiguration config)
@@ -48,9 +41,6 @@ namespace JobPortal.Api.Configuration
             return services;
         }
 
-        /// <summary>
-        /// Registers the auth middlewares. Call before mapping endpoints.
-        /// </summary>
         public static IApplicationBuilder UseAppAuthentication(this IApplicationBuilder app)
         {
             app.UseAuthentication();

@@ -9,21 +9,12 @@ using Microsoft.OpenApi.Models;
 
 namespace JobPortal.Api.Configuration
 {
-    /// <summary>
-    /// Central place to register API-level services and map endpoints.
-    /// Keep infra/app wiring in their own AddInfrastructure/AddApplication.
-    /// </summary>
     public static class DependencyInjection
     {
         public const string CorsPolicyName = "AppCors";
 
-        /// <summary>
-        /// Registers controllers, ProblemDetails + global exception filter, Swagger, CORS, SignalR, Auth.
-        /// Call from Program.cs: services.AddApiServices(configuration);
-        /// </summary>
         public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration config)
         {
-            // Controllers + ProblemDetails + global exception filter
             services.AddProblemDetails();
             services.AddControllers(options =>
             {
@@ -31,7 +22,6 @@ namespace JobPortal.Api.Configuration
                 options.Filters.Add<ApiExceptionFilter>();
             });
 
-            // Swagger (with JWT bearer support)
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
             {
@@ -59,7 +49,6 @@ namespace JobPortal.Api.Configuration
                 });
             });
 
-            // CORS — read allowed origins from configuration: "Cors": { "Origins": [ ... ] }
             var origins = config.GetSection("Cors:Origins").Get<string[]>() ?? Array.Empty<string>();
             services.AddCors(opt =>
             {
@@ -74,7 +63,6 @@ namespace JobPortal.Api.Configuration
                     }
                     else
                     {
-                        // Fallback for local dev if not configured
                         builder.WithOrigins("http://localhost:5173")
                                .AllowAnyHeader()
                                .AllowAnyMethod()
@@ -83,22 +71,15 @@ namespace JobPortal.Api.Configuration
                 });
             });
 
-            // Health checks (actual checks are added via your HealthChecksExtensions elsewhere)
             services.AddHealthChecks();
 
-            // SignalR (Redis backplane is configured via AddAppSignalR in your other extension)
             services.AddSignalR();
 
-            // Clerk JWT auth via your AuthExtensions
             services.AddAppAuthentication(config);
 
             return services;
         }
 
-        /// <summary>
-        /// Wires middleware pipeline + endpoint mappings.
-        /// Call from Program.cs: app.UseApi();
-        /// </summary>
         public static WebApplication UseApi(this WebApplication app)
         {
             var env = app.Environment;
@@ -111,10 +92,7 @@ namespace JobPortal.Api.Configuration
 
             app.UseHttpsRedirection();
 
-            // CORS before auth so preflight works with credentials
             app.UseCors(CorsPolicyName);
-
-            // Auth
             app.UseAuthentication();
             app.UseAuthorization();
 

@@ -12,7 +12,6 @@ namespace JobPortal.Api.Middleware
             return services;
         }
 
-        /// <summary>Place early (after correlation id) so downstream logs share the same TraceIdentifier.</summary>
         public static IApplicationBuilder UseRequestLogging(this IApplicationBuilder app)
         {
             return app.UseMiddleware<RequestLoggingMiddleware>();

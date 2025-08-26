@@ -14,7 +14,7 @@ namespace JobPortal.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize] // make public endpoints [AllowAnonymous] as needed
+    [Authorize] 
     public class OrgsController : ControllerBase
     {
         private readonly IOrganizationRepository _repo;
@@ -28,7 +28,6 @@ namespace JobPortal.Api.Controllers
             _mapper = mapper;
         }
 
-        /// <summary>Create a new organization.</summary>
         [HttpPost]
         public async Task<ActionResult<OrgDto>> Create([FromBody] CreateOrgRequest request, CancellationToken ct)
         {
@@ -46,7 +45,6 @@ namespace JobPortal.Api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = entity.Id }, dto);
         }
 
-        /// <summary>Get an organization by id.</summary>
         [HttpGet("{id:guid}")]
         [AllowAnonymous]
         public async Task<ActionResult<OrgDto>> GetById(Guid id, CancellationToken ct)
@@ -56,7 +54,6 @@ namespace JobPortal.Api.Controllers
             return Ok(_mapper.Map<OrgDto>(org));
         }
 
-        /// <summary>Search organizations with paging.</summary>
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<PagedOrgsResponse>> Search(
@@ -86,7 +83,6 @@ namespace JobPortal.Api.Controllers
             });
         }
 
-        /// <summary>Update an organization.</summary>
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<OrgDto>> Update(Guid id, [FromBody] UpdateOrgRequest request, CancellationToken ct)
         {
@@ -106,7 +102,6 @@ namespace JobPortal.Api.Controllers
             return Ok(_mapper.Map<OrgDto>(org));
         }
 
-        /// <summary>Delete an organization.</summary>
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
         {

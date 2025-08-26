@@ -13,7 +13,7 @@ namespace JobPortal.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [AllowAnonymous] // make public; flip to [Authorize] if you want to protect
+    [AllowAnonymous]
     public class SearchController : ControllerBase
     {
         private readonly IJobRepository _jobs;
@@ -27,16 +27,6 @@ namespace JobPortal.Api.Controllers
             _mapper = mapper;
         }
 
-        /// <summary>
-        /// Combined search over Jobs and Organizations.
-        /// </summary>
-        /// <param name="q">Free text query applied to title/description (jobs) and name/description (orgs)</param>
-        /// <param name="location">Filter by location (applied to both)</param>
-        /// <param name="employmentType">Job filter (e.g., FullTime/PartTime/Contract)</param>
-        /// <param name="jobsPage">Jobs page number (1-based)</param>
-        /// <param name="jobsPageSize">Jobs page size (1..200)</param>
-        /// <param name="orgsPage">Orgs page number (1-based)</param>
-        /// <param name="orgsPageSize">Orgs page size (1..200)</param>
         [HttpGet]
         public async Task<ActionResult<CombinedSearchResponse>> Combined(
             [FromQuery] string? q,
@@ -97,7 +87,7 @@ namespace JobPortal.Api.Controllers
             return Ok(resp);
         }
 
-        /// <summary>Search jobs only (thin wrapper over repository).</summary>
+
         [HttpGet("jobs")]
         public async Task<ActionResult<PagedJobsResponse>> Jobs(
             [FromQuery] string? q,
@@ -128,7 +118,6 @@ namespace JobPortal.Api.Controllers
             });
         }
 
-        /// <summary>Search organizations only (thin wrapper over repository).</summary>
         [HttpGet("orgs")]
         public async Task<ActionResult<PagedOrgsResponse>> Orgs(
             [FromQuery] string? q,

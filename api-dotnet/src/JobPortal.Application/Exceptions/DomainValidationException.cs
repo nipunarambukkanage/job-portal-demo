@@ -4,15 +4,10 @@ using System.Linq;
 
 namespace JobPortal.Application.Exceptions
 {
-    /// <summary>
-    /// Represents domain-level validation failures (not model binding).
-    /// Throw this when a command/query violates domain rules.
-    /// </summary>
     public sealed class DomainValidationException : Exception
     {
         public readonly record struct DomainError(string? PropertyName, string ErrorMessage);
 
-        /// <summary>Normalized errors bag. Never null.</summary>
         public IReadOnlyList<DomainError> Errors { get; }
 
         public DomainValidationException(string message)

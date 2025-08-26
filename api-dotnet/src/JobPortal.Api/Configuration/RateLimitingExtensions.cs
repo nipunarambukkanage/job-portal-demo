@@ -13,9 +13,6 @@ namespace JobPortal.Api.Middleware
             return services;
         }
 
-        /// <summary>
-        /// Place early (after routing and before auth) so protected endpoints also benefit.
-        /// </summary>
         public static IApplicationBuilder UseAppRateLimiting(this IApplicationBuilder app)
         {
             return app.UseMiddleware<RateLimitingMiddleware>();

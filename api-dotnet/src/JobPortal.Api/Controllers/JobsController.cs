@@ -27,7 +27,6 @@ namespace JobPortal.Api.Controllers
             _mapper = mapper;
         }
 
-        /// <summary>Create a new job posting.</summary>
         [HttpPost]
         public async Task<ActionResult<JobDto>> Create([FromBody] CreateJobRequest request)
         {
@@ -45,7 +44,6 @@ namespace JobPortal.Api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = entity.Id }, dto);
         }
 
-        /// <summary>Get a job by id.</summary>
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<JobDto>> GetById(Guid id)
         {
@@ -54,14 +52,13 @@ namespace JobPortal.Api.Controllers
             return Ok(_mapper.Map<JobDto>(job));
         }
 
-        /// <summary>Search jobs (by text/org/location/type) with paging.</summary>
         [HttpGet]
-        [AllowAnonymous] // make public if you’d like job listings visible without auth
+        [AllowAnonymous] 
         public async Task<ActionResult<PagedJobsResponse>> Search(
             [FromQuery] string? q,
             [FromQuery] Guid? orgId,
             [FromQuery] string? location,
-            [FromQuery] string? employmentType, // e.g., FullTime
+            [FromQuery] string? employmentType, 
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 20)
         {
@@ -87,14 +84,12 @@ namespace JobPortal.Api.Controllers
             });
         }
 
-        /// <summary>Update a job.</summary>
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<JobDto>> Update(Guid id, [FromBody] UpdateJobRequest request)
         {
             var job = await _repo.GetByIdAsync(id);
             if (job is null) return NotFound();
 
-            // Map allowed fields
             job.Title = request.Title ?? job.Title;
             job.Description = request.Description ?? job.Description;
             job.Location = request.Location ?? job.Location;
@@ -109,7 +104,6 @@ namespace JobPortal.Api.Controllers
             return Ok(_mapper.Map<JobDto>(job));
         }
 
-        /// <summary>Delete a job.</summary>
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {

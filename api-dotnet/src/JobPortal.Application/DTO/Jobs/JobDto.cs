@@ -9,7 +9,7 @@ namespace JobPortal.Application.DTO.Jobs
         public string Title { get; set; } = default!;
         public string? Description { get; set; }
         public string? Location { get; set; }
-        public string? EmploymentType { get; set; } // e.g., FullTime/PartTime/Contract
+        public string? EmploymentType { get; set; }
         public decimal? SalaryMin { get; set; }
         public decimal? SalaryMax { get; set; }
         public DateTime CreatedAtUtc { get; set; }

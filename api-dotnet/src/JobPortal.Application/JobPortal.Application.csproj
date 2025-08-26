@@ -18,4 +18,12 @@
 	<ItemGroup>
 		<ProjectReference Include="..\\JobPortal.Domain\\JobPortal.Domain.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Features\Applications\Commands\" />
+	  <Folder Include="Features\Applications\Queries\" />
+	  <Folder Include="Features\Jobs\Commands\UpdateJob\" />
+	  <Folder Include="Features\Jobs\Queries\SearchJobs\" />
+	  <Folder Include="Features\Orgs\" />
+	</ItemGroup>
 </Project>

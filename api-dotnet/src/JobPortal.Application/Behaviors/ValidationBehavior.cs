@@ -26,7 +26,6 @@ public sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
             var failures = results.SelectMany(r => r.Errors).Where(f => f is not null).ToList();
             if (failures.Count > 0)
             {
-                //throw FluentValidation.ValidationException or my own DomainValidationException
                 throw new ValidationException(failures);
             }
         }

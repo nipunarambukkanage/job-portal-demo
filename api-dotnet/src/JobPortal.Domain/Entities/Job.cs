@@ -18,7 +18,7 @@ namespace JobPortal.Domain.Entities
         public DateTime CreatedAtUtc { get; set; }
         public DateTime UpdatedAtUtc { get; set; }
 
-        public Job() { } // For EF
+        public Job() { }
 
         public Job(Guid organizationId, string title, string? description, string? location)
         {

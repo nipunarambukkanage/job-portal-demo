@@ -6,15 +6,11 @@ using Microsoft.Extensions.Logging;
 
 namespace JobPortal.Application.Behaviors
 {
-    /// <summary>
-    /// Measures handler execution time and logs slow requests.
-    /// </summary>
     public sealed class PerformanceBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
     {
         private readonly ILogger<PerformanceBehavior<TRequest, TResponse>> _logger;
 
-        /// <summary>Threshold (ms) after which a warning is logged.</summary>
         private const long WarningThresholdMs = 500;
 
         public PerformanceBehavior(ILogger<PerformanceBehavior<TRequest, TResponse>> logger)

@@ -17,7 +17,6 @@ namespace JobPortal.Application.DTO.Jobs
         [MaxLength(256)]
         public string? Location { get; set; }
 
-        // normalized string values: "FullTime", "PartTime", "Contract", etc.
         [MaxLength(64)]
         public string? EmploymentType { get; set; }
 

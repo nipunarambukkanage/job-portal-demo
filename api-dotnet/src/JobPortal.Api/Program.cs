@@ -24,7 +24,6 @@ services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "JobPortal API", Version = "v1" });
 
-    // Optional: JWT bearer in Swagger
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -66,7 +65,7 @@ services.AddAppAuthentication(config);
 // Health checks
 services.AddAppHealthChecks(config);
 
-// OpenTelemetry (pass env as required by your extension signature)
+// OpenTelemetry
 services.AddAppOpenTelemetry(config, env);
 
 // Middleware options
@@ -84,7 +83,7 @@ app.UseCorrelationId();
 // Request logging
 app.UseRequestLogging();
 
-// HTTPS redirection (optional depending on hosting)
+// HTTPS redirection
 app.UseHttpsRedirection();
 
 // CORS before auth
@@ -94,7 +93,7 @@ app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Swagger (built-in, no custom extension)
+// Swagger
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -112,7 +111,7 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = _ => t
 // Simple OK
 app.MapGet("/health", () => Results.Ok("OK"));
 
-// Rate limiting (after maps if you prefer to exclude swagger/health; move earlier to include)
+// Rate limiting
 app.UseAppRateLimiting();
 
 app.Run();

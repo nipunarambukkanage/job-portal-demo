@@ -11,14 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobPortal.Api.Middleware
 {
-    /// <summary>
-    /// Lightweight per-IP fixed-window rate limiter using IMemoryCache.
-    /// Adds RFC-violating-but-useful headers widely used across APIs:
-    ///   - X-RateLimit-Limit
-    ///   - X-RateLimit-Remaining
-    ///   - X-RateLimit-Reset (unix seconds)
-    /// Also sets "Retry-After" on 429 responses.
-    /// </summary>
     public sealed class RateLimitingMiddleware
     {
         private const string LimitHeader = "X-RateLimit-Limit";
@@ -56,12 +48,11 @@ namespace JobPortal.Api.Middleware
             var windowStart = new DateTimeOffset(now.Ticks - (now.Ticks % window.Ticks), TimeSpan.Zero);
             var windowEnd = windowStart.Add(window);
 
-            // Key = "<ip>|<windowStartTicks>"
             var key = $"rl:{ip}:{windowStart.UtcTicks}";
 
             var entry = _cache.GetOrCreate(key, e =>
             {
-                e.AbsoluteExpiration = windowEnd; // expire end-of-window
+                e.AbsoluteExpiration = windowEnd; 
                 return new Counter
                 {
                     Count = 0,
@@ -74,7 +65,6 @@ namespace JobPortal.Api.Middleware
             var remaining = Math.Max(0, _opts.RequestsPerWindow - entry.Count);
             var resetUnix = entry.WindowEnd.ToUnixTimeSeconds();
 
-            // Always attach headers so clients can track usage.
             ctx.Response.OnStarting(() =>
             {
                 ctx.Response.Headers[LimitHeader] = _opts.RequestsPerWindow.ToString();
@@ -133,10 +123,8 @@ namespace JobPortal.Api.Middleware
 
         private static string? GetClientIp(HttpContext ctx)
         {
-            // Prefer X-Forwarded-For when behind proxies
             if (ctx.Request.Headers.TryGetValue("X-Forwarded-For", out var fwd) && fwd.Count > 0)
             {
-                // Could be "client, proxy1, proxy2" → take first non-empty
                 var first = fwd.ToString().Split(',').Select(s => s.Trim()).FirstOrDefault(s => !string.IsNullOrWhiteSpace(s));
                 if (!string.IsNullOrWhiteSpace(first))
                     return first;

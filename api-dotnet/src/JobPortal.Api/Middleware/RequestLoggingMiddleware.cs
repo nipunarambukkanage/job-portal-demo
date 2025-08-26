@@ -10,10 +10,6 @@ using Microsoft.Extensions.Options;
 
 namespace JobPortal.Api.Middleware
 {
-    /// <summary>
-    /// Structured request/response logging with small body capture (optional).
-    /// Works with CorrelationIdMiddleware via HttpContext.TraceIdentifier.
-    /// </summary>
     public sealed class RequestLoggingMiddleware
     {
         private readonly RequestDelegate _next;
@@ -40,7 +36,6 @@ namespace JobPortal.Api.Middleware
 
             var sw = Stopwatch.StartNew();
 
-            // Capture request info early
             var req = ctx.Request;
             var method = req.Method;
             var path = req.Path.Value ?? "/";
@@ -50,12 +45,11 @@ namespace JobPortal.Api.Middleware
             string? reqBody = null;
             if (_opts.LogRequestBody && BodyCaptureAllowed(req.ContentType))
             {
-                req.EnableBuffering(); // allows reread
+                req.EnableBuffering(); 
                 reqBody = await ReadLimitedAsync(req.Body, _opts.MaxBodyBytes, req.ContentType);
                 req.Body.Position = 0;
             }
 
-            // Swap response body to capture it if needed
             var originalBody = ctx.Response.Body;
             using var buffer = new MemoryStream();
             if (_opts.LogResponseBody)
@@ -75,22 +69,17 @@ namespace JobPortal.Api.Middleware
 
                 if (_opts.LogResponseBody && BodyCaptureAllowed(ctx.Response.ContentType))
                 {
-                    // read buffer
                     ctx.Response.Body.Seek(0, SeekOrigin.Begin);
                     respBody = await ReadLimitedAsync(ctx.Response.Body, _opts.MaxBodyBytes, ctx.Response.ContentType);
                     ctx.Response.Body.Seek(0, SeekOrigin.Begin);
-
-                    // copy back to real stream
                     await ctx.Response.Body.CopyToAsync(originalBody);
                 }
 
-                // Log with a scope that includes correlation id
                 using (_logger.BeginScope(new System.Collections.Generic.Dictionary<string, object?>
                 {
                     ["TraceId"] = traceId
                 }))
                 {
-                    // Redact headers
                     var reqHeaders = RedactHeaders(req.Headers);
                     var respHeaders = RedactHeaders(ctx.Response.Headers);
 
@@ -114,12 +103,9 @@ namespace JobPortal.Api.Middleware
                             method, path, query, status, sw.ElapsedMilliseconds);
                     }
 
-                    // Optionally log headers at Debug level
                     _logger.LogDebug("RequestHeaders: {Headers}", reqHeaders);
                     _logger.LogDebug("ResponseHeaders: {Headers}", respHeaders);
                 }
-
-                // restore original body stream if we swapped
                 if (_opts.LogResponseBody)
                     ctx.Response.Body = originalBody;
             }
@@ -175,8 +161,6 @@ namespace JobPortal.Api.Middleware
 
         private static string TryDecodeText(byte[] data, string? contentType)
         {
-            // naive charset sniff (utf-8 fallback)
-            // you can enhance by parsing charset from contentType if needed
             try
             {
                 return Encoding.UTF8.GetString(data);

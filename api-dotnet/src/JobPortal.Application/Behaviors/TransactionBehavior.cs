@@ -13,7 +13,6 @@ public sealed class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
     {
-        // If later add explicit transactions, use _uow here.
         var response = await next();
         return response;
     }

@@ -13,7 +13,7 @@ namespace JobPortal.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize] // FallbackPolicy already requires auth; keeping explicit for clarity
+    [Authorize]
     public class ApplicationsController : ControllerBase
     {
         private readonly IApplicationRepository _repo;
@@ -27,7 +27,6 @@ namespace JobPortal.Api.Controllers
             _mapper = mapper;
         }
 
-        /// <summary>Create a new application for a job.</summary>
         [HttpPost]
         public async Task<ActionResult<ApplicationDto>> Create([FromBody] CreateApplicationRequest request)
         {
@@ -52,7 +51,6 @@ namespace JobPortal.Api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = entity.Id }, dto);
         }
 
-        /// <summary>Get an application by id.</summary>
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<ApplicationDto>> GetById(Guid id)
         {
@@ -62,7 +60,6 @@ namespace JobPortal.Api.Controllers
             return Ok(_mapper.Map<ApplicationDto>(app));
         }
 
-        /// <summary>List applications for a job with simple paging.</summary>
         [HttpGet]
         public async Task<ActionResult<PagedApplicationsResponse>> List(
             [FromQuery] Guid jobId,
@@ -82,7 +79,6 @@ namespace JobPortal.Api.Controllers
             });
         }
 
-        /// <summary>Update application status (e.g., Submitted -> Reviewed -> Interview -> Offered -> Rejected).</summary>
         [HttpPatch("{id:guid}/status")]
         public async Task<ActionResult<ApplicationDto>> UpdateStatus(Guid id, [FromBody] UpdateApplicationStatusRequest request)
         {
@@ -98,7 +94,6 @@ namespace JobPortal.Api.Controllers
             return Ok(_mapper.Map<ApplicationDto>(app));
         }
 
-        /// <summary>Delete an application.</summary>
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {

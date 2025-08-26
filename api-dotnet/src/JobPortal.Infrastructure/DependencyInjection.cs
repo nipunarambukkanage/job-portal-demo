@@ -22,25 +22,24 @@ namespace JobPortal.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
         {
-            // Needed by CurrentUser (in Infrastructure.Security) to read HttpContext
             services.AddHttpContextAccessor();
 
-            // --- Database (Postgres / Npgsql)
+            // Database (Postgres / Npgsql)
             var cs = config.GetConnectionString("Postgres")
                      ?? throw new InvalidOperationException("Missing Postgres connection string 'ConnectionStrings:Postgres'.");
 
             services.AddDbContext<JobPortalDbContext>(opt => opt.UseNpgsql(cs));
 
-            // --- Repositories & UoW
+            // Repositories & UoW
             services.AddScoped<IJobRepository, JobRepository>();
             services.AddScoped<IApplicationRepository, ApplicationRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<IUnitOfWork, EfUnitOfWork>();
 
-            // --- Current user accessor
+            // Current user accessor
             services.AddScoped<ICurrentUser, Infrastructure.Security.CurrentUser>();
 
-            // --- Caching (Redis) — optional
+            // Caching (Redis)
             var redisUrl = config["Redis:Url"];
             if (!string.IsNullOrWhiteSpace(redisUrl))
             {
@@ -48,7 +47,7 @@ namespace JobPortal.Infrastructure
                 services.AddSingleton<ICacheService, RedisCacheService>();
             }
 
-            // --- Blob storage (Azure) — optional
+            // Blob storage (Azure)
             var blobCs = config["Blob:ConnectionString"];
             if (!string.IsNullOrWhiteSpace(blobCs))
             {
@@ -56,7 +55,7 @@ namespace JobPortal.Infrastructure
                 services.AddSingleton<IBlobStorage, AzureBlobStorageService>();
             }
 
-            // --- OpenTelemetry (EF instrumentation + OTLP exporter)
+            // OpenTelemetry (EF instrumentation + OTLP exporter)
             services.AddOpenTelemetry().WithTracing(b =>
             {
                 b.AddEntityFrameworkCoreInstrumentation();

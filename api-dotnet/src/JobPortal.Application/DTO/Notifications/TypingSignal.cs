@@ -6,7 +6,7 @@ namespace JobPortal.Application.DTO.Notifications
     {
         public Guid OrgId { get; set; }
         public string UserId { get; set; } = string.Empty;
-        public string? Context { get; set; } // e.g., "job:123", "chat:abc"
+        public string? Context { get; set; } 
         public DateTime AtUtc { get; set; }
     }
 }

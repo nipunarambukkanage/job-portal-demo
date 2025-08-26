@@ -6,10 +6,6 @@ using Microsoft.Extensions.Logging;
 
 namespace JobPortal.Application.Behaviors
 {
-    /// <summary>
-    /// Minimal structured logging around every request/response.
-    /// (Transport/body logging is handled in API middleware; this logs app-level CQRS traffic.)
-    /// </summary>
     public sealed class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
     {
