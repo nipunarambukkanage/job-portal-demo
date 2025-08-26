@@ -1,4 +1,4 @@
-name: build-and-push
+﻿name: build-and-push
 
 on:
   push:
@@ -17,17 +17,29 @@ jobs:
         include:
           - name: api
             context: ./api-dotnet
-            file: ./api-dotnet/Dockerfile
-            image_suffix: -api
-
+            file: ./api-dotnet/src/JobPortal.Api/Dockerfile
+            image: ghcr.io/${{ github.repository }}-api
           - name: background
-            context: .
-            file: ./src/JobPortal.Background/Dockerfile
-            image_suffix: -bg
+            context: ./api-dotnet
+            file: ./api-dotnet/src/JobPortal.Background/Dockerfile
+            image: ghcr.io/${{ github.repository }}-bg
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Show tree (debug)
+        run: |
+          echo "Repo root: $(pwd)"
+          ls -la
+          echo "api-dotnet:"
+          ls -la ./api-dotnet || true
+          echo "api-dotnet/src:"
+          ls -la ./api-dotnet/src || true
+          echo "API Dockerfile exists?"
+          test -f ./api-dotnet/src/JobPortal.Api/Dockerfile && echo "✔" || (echo "✘ missing" && exit 1)
+          echo "BG Dockerfile exists?"
+          test -f ./api-dotnet/src/JobPortal.Background/Dockerfile && echo "✔" || (echo "✘ missing" && exit 1)
 
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
@@ -46,7 +58,7 @@ jobs:
           file: ${{ matrix.file }}
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}${{ matrix.image_suffix }}:latest
-            ghcr.io/${{ github.repository }}${{ matrix.image_suffix }}:${{ github.sha }}
+            ${{ matrix.image }}:latest
+            ${{ matrix.image }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
