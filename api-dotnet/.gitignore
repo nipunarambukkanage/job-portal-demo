@@ -22,3 +22,8 @@
 # Others
 *.cache
 *.DS_Store
+
+# App settings (sensitive config)
+**/appsettings.json
+**/appsettings.*.json
+**/appsettings.Development.json
