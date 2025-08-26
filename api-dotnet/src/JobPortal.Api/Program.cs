@@ -15,11 +15,19 @@ var config = builder.Configuration;
 var env = builder.Environment;
 var services = builder.Services;
 
-// Controllers + ProblemDetails + global exception filter
-services.AddProblemDetails();
-services.AddControllers(opt => opt.Filters.Add<ApiExceptionFilter>());
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
-// Swagger (built-in, no custom extension)
+services.AddProblemDetails();
+
+services.AddScoped<ApiExceptionFilter>();
+services.AddSingleton<ValidationProblemDetailsMapper>();
+
+services.AddControllers(opt =>
+{
+    opt.Filters.Add<ApiExceptionFilter>();
+});
+
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen(c =>
 {
@@ -43,7 +51,6 @@ services.AddSwaggerGen(c =>
     });
 });
 
-// CORS
 services.AddCors(o => o.AddDefaultPolicy(p =>
 {
     var origins = config.GetSection("Cors:Origins").Get<string[]>() ?? new[] { "http://localhost:5173" };
@@ -53,67 +60,54 @@ services.AddCors(o => o.AddDefaultPolicy(p =>
      .AllowCredentials();
 }));
 
-// SignalR
 services.AddSignalR();
 
-// Application & Infrastructure
 services.AddApplication();
 services.AddInfrastructure(config);
 
-// Auth (Clerk JWT)
 services.AddAppAuthentication(config);
 
-// Health checks
 services.AddAppHealthChecks(config);
 
-// OpenTelemetry
 services.AddAppOpenTelemetry(config, env);
 
-// Middleware options
 services.AddRequestLogging(config);
 services.AddAppRateLimiting(config);
 
-// Notifications gateway (SignalR hub)
 services.AddSingleton<INotificationGateway, SignalRNotificationGateway>();
+
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
 
-// Correlation Id
 app.UseCorrelationId();
 
-// Request logging
-app.UseRequestLogging();
-
-// HTTPS redirection
 app.UseHttpsRedirection();
 
-// CORS before auth
-app.UseCors();
-
-// Auth
-app.UseAuthentication();
-app.UseAuthorization();
-
-// Swagger
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "JobPortal API v1");
 });
 
-// Endpoints
+app.UseRouting();
+
+app.UseCors();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseRequestLogging();
+
+app.UseAppRateLimiting();
+
 app.MapControllers();
 app.MapHub<NotificationsHub>("/hubs/notifications");
 
-// Health endpoints
 app.MapHealthChecks("/health/live");
 app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = _ => true });
-
-// Simple OK
 app.MapGet("/health", () => Results.Ok("OK"));
-
-// Rate limiting
-app.UseAppRateLimiting();
 
 using (var scope = app.Services.CreateScope())
 {
