@@ -7,6 +7,7 @@ using JobPortal.Application;
 using JobPortal.Application.Abstractions.Messaging;
 using JobPortal.Infrastructure;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -113,5 +114,11 @@ app.MapGet("/health", () => Results.Ok("OK"));
 
 // Rate limiting
 app.UseAppRateLimiting();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<JobPortal.Infrastructure.Persistence.JobPortalDbContext>();
+    db.Database.Migrate();
+}
 
 app.Run();
