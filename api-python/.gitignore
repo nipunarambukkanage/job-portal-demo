@@ -1,39 +1,29 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Virtual environment
+# Virtual env
 .venv/
 env/
 venv/
 
-# Distribution / packaging
+# Packaging / build
 build/
 dist/
 *.egg-info/
 .eggs/
 
-# Unit test / coverage reports
+# Tests / coverage / caches
 htmlcov/
 .tox/
 .nox/
 .coverage
 .coverage.*
-.cache
 .pytest_cache/
+.cache
 
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# MyPy / Ruff / Pyre type checker
-.mypy_cache/
-.dmypy.json
-dmypy.json
-.pyre/
-.ruff_cache/
-
-# IDE / Editor
+# IDE / Editors
 .vscode/
 .idea/
 *.suo
@@ -41,31 +31,27 @@ dmypy.json
 *.userosscache
 *.sln.docstates
 
-# Logs
+# Logs / misc
 *.log
+.DS_Store
+Thumbs.db
 
 # Databases
 *.db
 *.sqlite
 *.sqlite3
 
-# Alembic migrations cache
-migrations/versions/__pycache__/
-
-# Docker
-*.pid
-*.seed
-*.pid.lock
-docker-compose.override.yml
-
-# OS / misc
-.DS_Store
-Thumbs.db
-
-# Environment variables & secrets
+# Env & secrets
 .env
 .env.*
-!.env.example   # keep example env file tracked
+!.env.example
 
-# Python API configs
-uvicorn.ini
+# Alembic cache (keep migration scripts tracked)
+migrations/versions/__pycache__/
+
+# Docker local overrides
+docker-compose.override.yml
+
+# Uvicorn reload pid
+*.pid
+*.pid.lock

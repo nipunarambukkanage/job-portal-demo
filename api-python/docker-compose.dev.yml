@@ -1,0 +1,72 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jp-api
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+      - azurite
+      - mailhog
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app
+    command: bash -lc "scripts/prestart.sh && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jp-worker
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./:/app
+    command: bash -lc "celery -A app.workers.celery_app.celery_app worker -Q default -l INFO"
+
+  db:
+    image: postgres:16
+    container_name: jp-db
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: jp-redis
+    ports:
+      - "6379:6379"
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: jp-azurite
+    command: "azurite-blob --blobHost 0.0.0.0 --blobPort 10000"
+    ports:
+      - "10000:10000"
+    volumes:
+      - azurite:/data
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: jp-mailhog
+    ports:
+      - "8025:8025"   # Web UI
+      - "1025:1025"   # SMTP
+
+volumes:
+  pgdata:
+  azurite:
