@@ -108,6 +108,7 @@ jobs:
                 DOC_INTEL_POLL_SECONDS=1 \
                 DOC_INTEL_POLL_ATTEMPTS=3 \
                 PYTHONUNBUFFERED=1
+          fi
 
       - name: Create/Update Migrations Job (and run)
         shell: bash
