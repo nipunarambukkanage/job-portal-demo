@@ -7,13 +7,14 @@ on:
     paths:
       - "api-python/**"
       - ".github/workflows/build-api-python.yml"
+      - "api-python/Dockerfile"
 
 permissions:
   id-token: write
   contents: read
 
 env:
-  ACR_NAME: ${{ secrets.ACR_NAME }}
+  ACR_NAME: ${{ secrets.ACR_NAME }}        # jobportalacrci971778
   IMAGE: api-python:${{ github.sha }}
 
 jobs:
@@ -22,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Azure Login (SP credentials JSON)
+      - name: Azure Login (Service Principal JSON)
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
@@ -30,6 +31,7 @@ jobs:
       - name: Enable ACR admin & fetch creds
         id: acr
         run: |
+          set -e
           az acr update -n "$ACR_NAME" --admin-enabled true
           echo "USR=$(az acr credential show -n "$ACR_NAME" --query username -o tsv)" >> $GITHUB_OUTPUT
           echo "PWD=$(az acr credential show -n "$ACR_NAME" --query passwords[0].value -o tsv)" >> $GITHUB_OUTPUT

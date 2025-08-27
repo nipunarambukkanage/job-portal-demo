@@ -8,14 +8,16 @@ if [[ -n "${IMAGE:-}" ]]; then
   IMG="$IMAGE"
 else
   IMG="$(az containerapp show -g "$RG" -n "$APP_NAME" --query "template.containers[0].image" -o tsv)"
-  if [[ -z "$IMG" ]]; then
+  if [[ -z "${IMG:-}" ]]; then
     echo "Could not resolve current image. Set IMAGE env var before running." >&2
     exit 1
   fi
 fi
 
+# Make sure ingress points to the right port (idempotent)
 az containerapp ingress update -g "$RG" -n "$APP_NAME" --target-port 8000 --transport Auto >/dev/null
 
+# Update only image and env vars (no registry / secret flags here)
 az containerapp update -g "$RG" -n "$APP_NAME" \
   --image "$IMG" \
   --set-env-vars \
