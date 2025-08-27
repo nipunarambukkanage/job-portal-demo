@@ -3,7 +3,7 @@ name: Build & Deploy Python API to Azure Container Apps
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ main ]  # run on any push to main
 
 permissions:
   id-token: write
@@ -24,26 +24,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Azure Login (OIDC)
+      - name: Azure Login (SP credentials JSON)
         uses: azure/login@v2
         with:
           credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: ACR login
-        run: az acr login -n $ACR_NAME
-
-      - name: Build & push image to ACR
-        working-directory: ./api-python
-        run: |
-          docker build -t $ACR_NAME.azurecr.io/$IMAGE .
-          docker push $ACR_NAME.azurecr.io/$IMAGE
-
-      - name: Enable ACR admin & get creds
+      - name: Enable ACR admin & fetch creds
         id: acr
         run: |
-          az acr update -n $ACR_NAME --admin-enabled true
-          echo "USR=$(az acr credential show -n $ACR_NAME --query username -o tsv)" >> $GITHUB_OUTPUT
-          echo "PWD=$(az acr credential show -n $ACR_NAME --query passwords[0].value -o tsv)" >> $GITHUB_OUTPUT
+          az acr update -n "$ACR_NAME" --admin-enabled true
+          echo "USR=$(az acr credential show -n "$ACR_NAME" --query username -o tsv)" >> $GITHUB_OUTPUT
+          echo "PWD=$(az acr credential show -n "$ACR_NAME" --query passwords[0].value -o tsv)" >> $GITHUB_OUTPUT
+
+      - name: Docker login to ACR
+        run: |
+          echo "${{ steps.acr.outputs.PWD }}" | docker login "$ACR_NAME.azurecr.io" -u "${{ steps.acr.outputs.USR }}" --password-stdin
+
+      - name: Build & push api-python image
+        working-directory: ./api-python
+        run: |
+          set -e
+          docker build -t "$ACR_NAME.azurecr.io/$IMAGE" .
+          docker push "$ACR_NAME.azurecr.io/$IMAGE"
 
       - name: Create/Update API Container App
         run: |
@@ -93,7 +95,6 @@ jobs:
                 DOC_INTEL_POLL_SECONDS=1 \
                 DOC_INTEL_POLL_ATTEMPTS=3 \
                 PYTHONUNBUFFERED=1
-          fi
 
       - name: Create/Update Migrations Job (and run)
         run: |
@@ -147,7 +148,6 @@ jobs:
                 AZURE_BLOB_CONNECTION_STRING=secretref:blob-conn \
                 PYTHONUNBUFFERED=1 \
               --command "celery" --args "-A" "app.workers.celery_app.celery_app" "worker" "-Q" "default" "-l" "INFO"
-          fi
 
       - name: Print API URL
         run: |
