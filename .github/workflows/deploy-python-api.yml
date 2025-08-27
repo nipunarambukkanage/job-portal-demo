@@ -1,6 +1,7 @@
 name: Build & Deploy Python API to Azure Container Apps
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
     paths:
@@ -142,7 +143,7 @@ jobs:
             az containerapp update -g "$RG" -n "$WORKER_NAME" \
               --image "$IMG" \
               --registry-server "$ACR_NAME.azurecr.io" --registry-username "${{ steps.acr.outputs.USR }}" --registry-password "${{ steps.acr.outputs.PWD }}" \
-              --secrets db-url='${{ secrets.DATABASE_URL }}' redis-url='${{ secrets.RELIS_URL }}' blob-conn='${{ secrets.AZURE_BLOB_CONNECTION_STRING }}' \
+              --secrets db-url='${{ secrets.DATABASE_URL }}' redis-url='${{ secrets.REDIS_URL }}' blob-conn='${{ secrets.AZURE_BLOB_CONNECTION_STRING }}' \
               --set-env-vars \
                 ENV=dev \
                 DATABASE_URL=secretref:db-url \
