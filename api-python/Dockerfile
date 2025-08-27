@@ -16,15 +16,14 @@ RUN pip install --upgrade pip && pip install -e ".[dev]"
 
 # ===== app =====
 COPY . /app
-
-# Make prestart executable if not already
 RUN chmod +x scripts/prestart.sh || true
 
-EXPOSE 8000
+# Listen on 8080 to match ACA ingress
+EXPOSE 8080
 ENV ENV=container LOG_LEVEL=INFO
 
-# Healthcheck: simple TCP connect
+# Healthcheck (app must implement GET /health)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
- CMD curl -fsS http://localhost:8000/health || exit 1
+  CMD curl -fsS http://localhost:8080/health || exit 1
 
-CMD ["bash", "-lc", "scripts/prestart.sh && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
+CMD ["bash", "-lc", "scripts/prestart.sh && uvicorn app.main:app --host 0.0.0.0 --port 8080"]
