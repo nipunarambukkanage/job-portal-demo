@@ -8,6 +8,9 @@ from sqlalchemy import Boolean, DateTime, Enum as SAEnum, ForeignKey, String, Te
 from sqlalchemy.dialects.postgresql import UUID, ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from datetime import datetime
+
+
 from app.db.base import Base
 
 
@@ -39,8 +42,8 @@ class Job(Base):
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, index=True)
 
-    posted_at: Mapped["datetime"] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at: Mapped["datetime"] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+    posted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
     # Relationships
     employer: Mapped["User"] = relationship(back_populates="jobs")

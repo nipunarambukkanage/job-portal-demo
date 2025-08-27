@@ -7,6 +7,9 @@ from sqlalchemy import DateTime, ForeignKey, Index, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from datetime import datetime
+
+
 from app.db.base import Base
 
 
@@ -28,7 +31,7 @@ class AuditLog(Base):
     message: Mapped[Optional[str]] = mapped_column(Text)
     meta: Mapped[Optional[dict]] = mapped_column(JSONB)
 
-    created_at: Mapped["datetime"] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # Relationships
     actor: Mapped[Optional["User"]] = relationship()

@@ -8,6 +8,9 @@ from sqlalchemy import DateTime, Enum as SAEnum, ForeignKey, UniqueConstraint, S
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from datetime import datetime
+
+
 from app.db.base import Base
 
 
@@ -38,8 +41,8 @@ class Application(Base):
 
     cover_letter: Mapped[Optional[str]] = mapped_column(String(4000))
 
-    applied_at: Mapped["datetime"] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at: Mapped["datetime"] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+    applied_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
     # Relationships
     job: Mapped["Job"] = relationship(back_populates="applications")

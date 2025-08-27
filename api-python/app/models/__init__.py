@@ -1,5 +1,6 @@
 from __future__ import annotations
-
+from datetime import datetime
+from sqlalchemy import DateTime, func
 from .user import User, UserRole
 from .job import Job, EmploymentType
 from .application import Application, ApplicationStatus

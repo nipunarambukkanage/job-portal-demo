@@ -8,6 +8,8 @@ from sqlalchemy import DateTime, Enum as SAEnum, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from datetime import datetime
+
 from app.db.base import Base
 
 
@@ -33,8 +35,8 @@ class User(Base):
     headline: Mapped[Optional[str]] = mapped_column(String(200))
     about: Mapped[Optional[str]] = mapped_column(Text)
 
-    created_at: Mapped["datetime"] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at: Mapped["datetime"] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
     # Relationships
     resumes: Mapped[List["Resume"]] = relationship(back_populates="user", cascade="all, delete-orphan")

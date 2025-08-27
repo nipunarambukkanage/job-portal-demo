@@ -4,7 +4,9 @@ version = "1.0.0"
 description = "Python API for Job Portal: FastAPI, SQLAlchemy async, Celery workers, Azure integrations."
 readme = "README.md"
 requires-python = ">=3.12"
-authors = [{ name = "Job Portal Team" }]
+authors = [
+  { name = "Job Portal Team" }
+]
 dependencies = [
   "fastapi>=0.115.0",
   "uvicorn[standard]>=0.30.0",
@@ -14,6 +16,7 @@ dependencies = [
   "asyncpg>=0.29.0",
   "httpx>=0.27.0",
   "PyJWT[crypto]>=2.8.0",
+  "python-jose[cryptography]>=3.3.0",
   "redis[async]>=5.0.0",
   "azure-storage-blob>=12.20.0",
   "alembic>=1.13.2",
@@ -30,8 +33,19 @@ dev = [
   "types-PyYAML>=6.0.12.20240311",
 ]
 
-[tool.uvloop]
-enabled = true
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "app/**",
+  "README.md",
+  "pyproject.toml",
+]
 
 [tool.ruff]
 line-length = 100
@@ -42,6 +56,5 @@ extend-select = ["I"]  # import sorting
 asyncio_mode = "auto"
 testpaths = ["tests"]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[tool.uvloop]
+enabled = true
