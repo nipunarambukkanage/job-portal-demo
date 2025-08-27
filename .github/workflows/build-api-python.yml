@@ -1,0 +1,46 @@
+name: build-api-python-to-acr
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - "api-python/**"
+      - ".github/workflows/build-api-python.yml"
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ACR_NAME: ${{ secrets.ACR_NAME }}
+  IMAGE: api-python:${{ github.sha }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login (SP credentials JSON)
+        uses: azure/login@v2
+        with:
+          credentials: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Enable ACR admin & fetch creds
+        id: acr
+        run: |
+          az acr update -n "$ACR_NAME" --admin-enabled true
+          echo "USR=$(az acr credential show -n "$ACR_NAME" --query username -o tsv)" >> $GITHUB_OUTPUT
+          echo "PWD=$(az acr credential show -n "$ACR_NAME" --query passwords[0].value -o tsv)" >> $GITHUB_OUTPUT
+
+      - name: Docker login to ACR
+        run: |
+          echo "${{ steps.acr.outputs.PWD }}" | docker login "$ACR_NAME.azurecr.io" -u "${{ steps.acr.outputs.USR }}" --password-stdin
+
+      - name: Build & push api-python image
+        working-directory: ./api-python
+        run: |
+          set -e
+          docker build -t "$ACR_NAME.azurecr.io/$IMAGE" .
+          docker push "$ACR_NAME.azurecr.io/$IMAGE"
