@@ -27,7 +27,7 @@ jobs:
       - name: Azure Login (SP credentials JSON)
         uses: azure/login@v2
         with:
-          credentials: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Enable ACR admin & fetch creds
         id: acr
