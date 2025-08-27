@@ -67,25 +67,37 @@ jobs:
           docker build -t "$ACR_NAME.azurecr.io/$IMAGE" .
           docker push "$ACR_NAME.azurecr.io/$IMAGE"
 
-      - name: Helper functions
+      - name: Helper: wait until app operation completes
         id: helpers
         shell: bash
         run: |
-          cat > wait_ready.sh << 'EOS'
+          cat > wait_ready_app.sh << 'EOS'
           #!/usr/bin/env bash
           set -euo pipefail
           APP="$1"; RG="$2"
           for i in $(seq 1 90); do
             state=$(az containerapp show -g "$RG" -n "$APP" --query properties.provisioningState -o tsv 2>/dev/null || echo "Unknown")
-            if [[ "$state" == "Succeeded" ]]; then
-              exit 0
-            fi
+            [[ "$state" == "Succeeded" ]] && exit 0
             sleep 5
           done
-          echo "Timed out waiting for $APP to be ready (last state: $state)" >&2
+          echo "Timed out waiting for $APP (state: $state)" >&2
           exit 1
           EOS
-          chmod +x wait_ready.sh
+          chmod +x wait_ready_app.sh
+
+          cat > wait_ready_job.sh << 'EOS'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          JOB="$1"; RG="$2"
+          for i in $(seq 1 90); do
+            state=$(az containerapp job show -g "$RG" -n "$JOB" --query properties.provisioningState -o tsv 2>/dev/null || echo "Unknown")
+            [[ "$state" == "Succeeded" ]] && exit 0
+            sleep 5
+          done
+          echo "Timed out waiting for job $JOB (state: $state)" >&2
+          exit 1
+          EOS
+          chmod +x wait_ready_job.sh
 
       - name: Create or Update API (image + ingress)
         shell: bash
@@ -94,7 +106,6 @@ jobs:
           IMG="$ACR_NAME.azurecr.io/$IMAGE"
 
           if ! az containerapp show -g "$RG" -n "$APP_NAME" >/dev/null 2>&1; then
-            # CREATE
             az containerapp create -g "$RG" -n "$APP_NAME" --environment "$ENV_NAME" \
               --image "$IMG" \
               --ingress external --target-port 8000 \
@@ -124,22 +135,14 @@ jobs:
                 PYTHONUNBUFFERED=1 \
               --min-replicas 1 --max-replicas 3
           else
-            # UPDATE (split ops to avoid "operation in progress" + unsupported args)
-            # 0) ensure previous op is finished
-            ./wait_ready.sh "$APP_NAME" "$RG"
-
-            # 1) ingress (idempotent)
+            ./wait_ready_app.sh "$APP_NAME" "$RG"
             az containerapp ingress update -g "$RG" -n "$APP_NAME" --target-port 8000 --transport Auto
-
-            # 2) set/refresh ACR registry creds
-            ./wait_ready.sh "$APP_NAME" "$RG"
+            ./wait_ready_app.sh "$APP_NAME" "$RG"
             az containerapp registry set -g "$RG" -n "$APP_NAME" \
               --server "$ACR_NAME.azurecr.io" \
               --username "${{ steps.acr.outputs.USR }}" \
               --password "${{ steps.acr.outputs.PWD }}"
-
-            # 3) set/refresh secrets
-            ./wait_ready.sh "$APP_NAME" "$RG"
+            ./wait_ready_app.sh "$APP_NAME" "$RG"
             az containerapp secret set -g "$RG" -n "$APP_NAME" --secrets \
               db-url='${{ secrets.DATABASE_URL }}' \
               redis-url='${{ secrets.REDIS_URL }}' \
@@ -147,9 +150,7 @@ jobs:
               clerk-issuer='${{ secrets.CLERK_ISSUER }}' \
               clerk-jwks='${{ secrets.CLERK_JWKS_URL }}' \
               clerk-aud='${{ secrets.CLERK_AUDIENCE }}'
-
-            # 4) update image + env vars (NO registry/secrets flags here)
-            ./wait_ready.sh "$APP_NAME" "$RG"
+            ./wait_ready_app.sh "$APP_NAME" "$RG"
             az containerapp update -g "$RG" -n "$APP_NAME" \
               --image "$IMG" \
               --set-env-vars \
@@ -170,10 +171,11 @@ jobs:
                 PYTHONUNBUFFERED=1
           fi
 
-          ./wait_ready.sh "$APP_NAME" "$RG"
+          ./wait_ready_app.sh "$APP_NAME" "$RG"
           FQDN=$(az containerapp show -g "$RG" -n "$APP_NAME" --query properties.configuration.ingress.fqdn -o tsv)
           echo "API URL: https://$FQDN"
 
+      # ---------- FIXED SECTION: JOB (no inline --secrets; proper args) ----------
       - name: Create/Update Migrations Job (alembic upgrade)
         shell: bash
         run: |
@@ -181,22 +183,46 @@ jobs:
           IMG="$ACR_NAME.azurecr.io/$IMAGE"
 
           if ! az containerapp job show -g "$RG" -n "$JOB_NAME" >/dev/null 2>&1; then
+            # Create the job with image and command
             az containerapp job create -g "$RG" -n "$JOB_NAME" --environment "$ENV_NAME" \
-              --image "$IMG" \
-              --registry-server "$ACR_NAME.azurecr.io" --registry-username "${{ steps.acr.outputs.USR }}" --registry-password "${{ steps.acr.outputs.PWD }}" \
-              --secrets db-url='${{ secrets.DATABASE_URL }}' \
-              --env-vars DATABASE_URL=secretref:db-url \
-              --replica-timeout 1800 --parallelism 1 --replica-completion-count 1 \
               --trigger-type Manual \
-              --command "bash" --args "-lc" "python -m alembic upgrade head"
+              --replica-timeout 1800 --parallelism 1 --replica-completion-count 1 \
+              --image "$IMG" \
+              --command bash --args -lc "python -m alembic upgrade head"
+
+            # Wait until control plane is ready for updates
+            ./wait_ready_job.sh "$JOB_NAME" "$RG"
+
+            # Attach registry & secrets, then set env vars
+            az containerapp job registry set -g "$RG" -n "$JOB_NAME" \
+              --server "$ACR_NAME.azurecr.io" \
+              --username "${{ steps.acr.outputs.USR }}" \
+              --password "${{ steps.acr.outputs.PWD }}"
+
+            az containerapp job secret set -g "$RG" -n "$JOB_NAME" --secrets db-url='${{ secrets.DATABASE_URL }}'
+
+            az containerapp job update -g "$RG" -n "$JOB_NAME" \
+              --set-env-vars DATABASE_URL=secretref:db-url
+
+            # Nudge with same image just in case
+            az containerapp job update -g "$RG" -n "$JOB_NAME" --image "$IMG" >/dev/null
           else
+            ./wait_ready_job.sh "$JOB_NAME" "$RG"
+
+            az containerapp job registry set -g "$RG" -n "$JOB_NAME" \
+              --server "$ACR_NAME.azurecr.io" \
+              --username "${{ steps.acr.outputs.USR }}" \
+              --password "${{ steps.acr.outputs.PWD }}"
+
+            az containerapp job secret set -g "$RG" -n "$JOB_NAME" --secrets db-url='${{ secrets.DATABASE_URL }}'
+
             az containerapp job update -g "$RG" -n "$JOB_NAME" \
               --image "$IMG" \
-              --secrets db-url='${{ secrets.DATABASE_URL }}' \
               --set-env-vars DATABASE_URL=secretref:db-url \
-              --command "bash" --args "-lc" "python -m alembic upgrade head"
+              --command bash --args -lc "python -m alembic upgrade head"
           fi
 
+          # Run the job once to apply migrations
           az containerapp job start -g "$RG" -n "$JOB_NAME" || true
 
       - name: Create/Update Celery Worker (no ingress)
@@ -205,7 +231,7 @@ jobs:
           set -e
           IMG="$ACR_NAME.azurecr.io/$IMAGE"
 
-          if ! az containerapp show -g "$RG" -n "$WORKER_NAME" >/dev/null 2>&1; then
+          if ! az containerapp show -g "$RG" -n "$WORKER_NAME" >/devnull 2>&1; then
             az containerapp create -g "$RG" -n "$WORKER_NAME" --environment "$ENV_NAME" \
               --image "$IMG" \
               --registry-server "$ACR_NAME.azurecr.io" --registry-username "${{ steps.acr.outputs.USR }}" --registry-password "${{ steps.acr.outputs.PWD }}" \
@@ -219,17 +245,17 @@ jobs:
               --min-replicas 1 --max-replicas 3 \
               --command "celery" --args "-A" "app.workers.celery_app.celery_app" "worker" "-Q" "default" "-l" "INFO"
           else
-            ./wait_ready.sh "$WORKER_NAME" "$RG"
+            ./wait_ready_app.sh "$WORKER_NAME" "$RG"
             az containerapp registry set -g "$RG" -n "$WORKER_NAME" \
               --server "$ACR_NAME.azurecr.io" \
               --username "${{ steps.acr.outputs.USR }}" \
               --password "${{ steps.acr.outputs.PWD }}"
-            ./wait_ready.sh "$WORKER_NAME" "$RG"
+            ./wait_ready_app.sh "$WORKER_NAME" "$RG"
             az containerapp secret set -g "$RG" -n "$WORKER_NAME" --secrets \
               db-url='${{ secrets.DATABASE_URL }}' \
               redis-url='${{ secrets.REDIS_URL }}' \
               blob-conn='${{ secrets.AZURE_BLOB_CONNECTION_STRING }}'
-            ./wait_ready.sh "$WORKER_NAME" "$RG"
+            ./wait_ready_app.sh "$WORKER_NAME" "$RG"
             az containerapp update -g "$RG" -n "$WORKER_NAME" \
               --image "$IMG" \
               --set-env-vars \
@@ -240,3 +266,9 @@ jobs:
                 PYTHONUNBUFFERED=1 \
               --command "celery" --args "-A" "app.workers.celery_app.celery_app" "worker" "-Q" "default" "-l" "INFO"
           fi
+
+      - name: Print API URL
+        shell: bash
+        run: |
+          FQDN=$(az containerapp show -g "$RG" -n "$APP_NAME" --query properties.configuration.ingress.fqdn -o tsv || true)
+          echo "API URL: https://$FQDN"
