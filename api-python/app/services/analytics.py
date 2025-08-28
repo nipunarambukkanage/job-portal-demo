@@ -47,7 +47,6 @@ async def candidate_funnel_summary(session: AsyncSession, *, candidate_id: "uuid
     )
     rows = (await session.execute(counts_q)).all()
 
-    # Derive simple funnel
     submitted = sum(int(c) for s, c in rows if s == ApplicationStatus.submitted)
     reviewing = sum(int(c) for s, c in rows if s == ApplicationStatus.reviewing)
     shortlisted = sum(int(c) for s, c in rows if s == ApplicationStatus.shortlisted)

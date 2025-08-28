@@ -13,5 +13,4 @@ async def get_job(job_id: str, user=Depends(get_current_user)):
 
 @router.get("/{job_id}/candidates", summary="Matched candidates for a job")
 async def matched_candidates(job_id: str, user=Depends(get_current_user)):
-    # In the full app, call matching service.
     return {"job_id": job_id, "candidates": []}

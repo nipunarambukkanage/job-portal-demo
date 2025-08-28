@@ -77,13 +77,12 @@ async def parse_resume_via_docintel(
     5) mark parse status
     Returns (raw_json, normalized_features_dict)
     """
-    import uuid  # local import to avoid circular typing issues
+    import uuid
 
     try:
         log.info("docintel_analyze_start", extra={"resume_id": str(resume_id)})
         raw = await _docintel_analyze_url(blob_sas_url)
 
-        # Save a trimmed raw result (avoid storing extremely large payloads)
         trimmed = {
             "status": raw.get("status"),
             "createdDateTime": raw.get("createdDateTime"),
@@ -94,10 +93,8 @@ async def parse_resume_via_docintel(
         }
         await save_resume_raw_docintel(session, resume_id=resume_id, raw_json=trimmed)
 
-        # Normalize
         normalized = normalize_docintel_resume(trimmed)
 
-        # Upsert features
         await upsert_resume_features(
             session,
             resume_id=resume_id,

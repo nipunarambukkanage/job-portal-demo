@@ -22,7 +22,6 @@ def _parse_date(s: Optional[str]) -> Optional[date]:
     try:
         return date.fromisoformat(s[:10])
     except Exception:
-        # crude fallback for formats like "Jan 2020"
         m = re.match(r"([A-Za-z]{3,9})\s+(\d{4})", s)
         if m:
             try:
@@ -32,9 +31,7 @@ def _parse_date(s: Optional[str]) -> Optional[date]:
         return None
 
 def _extract_contact(fields: Dict[str, Any]) -> Dict[str, Any]:
-    # Doc Intel prebuilt-resume commonly uses "contactInfo" or "ContactInfo"
     ci = fields.get("contactInfo") or fields.get("ContactInfo") or {}
-    # Sometimes emails/phones are direct lists, sometimes nested fields
     emails = ci.get("emails") or ci.get("Emails") or ci.get("email") or ci.get("Email")
     phones = ci.get("phones") or ci.get("Phones") or ci.get("phone") or ci.get("Phone")
     websites = ci.get("websites") or ci.get("Websites")
@@ -146,7 +143,6 @@ def normalize_docintel_resume(raw: Dict[str, Any]) -> Dict[str, Any]:
     documents = raw.get("documents") or []
     fields: Dict[str, Any] = {}
     if documents and isinstance(documents, list):
-        # v3 style: each document has "fields" (map)
         fields = documents[0].get("fields") or {}
 
     contact = _extract_contact(fields)
@@ -154,7 +150,6 @@ def normalize_docintel_resume(raw: Dict[str, Any]) -> Dict[str, Any]:
     education = _extract_education(fields)
     certifications = _extract_certs(fields)
 
-    # total experience months (approx)
     months = 0
     for item in experience:
         start = item.get("start_date")

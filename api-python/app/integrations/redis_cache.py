@@ -15,7 +15,6 @@ def get_redis() -> Redis:
         url = os.getenv("REDIS_URL")
         if not url:
             raise RuntimeError("REDIS_URL is not set")
-        # decode_responses=False to return bytes; we encode/decode ourselves for json/text safety
         _redis = Redis.from_url(url, decode_responses=False)
     return _redis
 

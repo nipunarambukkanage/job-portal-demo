@@ -16,7 +16,6 @@ def get_engine() -> AsyncEngine:
     global _engine, _Session
     if _engine is None:
         cfg = get_settings()
-        # For serverless / ACA scenarios, NullPool avoids stale connections on scale-to-zero
         _engine = create_async_engine(
             cfg.DATABASE_URL,
             echo=False,

@@ -53,7 +53,7 @@ class ResumeFeaturesNormalized(BaseModel):
     Canonical normalized feature set derived from Doc Intel outputs.
     Mirrors the DB's ResumeFeatures structure closely.
     """
-    resume_id: "uuid.UUID | None" = None  # optional when used as payload
+    resume_id: "uuid.UUID | None" = None
     contact: NormalizedContactInfo | None = None
     summary: str | None = None
     skills: list[str] | None = None

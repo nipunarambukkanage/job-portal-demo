@@ -26,7 +26,6 @@ class JobBase(ORMModel):
 
 
 class JobCreate(JobBase):
-    # Typically inferred from token, but schema allows explicit assignment if needed
     employer_id: uuid.UUID | None = None
 
 

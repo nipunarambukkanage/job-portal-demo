@@ -57,7 +57,6 @@ def _job_filters(
     if employment_type:
         conds.append(Job.employment_type == employment_type)
     if skills:
-        # Postgres array overlap: skills && :skills
         conds.append(Job.skills.op("&&")(skills))
     return and_(*conds) if conds else None
 

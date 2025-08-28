@@ -16,7 +16,6 @@ def _tokenize(text: str) -> list[str]:
 
 
 def _hash_idx(token: str, dims: int) -> int:
-    # Stable index via md5
     h = hashlib.md5(token.encode("utf-8")).hexdigest()
     return int(h, 16) % dims
 

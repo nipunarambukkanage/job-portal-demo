@@ -33,7 +33,6 @@ async def create_application(
     try:
         await session.flush()
     except IntegrityError as ex:
-        # Surface a clean error to caller (service/route)
         raise ValueError("Candidate has already applied to this job") from ex
     return obj
 

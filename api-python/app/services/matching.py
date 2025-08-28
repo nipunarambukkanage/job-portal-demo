@@ -53,7 +53,6 @@ async def match_jobs_for_candidate(
             common = sorted(set(_norm_tag(x) for x in cand_skills) & set(_norm_tag(x) for x in (job.skills or [])))
             if common:
                 reasons.append(f"Shared skills: {', '.join(common[:6])}")
-        # location or type bonuses could be added here
         score = s
         if score > 0:
             results.append((score, job, reasons))

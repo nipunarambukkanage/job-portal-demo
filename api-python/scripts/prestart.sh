@@ -4,7 +4,6 @@ set -Eeuo pipefail
 echo "[prestart] starting prestart steps..."
 echo "[prestart] ENV=${ENV:-dev} PORT=${PORT:-8000}"
 
-# ---------- Wait for Postgres (non-fatal) ----------
 if [[ -n "${DATABASE_URL:-}" || -n "${POSTGRES_DSN:-}" ]]; then
   echo "[prestart] checking Postgres connectivity..."
   set +e
@@ -46,7 +45,7 @@ else
   echo "[prestart] DATABASE_URL/POSTGRES_DSN not set; skipping DB ping"
 fi
 
-# ---------- Redis ping (non-fatal) ----------
+# ---------- Redis ping ----------
 if [[ -n "${REDIS_URL:-}" ]]; then
   echo "[prestart] checking Redis..."
   set +e
@@ -78,7 +77,7 @@ else
   echo "[prestart] REDIS_URL not set; skipping Redis check"
 fi
 
-# ---------- Alembic (best-effort) ----------
+# ---------- Alembic ----------
 if [[ -f "alembic.ini" ]]; then
   echo "[prestart] running alembic upgrade head (best-effort)..."
   set +e

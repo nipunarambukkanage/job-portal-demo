@@ -8,5 +8,4 @@ async def liveness():
 
 @router.get("/ready", summary="Readiness")
 async def readiness():
-    # In a full setup ping DB/Redis/JWKS here
     return {"status": "ready"}

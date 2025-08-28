@@ -15,6 +15,5 @@ async def init_db() -> None:
     In production, schema changes should be handled by Alembic migrations.
     """
     async with async_session() as s:
-        # Example: ensure we can run a simple statement
         await s.execute(text("SELECT 1"))
         log.info("Database init check completed")

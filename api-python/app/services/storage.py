@@ -7,10 +7,6 @@ import logging
 
 log = logging.getLogger(__name__)
 
-# We keep imports inside functions so the app can run without the package installed
-# until a storage operation is actually used.
-
-
 def ensure_blob_url(url: str) -> str:
     """
     Minimal guard to ensure a blob URL (or SAS URL) looks sane.

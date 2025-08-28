@@ -37,7 +37,6 @@ class Job(Base):
     location: Mapped[Optional[str]] = mapped_column(String(200))
     employment_type: Mapped[EmploymentType] = mapped_column(SAEnum(EmploymentType, name="employment_type"), nullable=False, default=EmploymentType.full_time, index=True)
 
-    # Simple skill tags for filtering (normalization handled by Python services)
     skills: Mapped[Optional[list[str]]] = mapped_column(ARRAY(String(100)))
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, index=True)

@@ -52,19 +52,16 @@ async def recommend_jobs_for_resume(
     """
     Embed candidate features vs. active jobs and rank by cosine similarity.
     """
-    # load candidate features
     f = (await session.execute(
         select(ResumeFeatures).where(ResumeFeatures.resume_id == resume_id)
     )).scalar_one_or_none()
     if not f:
         return []
 
-    # gather active jobs (limit for perf)
     jobs = (await session.execute(
         select(Job).where(Job.is_active.is_(True)).order_by(Job.posted_at.desc()).limit(500)
     )).scalars().all()
 
-    # build corpus
     cand_vec = embed_texts([_resume_text(f)], dims=512)[0]
     job_texts = [_job_text(j) for j in jobs]
     job_vecs = embed_texts(job_texts, dims=512)

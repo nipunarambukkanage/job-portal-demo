@@ -10,7 +10,6 @@ from app.routes import auth as auth_routes
 
 @pytest.fixture(scope="session")
 def app():
-    # Keep CORS predictable for tests
     os.environ.setdefault(
         "CORS_ORIGINS",
         "http://localhost:5173,https://jobportal971778.z29.web.core.windows.net,https://jobportal.nipunarambukkanage.dev",
@@ -20,7 +19,6 @@ def app():
 
 @pytest.fixture()
 def client(app):
-    # Override auth to avoid external JWKS calls
     async def _fake_current_user():
         return {
             "sub": "user_test_123",

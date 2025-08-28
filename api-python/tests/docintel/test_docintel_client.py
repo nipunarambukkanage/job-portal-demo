@@ -37,7 +37,6 @@ async def test_docintel_client_analyze_url_success(monkeypatch):
             return False
 
         async def post(self, url, headers=None, json=None):
-            # Return operation-location header
             return _Resp(
                 200,
                 headers={"operation-location": "https://op/status/123"},
@@ -50,7 +49,6 @@ async def test_docintel_client_analyze_url_success(monkeypatch):
                 return _Resp(200, json_data={"status": "running"})
             return _Resp(200, json_data={"status": "succeeded", "documents": [{"fields": {}}]})
 
-    # Patch httpx.AsyncClient
     monkeypatch.setattr("httpx.AsyncClient", _DummyClient, raising=True)
 
     client = AzureDocIntelClient(

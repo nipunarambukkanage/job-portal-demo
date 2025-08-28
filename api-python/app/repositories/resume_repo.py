@@ -66,7 +66,6 @@ async def set_resume_parse_status(
         .values(parse_status=status, parse_error=parse_error)
     )
     res = await session.execute(q)
-    # No flush needed for bulk; caller's transaction will commit
     return res.rowcount or 0
 
 

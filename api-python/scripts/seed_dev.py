@@ -112,7 +112,6 @@ async def seed() -> dict[str, Any]:
             skills=["python", "pytorch", "mlops", "nlp", "vector"],
         )
 
-        # Minimal resume features for the candidate (using a fixed demo resume_id)
         resume_id = uuid.uuid4()
         await _get_or_create_resume_features(
             session,

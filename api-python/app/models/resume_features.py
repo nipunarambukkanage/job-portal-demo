@@ -17,14 +17,12 @@ class ResumeFeatures(Base):
     """
     Normalized, queryable resume information (1:1 with Resume).
     """
-    # Use resume_id as PK and FK for strict one-to-one
     resume_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("resume.id", ondelete="CASCADE"),
         primary_key=True,
     )
 
-    # Basic extracted fields
     full_name: Mapped[Optional[str]] = mapped_column(String(200))
     email: Mapped[Optional[str]] = mapped_column(String(320))
     phone: Mapped[Optional[str]] = mapped_column(String(50))
@@ -33,7 +31,6 @@ class ResumeFeatures(Base):
     skills: Mapped[Optional[list[str]]] = mapped_column(ARRAY(String(100)))
     languages: Mapped[Optional[list[str]]] = mapped_column(ARRAY(String(60)))
 
-    # Complex structures (arrays of objects) kept in JSONB for flexibility
     education: Mapped[Optional[dict]] = mapped_column(JSONB)   # e.g., {"schools": [...]} or a list; normalizer decides
     experience: Mapped[Optional[dict]] = mapped_column(JSONB)  # e.g., {"jobs": [...]}
     certifications: Mapped[Optional[dict]] = mapped_column(JSONB)

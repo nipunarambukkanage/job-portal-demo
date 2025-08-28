@@ -13,7 +13,6 @@ def test_parse_resume_task_synchronous_call(monkeypatch):
       - parse_resume_via_docintel -> deterministic fake coroutine
     """
 
-    # 1) Fake async session context manager (to avoid DB)
     class _DummySession:
         async def commit(self): ...
         async def rollback(self): ...
@@ -30,7 +29,6 @@ def test_parse_resume_task_synchronous_call(monkeypatch):
 
     monkeypatch.setattr("app.workers.resume_tasks.async_session", _dummy_async_session, raising=True)
 
-    # 2) Fake parsing pipeline (no network)
     async def _fake_parse(session, *, resume_id, blob_sas_url):
         return (
             {"status": "succeeded", "documents": []},

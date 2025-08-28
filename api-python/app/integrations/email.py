@@ -51,7 +51,6 @@ def send_email(
     if cc:
         msg["Cc"] = ", ".join(cc)
     if bcc:
-        # BCC not set in headers for privacy; include in rcpt list
         pass
     msg["Subject"] = subject
     msg.set_content(text_body)

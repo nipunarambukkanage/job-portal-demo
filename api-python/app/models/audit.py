@@ -19,15 +19,12 @@ class AuditLog(Base):
     """
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
-    # Optional actor
     actor_user_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), ForeignKey("user.id", ondelete="SET NULL"), index=True)
 
-    # What happened to which entity
     action: Mapped[str] = mapped_column(String(120), nullable=False, index=True)
-    entity_type: Mapped[str] = mapped_column(String(120), nullable=False, index=True)  # e.g., "job", "application", "resume"
+    entity_type: Mapped[str] = mapped_column(String(120), nullable=False, index=True)
     entity_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
 
-    # Optional text and structured metadata
     message: Mapped[Optional[str]] = mapped_column(Text)
     meta: Mapped[Optional[dict]] = mapped_column(JSONB)
 

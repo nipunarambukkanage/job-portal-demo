@@ -33,4 +33,4 @@ class ApplicationRead(EntityId, EntityTimestamps):
     resume_id: uuid.UUID | None = None
     status: ApplicationStatus
     cover_letter: str | None = None
-    applied_at: "datetime | None" = None  # kept for parity with model
+    applied_at: "datetime | None" = None

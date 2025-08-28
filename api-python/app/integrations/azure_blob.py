@@ -45,7 +45,7 @@ def ensure_container_exists(container: str) -> None:
 def upload_bytes(container: str, blob_name: str, data: bytes, *, overwrite: bool = True, content_type: Optional[str] = None) -> None:
     bc = get_blob_client(container, blob_name)
     if content_type:
-        from azure.storage.blob import ContentSettings  # lazy import to avoid type issues
+        from azure.storage.blob import ContentSettings
         bc.upload_blob(data, overwrite=overwrite, content_settings=ContentSettings(content_type=content_type))
     else:
         bc.upload_blob(data, overwrite=overwrite)

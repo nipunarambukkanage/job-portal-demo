@@ -40,7 +40,6 @@ def parse_resume_task(self, resume_id: str, blob_sas_url: str) -> Dict[str, Any]
         log.info("resume_parse_task_done", extra={"resume_id": resume_id})
         return result
     except Exception as ex:
-        # If Doc Intel throttles or transient errors occur, retry once
         try:
             raise self.retry(exc=ex, countdown=5)
         except Exception:

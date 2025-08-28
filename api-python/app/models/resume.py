@@ -35,13 +35,11 @@ class Resume(Base):
     mime_type: Mapped[str] = mapped_column(String(120), nullable=False)
     size_bytes: Mapped[int] = mapped_column(Integer, nullable=False)
 
-    # Where the file lives (e.g., Azure Blob SAS or path reference managed by storage layer)
     blob_url: Mapped[str] = mapped_column(Text, nullable=False)
 
     parse_status: Mapped[ParseStatus] = mapped_column(SAEnum(ParseStatus, name="parse_status"), default=ParseStatus.pending, nullable=False, index=True)
     parse_error: Mapped[Optional[str]] = mapped_column(String(1000))
 
-    # Optional: keep a trimmed Doc Intelligence response for diagnostics (NOT the full PDF)
     raw_docintel: Mapped[Optional[dict]] = mapped_column(JSONB)
 
     uploaded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)

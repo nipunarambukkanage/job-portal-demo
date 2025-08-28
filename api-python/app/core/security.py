@@ -14,7 +14,6 @@ from app.core.config import get_settings
 
 bearer = HTTPBearer(auto_error=True)
 
-# In-memory JWKS cache (simple TTL)
 _JWKS_CACHE: Dict[str, Any] | None = None
 _JWKS_EXP: float = 0.0
 _JWKS_TTL_SECONDS = 3600  # 1 hour
@@ -48,7 +47,6 @@ async def get_current_user(credentials=Depends(bearer)) -> Dict[str, Any]:
     settings = get_settings()
 
     try:
-        # Determine the signing key via 'kid' from header
         header = jwt.get_unverified_header(token)
         kid = header.get("kid")
         if not kid:
@@ -58,7 +56,6 @@ async def get_current_user(credentials=Depends(bearer)) -> Dict[str, Any]:
         keys = jwks.get("keys", [])
         key_match = next((k for k in keys if k.get("kid") == kid), None)
         if not key_match:
-            # Cache miss/rotation — refresh once
             _ = await _fetch_jwks(settings.CLERK_JWKS_URL)
             for k in _.get("keys", []):
                 if k.get("kid") == kid:

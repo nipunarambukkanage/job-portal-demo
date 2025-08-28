@@ -21,14 +21,12 @@ from app.db.base import Base  # noqa: E402
 
 target_metadata = Base.metadata
 
-# Use environment variable or fall back to config file
 DATABASE_URL = os.getenv("DATABASE_URL") or config.get_main_option("sqlalchemy.url")
 if not DATABASE_URL:
     raise RuntimeError(
         "DATABASE_URL not set (e.g., postgresql+asyncpg://user:pass@host:port/db)"
     )
 
-# Set the main option for alembic
 config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 INCLUDE_SCHEMAS = True
@@ -45,18 +43,15 @@ def _normalized_asyncpg_url_and_connect_args(url_str: str) -> tuple[str, dict]:
         # Always use SSL context for DigitalOcean
         if os.path.isfile(cafile):
             ctx = ssl.create_default_context(cafile=cafile)
-            # For DigitalOcean, we need to verify the certificate
             ctx.check_hostname = True
             ctx.verify_mode = ssl.CERT_REQUIRED
         else:
-            # Fallback: create default context but require SSL
             ctx = ssl.create_default_context()
             ctx.check_hostname = True
             ctx.verify_mode = ssl.CERT_REQUIRED
         
         connect_args["ssl"] = ctx
 
-        # Remove sslmode from query string to avoid conflicts with asyncpg
         query_dict = dict(url.query)
         query_dict.pop("sslmode", None)
         query_dict.pop("sslrootcert", None)

@@ -19,7 +19,6 @@ class JSONFormatter(logging.Formatter):
         }
         if record.exc_info:
             base["exc_info"] = self.formatException(record.exc_info)
-        # Extra attributes added via logger.bind-like approaches
         for k, v in record.__dict__.items():
             if k not in (
                 "name",
@@ -53,7 +52,6 @@ def setup_logging() -> None:
     root = logging.getLogger()
     root.setLevel(getattr(logging, settings.LOG_LEVEL.upper(), logging.INFO))
 
-    # Clear existing handlers (for reloads)
     for h in list(root.handlers):
         root.removeHandler(h)
 
@@ -61,7 +59,6 @@ def setup_logging() -> None:
     handler.setFormatter(JSONFormatter())
     root.addHandler(handler)
 
-    # Tweak noisy libraries if needed
     logging.getLogger("uvicorn").handlers = [handler]
     logging.getLogger("uvicorn.error").handlers = [handler]
     logging.getLogger("uvicorn.access").handlers = [handler]

@@ -13,7 +13,7 @@ def _redis_url() -> str:
 
 def make_celery() -> Celery:
     broker = _redis_url()
-    backend = broker  # using Redis for results as well
+    backend = broker
     app = Celery(
         "job_portal_workers",
         broker=broker,

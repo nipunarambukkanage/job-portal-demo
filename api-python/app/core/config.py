@@ -8,7 +8,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    # Load from .env if present (ignored in production containers unles mount it)
     model_config = SettingsConfigDict(
         env_file=(".env", ".env.local"),
         env_file_encoding="utf-8",
@@ -21,7 +20,6 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
 
     # CORS (comma-separated)
-    # Keep a safe local default; production should override via env
     CORS_ORIGINS: str = "http://localhost:5173"
 
     # ===== Auth (Clerk) – not secrets but configurable =====
@@ -39,14 +37,13 @@ class Settings(BaseSettings):
         description="e.g. redis://:password@host:port/0?ssl=true",
     )
 
-    # Accept either AZURE_BLOB_CONNECTION_STRING or AZURE_BLOB_CONN_STR
     AZURE_BLOB_CONNECTION_STRING: str = Field(
         default="",
         validation_alias=AliasChoices("AZURE_BLOB_CONNECTION_STRING", "AZURE_BLOB_CONN_STR"),
         description="Azure Storage connection string",
     )
 
-    # ===== Azure Document Intelligence (optional) =====
+    # ===== Azure Document Intelligence =====
     AZURE_DOC_INTEL_ENDPOINT: Optional[AnyHttpUrl] = None
     AZURE_DOC_INTEL_KEY: Optional[str] = None
     DOC_INTEL_MODEL: str = "prebuilt-resume"
@@ -54,7 +51,7 @@ class Settings(BaseSettings):
     DOC_INTEL_POLL_SECONDS: int = 2
     DOC_INTEL_POLL_ATTEMPTS: int = 30
 
-    # ===== OTEL (optional) =====
+    # ===== OTEL =====
     OTEL_EXPORTER_OTLP_ENDPOINT: Optional[str] = None
     OTEL_SERVICE_NAME: str = "python-api"
 
@@ -65,7 +62,6 @@ class Settings(BaseSettings):
     @field_validator("DATABASE_URL", mode="before")
     @classmethod
     def normalize_db_url(cls, v: str) -> str:
-        # Normalize to asyncpg if using Postgres
         if not v:
             return v
         if v.startswith("postgres://"):

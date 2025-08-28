@@ -64,4 +64,3 @@ async def upsert_resume_features(
     }
     stmt = stmt.on_conflict_do_update(index_elements=[ResumeFeatures.resume_id], set_=update_cols)
     await session.execute(stmt)
-    # Caller manages commit via session context
