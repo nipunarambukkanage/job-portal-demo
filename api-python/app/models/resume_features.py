@@ -34,7 +34,7 @@ class ResumeFeatures(Base):
     languages: Mapped[Optional[list[str]]] = mapped_column(ARRAY(String(60)))
 
     # Complex structures (arrays of objects) kept in JSONB for flexibility
-    education: Mapped[Optional[dict]] = mapped_column(JSONB)   # e.g., {"schools": [...]} or a list; your normalizer decides
+    education: Mapped[Optional[dict]] = mapped_column(JSONB)   # e.g., {"schools": [...]} or a list; normalizer decides
     experience: Mapped[Optional[dict]] = mapped_column(JSONB)  # e.g., {"jobs": [...]}
     certifications: Mapped[Optional[dict]] = mapped_column(JSONB)
 

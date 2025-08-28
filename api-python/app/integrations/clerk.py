@@ -46,7 +46,7 @@ async def fetch_clerk_user(user_id: str) -> Dict[str, Any]:
 
 async def fetch_clerk_organization_memberships(user_id: str) -> List[Dict[str, Any]]:
     """
-    List organization memberships for a user (if you use Clerk orgs).
+    List organization memberships for a user (if use Clerk orgs).
     https://clerk.com/docs/reference/backend-api/tag/Organization-Memberships
     """
     data = await _clerk_get("organization_memberships", params={"user_id": user_id})

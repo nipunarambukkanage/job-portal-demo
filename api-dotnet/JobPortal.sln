@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		migration_scripts.txt = migration_scripts.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobPortal.Api", "src\JobPortal.Api\JobPortal.Api.csproj", "{5394D2E6-9E23-4C72-8D94-1DCEDFC1704A}"

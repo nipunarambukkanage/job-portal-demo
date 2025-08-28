@@ -26,3 +26,5 @@
 # App settings (sensitive config)
 src/JobPortal.Api/appsettings.json
 src/JobPortal.Api/appsettings.*.json
+
+migration_scripts.txt
