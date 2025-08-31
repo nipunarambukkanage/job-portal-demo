@@ -6,7 +6,6 @@ const pyApiBaseUrl = (import.meta as any).env.VITE_PY_API_BASE_URL as string;
 
 let tokenGetter: null | (() => Promise<string | null>) = null;
 
-/** Allow the app to register an async token getter (Clerk). */
 export function setAuthTokenGetter(fn: () => Promise<string | null>) {
   tokenGetter = fn;
 }
@@ -14,9 +13,9 @@ export function setAuthTokenGetter(fn: () => Promise<string | null>) {
 function setHeader(headers: any, key: string, value: string) {
   if (!headers) return;
   if (typeof headers.set === "function") {
-    headers.set(key, value); // AxiosHeaders instance
+    headers.set(key, value);
   } else {
-    headers[key] = value;    // plain object
+    headers[key] = value;
   }
 }
 
@@ -45,7 +44,6 @@ function attachInterceptors(client: AxiosInstance) {
           }
         }
 
-        // best-effort correlation id
         const cid =
           typeof crypto !== "undefined" && "randomUUID" in crypto
             ? (crypto as any).randomUUID()
@@ -55,7 +53,7 @@ function attachInterceptors(client: AxiosInstance) {
           setHeader(headers, "x-correlation-id", cid);
         }
       } catch {
-        // ignore token errors; continue without auth header
+        // continue without auth header
       }
       return config;
     },

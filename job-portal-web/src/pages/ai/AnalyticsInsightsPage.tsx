@@ -1,5 +1,6 @@
 ﻿import * as React from "react";
-import { Box, Grid, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Box, Paper, Stack, TextField, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import AreaChart from "../../components/charts/AreaChart";
 import { getAiAnalytics, type AnalyticsSeries } from "../../api/services/python/analytics";
 
@@ -41,7 +42,7 @@ export default function AnalyticsInsightsPage() {
       </Paper>
       {chart && (
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          <Grid xs={12}>
             <Paper sx={{ p: 2 }}>
               <AreaChart series={chart.series} categories={chart.categories} />
             </Paper>

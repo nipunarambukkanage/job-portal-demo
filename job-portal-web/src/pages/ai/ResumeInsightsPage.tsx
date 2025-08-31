@@ -1,5 +1,6 @@
 ﻿import * as React from "react";
-import { Box, Grid, Paper, Stack, Typography, Button, List, ListItem, ListItemText } from "@mui/material";
+import { Box, Paper, Stack, Typography, Button, List, ListItem, ListItemText } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import FileDropzone from "../../components/common/FileDropzone";
 import { getResumeInsights, type ResumeInsight } from "../../api/services/python/resume";
 
@@ -26,7 +27,7 @@ export default function ResumeInsightsPage() {
         Resume Insights
       </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
+        <Grid xs={12} md={6}>
           <Paper sx={{ p: 2 }}>
             <FileDropzone value={files} onChange={setFiles} accept={{ "application/pdf": [".pdf"], "text/plain": [".txt"] }} helperText="PDF or TXT, up to 10MB" />
             <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
@@ -37,7 +38,7 @@ export default function ResumeInsightsPage() {
             </Stack>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid xs={12} md={6}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="subtitle1" gutterBottom>
               Insights

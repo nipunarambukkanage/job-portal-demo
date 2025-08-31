@@ -1,5 +1,6 @@
 ﻿import * as React from "react";
-import { Grid, Paper, Typography } from "@mui/material";
+import { Paper, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import KPI from "../../components/charts/KPI";
 import BarChart from "../../components/charts/BarChart";
 import Spinner from "../../components/feedback/Spinner";
@@ -43,17 +44,17 @@ export default function UserDashboardPage() {
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} md={4}>
+      <Grid xs={12} md={4}>
         <KPI label="My Applications" value={kpis.applications} />
       </Grid>
-      <Grid item xs={12} md={4}>
+      <Grid xs={12} md={4}>
         <KPI label="Interviews" value={kpis.interviews} />
       </Grid>
-      <Grid item xs={12} md={4}>
+      <Grid xs={12} md={4}>
         <KPI label="Offers" value={kpis.offers} />
       </Grid>
       {chart && (
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
               My Application Trend

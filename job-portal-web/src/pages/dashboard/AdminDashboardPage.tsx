@@ -1,5 +1,6 @@
 ﻿import * as React from "react";
-import { Grid, Paper, Typography } from "@mui/material";
+import { Paper, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import KPI from "../../components/charts/KPI";
 import PieChart from "../../components/charts/PieChart";
 import Spinner from "../../components/feedback/Spinner";
@@ -44,17 +45,17 @@ export default function AdminDashboardPage() {
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} md={4}>
+      <Grid xs={12} md={4}>
         <KPI label="Open Jobs" value={kpis.openJobs} />
       </Grid>
-      <Grid item xs={12} md={4}>
+      <Grid xs={12} md={4}>
         <KPI label="Applicants" value={kpis.applicants} />
       </Grid>
-      <Grid item xs={12} md={4}>
+      <Grid xs={12} md={4}>
         <KPI label="Hires (Offers)" value={kpis.hires} />
       </Grid>
       {pipeline && (
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
               Pipeline

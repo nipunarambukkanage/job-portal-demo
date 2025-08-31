@@ -1,5 +1,6 @@
 ﻿import * as React from "react";
-import { Box, Grid, Paper, Typography, Stack } from "@mui/material";
+import { Box, Paper, Typography, Stack } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,8 +17,8 @@ const schema = z.object({
   title: z.string().min(3),
   company: z.string().min(2),
   location: z.string().min(2),
-  salaryMin: z.number().min(0).optional().nullable(),
-  salaryMax: z.number().min(0).optional().nullable(),
+  salaryMin: z.number().min(0).optional(),
+  salaryMax: z.number().min(0).optional(),
   description: z.string().min(10),
 });
 
@@ -42,8 +43,8 @@ export default function JobEditPage() {
           title: j.title,
           company: j.company,
           location: j.location,
-          salaryMin: (j as any).salaryMin ?? null,
-          salaryMax: (j as any).salaryMax ?? null,
+          salaryMin: (j as any).salaryMin ?? undefined,
+          salaryMax: (j as any).salaryMax ?? undefined,
           description: j.description ?? "",
         });
       } finally {
@@ -54,7 +55,12 @@ export default function JobEditPage() {
 
   const onSubmit = async (data: FormValues) => {
     if (!id) return;
-    await jobsService.update(id, data);
+    const payload = {
+      ...data,
+      salaryMin: data.salaryMin ?? undefined,
+      salaryMax: data.salaryMax ?? undefined,
+    };
+    await jobsService.update(id, payload);
     enqueueSnackbar("Job updated", { variant: "success" });
     nav("/jobs/" + id);
   };
@@ -69,22 +75,22 @@ export default function JobEditPage() {
       <Paper sx={{ p: 2 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
+            <Grid xs={12} md={6}>
               <FormTextField name="title" control={control} label="Title" />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid xs={12} md={6}>
               <FormTextField name="company" control={control} label="Company" />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid xs={12} md={6}>
               <FormTextField name="location" control={control} label="Location" />
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid xs={12} md={3}>
               <FormNumber name="salaryMin" control={control} label="Salary Min" />
             </Grid>
-            <Grid item xs={12} md={3}>
+            <Grid xs={12} md={3}>
               <FormNumber name="salaryMax" control={control} label="Salary Max" />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
               <FormRichText name="description" control={control} label="Description" />
             </Grid>
           </Grid>

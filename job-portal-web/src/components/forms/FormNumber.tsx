@@ -32,7 +32,7 @@ export default function FormNumber({
           fullWidth
           onChange={(e) => {
             const v = e.target.value;
-            field.onChange(v === "" ? null : Number(v));
+            field.onChange(v === "" ? undefined : Number(v));
           }}
         />
       )}
