@@ -1,18 +1,12 @@
-﻿import { onCLS, onFID, onLCP, onINP, onTTFB, onFCP, type Metric } from "web-vitals";
+﻿import { onCLS, onFCP, onINP, onLCP, onTTFB, type Metric } from "web-vitals";
 
 export type WebVitalsReporter = (metric: Metric) => void;
 
-export function reportWebVitals(reporter?: WebVitalsReporter) {
-  const fn = reporter || ((m) => console.log("[web-vitals]", m.name, Math.round(m.value)));
-  try {
-    onCLS(fn);
-    onFID(fn);
-    onLCP(fn);
-    onINP(fn);
-    onTTFB(fn);
-    onFCP(fn);
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.warn("web-vitals not available", e);
-  }
+export default function reportWebVitals(report?: WebVitalsReporter) {
+  if (!report) return;
+  onCLS(report);
+  onFCP(report);
+  onINP(report);
+  onLCP(report);
+  onTTFB(report);
 }

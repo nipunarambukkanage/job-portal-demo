@@ -1,6 +1,6 @@
 import { mapDotNetError } from './dotnet';
 import { mapPythonError } from './python';
-import { ApiError } from '../types/common';
+import type { ApiError } from '../types/common';
 
 export const errorMapper = (e: any): ApiError => {
   const url: string = e?.config?.baseURL || '';

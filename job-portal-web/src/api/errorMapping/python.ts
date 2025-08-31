@@ -1,4 +1,4 @@
-import { ApiError } from '../types/common';
+import type { ApiError } from '../types/common';
 export const mapPythonError = (e: any): ApiError => {
   const status = e?.response?.status ?? 500;
   const code = e?.response?.data?.detail?.code ?? e?.response?.data?.code;

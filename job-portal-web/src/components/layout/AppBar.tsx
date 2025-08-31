@@ -1,6 +1,5 @@
 import { AppBar as MAppBar, Toolbar, IconButton, Typography, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { ReactNode } from 'react';
 
 export default function AppBar({ onMenu }: { onMenu: ()=>void }) {
   return (

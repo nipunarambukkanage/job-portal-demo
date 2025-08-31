@@ -1,3 +1,25 @@
+﻿### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\index.html
+
+<!doctype html>
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <meta name='theme-color' content='#1976d2' />
+    <link rel='manifest' href='/manifest.json' />
+    <link rel='icon' href='/favicon.svg' />
+    <title>Job Portal</title>
+  </head>
+  <body>
+    <div id='root'></div>
+    <script type='module' src='/src/main.tsx'></script>
+  </body>
+</html>
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\package-lock.json
+
 {
   "name": "job-portal-web",
   "version": "0.0.0",
@@ -9078,3 +9100,2794 @@
     }
   }
 }
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\package.json
+
+{
+  "name": "job-portal-web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 5173",
+    "prepare": "husky",
+    "test": "vitest --environment jsdom --coverage",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/nprogress": "^0.2.3",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "@types/react-router-dom": "^5.3.3",
+    "@typescript-eslint/eslint-plugin": "^8.41.0",
+    "@typescript-eslint/parser": "^8.41.0",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "husky": "^9.1.7",
+    "jsdom": "^26.1.0",
+    "lint-staged": "^16.1.5",
+    "msw": "^2.11.0",
+    "prettier": "^3.6.2",
+    "typescript": "~5.8.3",
+    "vite": "^7.1.3",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@clerk/clerk-react": "^5.45.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@hookform/resolvers": "^5.2.1",
+    "@microsoft/signalr": "^9.0.6",
+    "@mui/icons-material": "^7.3.1",
+    "@mui/material": "^7.3.1",
+    "@reduxjs/toolkit": "^2.8.2",
+    "apexcharts": "^5.3.4",
+    "axios": "^1.11.0",
+    "clsx": "^2.1.1",
+    "dayjs": "^1.11.18",
+    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
+    "nanoid": "^5.1.5",
+    "notistack": "^3.0.2",
+    "nprogress": "^0.2.0",
+    "react": "^19.1.1",
+    "react-apexcharts": "^1.7.0",
+    "react-dom": "^19.1.1",
+    "react-dropzone": "^14.3.8",
+    "react-hook-form": "^7.62.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.8.2",
+    "recharts": "^3.1.2",
+    "uuid": "^11.1.0",
+    "web-vitals": "^5.1.0",
+    "zod": "^4.1.5"
+  },
+  "lint-staged": {
+    "src/**/*": {
+      "{ts,tsx,js,jsx,json,css,md}": "[prettier --write]"
+    }
+  }
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\README.md
+
+# Job Portal Web
+
+- React + Vite + TypeScript
+- Clerk auth (admin/user roles)
+- MUI responsive UI
+- Redux Toolkit (loading/error handling)
+- Axios clients for .NET & Python APIs
+- SignalR live notifications
+- ApexCharts analytics
+- Notistack snackbars
+- RHF + Zod forms
+
+## Env
+Copy \.env.example\ to \.env\ and fill values.
+
+## Run
+npm run dev
+
+## Build
+npm run build && npm run preview
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\tsconfig.json
+
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+
+    /* JSX */
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\public\manifest.json
+
+{
+  "name": "Job Portal",
+  "short_name": "Jobs",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1976d2",
+  "icons": []
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\App.tsx
+
+import { BrowserRouter } from 'react-router-dom';
+import AppRoutes from './routes';
+import AppProviders from './providers/AppProviders';
+import RouteProgress from './components/common/RouteProgress';
+
+export default function App(){
+  return (
+    <BrowserRouter>
+      <AppProviders>
+        <RouteProgress />
+        <AppRoutes />
+      </AppProviders>
+    </BrowserRouter>
+  );
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\counter.ts
+
+export function setupCounter(element: HTMLButtonElement) {
+  let counter = 0
+  const setCounter = (count: number) => {
+    counter = count
+    element.innerHTML = `count is ${counter}`
+  }
+  element.addEventListener('click', () => setCounter(counter + 1))
+  setCounter(0)
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\index.css
+
+@import "./styles/variables.css";
+@import "./styles/globals.css";
+@import "./styles/theme.css";
+@import "./styles/components.css";
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\main.ts
+
+import './style.css'
+import typescriptLogo from './typescript.svg'
+import viteLogo from '/vite.svg'
+import { setupCounter } from './counter.ts'
+import reportWebVitals from './lib/webVitals/vitals';
+
+reportWebVitals((m) => console.log(m));
+
+document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
+  <div>
+    <a href="https://vite.dev" target="_blank">
+      <img src="${viteLogo}" class="logo" alt="Vite logo" />
+    </a>
+    <a href="https://www.typescriptlang.org/" target="_blank">
+      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
+    </a>
+    <h1>Vite + TypeScript</h1>
+    <div class="card">
+      <button id="counter" type="button"></button>
+    </div>
+    <p class="read-the-docs">
+      Click on the Vite and TypeScript logos to learn more
+    </p>
+  </div>
+`
+
+setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\main.tsx
+
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import { ClerkProvider } from "@clerk/clerk-react";
+import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./lib/webVitals/vitals";
+
+// Store: expect src/store/index.ts to export a configured store
+// Fallback to a minimal store if not present (useful during scaffolding)
+let store: any;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  store = require("./store").store;
+} catch {
+  const { configureStore, createSlice } = require("@reduxjs/toolkit");
+  const dummy = createSlice({ name: "dummy", initialState: {}, reducers: {} });
+  store = configureStore({ reducer: { dummy: dummy.reducer } });
+}
+
+// Theme: if you have a custom theme export in ./theme, prefer it
+let theme: any;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  theme = require("./theme").default;
+} catch {
+  theme = createTheme({
+    palette: { mode: "light" },
+    shape: { borderRadius: 12 },
+    components: { MuiButton: { styleOverrides: { root: { textTransform: "none" } } } },
+  });
+}
+
+const clerkKey = process.env.VITE_CLERK_PUBLISHABLE_KEY as string;
+if (!clerkKey) {
+  // eslint-disable-next-line no-console
+  console.error("VITE_CLERK_PUBLISHABLE_KEY is not set. Clerk auth will not work.");
+}
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <ClerkProvider publishableKey={clerkKey}>
+      <Provider store={store}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </ThemeProvider>
+      </Provider>
+    </ClerkProvider>
+  </React.StrictMode>
+);
+
+// Optional: log web vitals (replace with your analytics hook if desired)
+reportWebVitals();
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\style.css
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.vanilla:hover {
+  filter: drop-shadow(0 0 2em #3178c6aa);
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\vite-env.d.ts
+
+/// <reference types="vite/client" />
+
+interface ImportMetaEnv {
+  readonly VITE_CLERK_PUBLISHABLE_KEY: string;
+  readonly VITE_API_BASE_URL: string;
+  readonly VITE_PY_API_BASE_URL?: string;
+  readonly VITE_SIGNALR_URL?: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\axios.ts
+
+import axios from "axios";
+import type { AxiosInstance, InternalAxiosRequestConfig, AxiosError } from "axios";
+
+const apiBaseUrl = (import.meta as any).env.VITE_API_BASE_URL as string;
+const pyApiBaseUrl = (import.meta as any).env.VITE_PY_API_BASE_URL as string;
+
+let tokenGetter: null | (() => Promise<string | null>) = null;
+
+/** Allow the app to register an async token getter (Clerk). */
+export function setAuthTokenGetter(fn: () => Promise<string | null>) {
+  tokenGetter = fn;
+}
+
+function setHeader(headers: any, key: string, value: string) {
+  if (!headers) return;
+  if (typeof headers.set === "function") {
+    headers.set(key, value); // AxiosHeaders instance
+  } else {
+    headers[key] = value;    // plain object
+  }
+}
+
+function getHeader(headers: any, key: string): string | undefined {
+  if (!headers) return undefined;
+  if (typeof headers.get === "function") {
+    return headers.get(key);
+  }
+  return headers[key];
+}
+
+function attachInterceptors(client: AxiosInstance) {
+  client.interceptors.request.use(
+    async (config: InternalAxiosRequestConfig) => {
+      try {
+        // Ensure headers exists without assigning '{}' to a typed field
+        let headers: any = config.headers as any;
+        if (!headers) {
+          (config as any).headers = {};
+          headers = (config.headers as any);
+        }
+
+        if (tokenGetter) {
+          const token = await tokenGetter();
+          if (token) {
+            setHeader(headers, "Authorization", `Bearer ${token}`);
+          }
+        }
+
+        // best-effort correlation id
+        const cid =
+          typeof crypto !== "undefined" && "randomUUID" in crypto
+            ? (crypto as any).randomUUID()
+            : Math.random().toString(36).slice(2);
+
+        if (!getHeader(headers, "x-correlation-id")) {
+          setHeader(headers, "x-correlation-id", cid);
+        }
+      } catch {
+        // ignore token errors; continue without auth header
+      }
+      return config;
+    },
+    (error: AxiosError) => Promise.reject(error)
+  );
+
+  client.interceptors.response.use(
+    (resp) => resp,
+    (error: AxiosError) => {
+      // Place to normalize .NET/Python API error shapes if desired.
+      return Promise.reject(error);
+    }
+  );
+}
+
+export const dotnetClient: AxiosInstance = axios.create({
+  baseURL: apiBaseUrl,
+  withCredentials: false,
+});
+
+export const pythonClient: AxiosInstance = axios.create({
+  baseURL: pyApiBaseUrl,
+  withCredentials: false,
+});
+
+attachInterceptors(dotnetClient);
+attachInterceptors(pythonClient);
+
+// Default export keeps existing imports working if any file uses default.
+export default dotnetClient;
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\client.ts
+
+import type { AxiosInstance } from 'axios';
+
+export async function get<T>(c: AxiosInstance, url: string, params?: unknown) {
+  const r = await c.get<T>(url, { params }); return r.data;
+}
+export async function post<T>(c: AxiosInstance, url: string, body?: unknown) {
+  const r = await c.post<T>(url, body); return r.data;
+}
+export async function put<T>(c: AxiosInstance, url: string, body?: unknown) {
+  const r = await c.put<T>(url, body); return r.data;
+}
+export async function del<T>(c: AxiosInstance, url: string) {
+  const r = await c.delete<T>(url); return r.data;
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\endpoints.python.ts
+
+export const py = {
+  recs: { list: '/recommendations' },
+  resume: { analyze: '/resume/analyze' },
+  analytics: { insights: '/analytics/insights' }
+} as const;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\endpoints.ts
+
+const trimEnd = (s?: string) => (s ? s.replace(/\/+$/, "") : "");
+
+const API = trimEnd(import.meta.env.VITE_API_BASE_URL);
+const PY  = trimEnd(import.meta.env.VITE_PY_API_BASE_URL);
+const SIGNALR = import.meta.env.VITE_SIGNALR_URL;
+
+/** .NET backend endpoints */
+export const dotnet = {
+  base: API,
+
+  jobs: {
+    root: `${API}/jobs`,
+    list: `${API}/jobs`,
+    create: `${API}/jobs`,
+    detail: (id: string | number) => `${API}/jobs/${id}`,
+    update: (id: string | number) => `${API}/jobs/${id}`,
+    delete: (id: string | number) => `${API}/jobs/${id}`,
+    search: `${API}/jobs/search`,
+  },
+
+  orgs: {
+    root: `${API}/orgs`,
+    list: `${API}/orgs`,
+    create: `${API}/orgs`,
+    detail: (id: string | number) => `${API}/orgs/${id}`,
+    update: (id: string | number) => `${API}/orgs/${id}`,
+    delete: (id: string | number) => `${API}/orgs/${id}`,
+  },
+
+  applications: {
+    root: `${API}/applications`,
+    list: `${API}/applications`,
+    create: `${API}/applications`,
+    detail: (id: string | number) => `${API}/applications/${id}`,
+    update: (id: string | number) => `${API}/applications/${id}`,
+    delete: (id: string | number) => `${API}/applications/${id}`,
+    status: (id: string | number) => `${API}/applications/${id}/status`,
+  },
+
+  auth: {
+    me: `${API}/auth/me`,
+    refresh: `${API}/auth/refresh`,
+  },
+
+  notifications: {
+    root: `${API}/notifications`,
+    stream: `${API}/notifications/stream`,
+    markRead: (id: string | number) => `${API}/notifications/${id}/read`,
+  },
+
+  signalR: SIGNALR,
+};
+
+/** Python backend endpoints */
+export const python = {
+  base: PY,
+
+  recommendations: {
+    forUser: (userId: string | number) => `${PY}/recommendations/${userId}`,
+    forJob: (jobId: string | number) => `${PY}/recommendations/job/${jobId}`,
+  },
+
+  resume: {
+    upload: `${PY}/resume/upload`,
+    parse: `${PY}/resume/parse`,
+    analyze: `${PY}/resume/analyze`,
+  },
+
+  analytics: {
+    kpis: `${PY}/analytics/kpis`,
+    trends: `${PY}/analytics/trends`,
+    heatmap: `${PY}/analytics/heatmap`,
+  },
+};
+
+const endpoints = { dotnet, python };
+export default endpoints;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\errorMapper.ts
+
+import type { AxiosError } from "axios";
+
+export interface ApiError extends Error {
+  status?: number;
+  code?: string;
+  details?: unknown;
+  source?: "dotnet" | "python" | "network" | "unknown";
+}
+
+export const mapError = (err: unknown): ApiError => {
+  const base = new Error("Request failed") as ApiError;
+  base.source = "unknown";
+
+  // AxiosError
+  if (typeof err === "object" && err !== null && (err as any).isAxiosError) {
+    const ax = err as AxiosError<any>;
+    base.status = ax.response?.status;
+
+    const data = ax.response?.data as any;
+    if (data && typeof data === "object") {
+      base.message = data.message || data.error || ax.message || base.message;
+      base.code = data.code || data.type || undefined;
+      base.details = data.details ?? undefined;
+    } else {
+      base.message = ax.message || base.message;
+    }
+
+    const pyBase = (import.meta.env.VITE_PY_API_BASE_URL ?? "").replace(/\/+$/, "");
+    const dnBase = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/+$/, "");
+    const usedBase = (ax.config?.baseURL ?? "").replace(/\/+$/, "");
+
+    if (usedBase && pyBase && usedBase.startsWith(pyBase)) base.source = "python";
+    else if (usedBase && dnBase && usedBase.startsWith(dnBase)) base.source = "dotnet";
+    else base.source = "network";
+
+    return base;
+  }
+
+  if (err instanceof Error) {
+    base.message = err.message || base.message;
+    return base;
+  }
+
+  return base;
+};
+
+export default mapError;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\interceptors.ts
+
+import type { AxiosInstance, InternalAxiosRequestConfig, AxiosError } from "axios";
+import { dotnetClient, pythonClient } from "./axios";
+import { mapError } from "./errorMapper";
+
+type TokenGetter = () => string | null | Promise<string | null>;
+let tokenGetter: TokenGetter | null = null;
+
+export const setAuthTokenGetter = (fn: TokenGetter) => {
+  tokenGetter = fn;
+};
+
+const attach = (client: AxiosInstance) => {
+  client.interceptors.request.use(
+    async (config: InternalAxiosRequestConfig) => {
+      let token: string | null = null;
+      if (tokenGetter) {
+        token = await Promise.resolve(tokenGetter());
+      }
+      if (token) {
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error: AxiosError) => Promise.reject(mapError(error))
+  );
+
+  client.interceptors.response.use(
+    (res) => res,
+    (error: AxiosError) => Promise.reject(mapError(error))
+  );
+};
+
+attach(dotnetClient);
+attach(pythonClient);
+
+export default { setAuthTokenGetter };
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\clients\dotnet.ts
+
+import axios, { type AxiosInstance } from "axios";
+
+const baseURL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/+$/, "");
+
+export const dotnetClient: AxiosInstance = axios.create({
+  baseURL,
+  withCredentials: true,
+  headers: { "Content-Type": "application/json" },
+});
+
+export default dotnetClient;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\clients\python.ts
+
+import axios, { type AxiosInstance } from "axios";
+
+const baseURL = (import.meta.env.VITE_PY_API_BASE_URL ?? "").replace(/\/+$/, "");
+
+export const pythonClient: AxiosInstance = axios.create({
+  baseURL,
+  withCredentials: true,
+  headers: { "Content-Type": "application/json" },
+});
+
+export default pythonClient;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\errorMapping\dotnet.ts
+
+import type { ApiError } from '../types/common';
+export const mapDotNetError = (e: any): ApiError => {
+  const status = e?.response?.status ?? 500;
+  const code = e?.response?.data?.error?.code ?? e?.response?.data?.code;
+  const message = e?.response?.data?.error?.message ?? e?.response?.data?.message ?? 'Server error';
+  return { status, code, message, details: e?.response?.data };
+};
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\errorMapping\index.ts
+
+import { mapDotNetError } from './dotnet';
+import { mapPythonError } from './python';
+import type { ApiError } from '../types/common';
+
+export const errorMapper = (e: any): ApiError => {
+  const url: string = e?.config?.baseURL || '';
+  if (url.includes('://') && (url.includes('localhost:5000') || url.includes('/api'))) return mapDotNetError(e);
+  return mapPythonError(e);
+};
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\errorMapping\python.ts
+
+import type { ApiError } from '../types/common';
+export const mapPythonError = (e: any): ApiError => {
+  const status = e?.response?.status ?? 500;
+  const code = e?.response?.data?.detail?.code ?? e?.response?.data?.code;
+  const message = e?.response?.data?.detail?.message ?? e?.response?.data?.detail ?? e?.message ?? 'Server error';
+  return { status, code, message, details: e?.response?.data };
+};
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\services\applications.ts
+
+export const applicationsService = { list: async ()=>({items:[], total:0, page:1, pageSize:10}) };
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\services\auth.ts
+
+import { dotnet } from '../endpoints';
+import { dotnetClient } from '../axios';
+import { get } from '../client';
+import type { User } from '../types/user';
+
+export const authService = {
+  me: () => get<User>(dotnetClient, dotnet.auth.me)
+};
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\services\jobs.ts
+
+import { dotnet } from '../endpoints';
+import { dotnetClient } from '../axios';
+import { get, post, put, del } from '../client';
+import type { Job } from '../types/job';
+import type { Paged } from '../types/common';
+
+export const jobsService = {
+  list: (query?: any) => get<Paged<Job>>(dotnetClient, dotnet.jobs.list, query),
+  detail: (id: string) => get<Job>(dotnetClient, dotnet.jobs.detail(id)),
+  create: (data: Partial<Job>) => post<Job>(dotnetClient, dotnet.jobs.create, data),
+  update: (id: string, data: Partial<Job>) => put<Job>(dotnetClient, dotnet.jobs.update(id), data),
+  delete: (id: string) => del<void>(dotnetClient, dotnet.jobs.delete(id))
+};
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\services\notifications.ts
+
+export const notificationsService = { list: async ()=>[] as any[] };
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\services\orgs.ts
+
+export const orgsService = { list: async ()=>({items:[], total:0, page:1, pageSize:10}) };
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\services\search.ts
+
+export const searchService = { search: async (_:any)=>({items:[], total:0, page:1, pageSize:10}) };
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\services\python\analytics.ts
+
+import pythonClient from "../../clients/python";
+
+export type AnalyticsQuery = {
+  from?: string; // ISO date
+  to?: string;   // ISO date
+  cohort?: string;
+};
+
+export type AnalyticsSeries = {
+  name: string;
+  data: Array<{ x: string | number | Date; y: number }>;
+};
+
+export async function getAiAnalytics(
+  params: AnalyticsQuery = {}
+): Promise<AnalyticsSeries[]> {
+  const { data } = await pythonClient.get("/ai/analytics", { params });
+  return data as AnalyticsSeries[];
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\services\python\recommendations.ts
+
+import pythonClient from "../../clients/python";
+
+export type RecommendationQuery = {
+  userId?: string;
+  jobId?: string;
+  limit?: number;
+};
+
+export type RecommendationItem = {
+  id: string | number;
+  score?: number;
+  [key: string]: unknown;
+};
+
+/** GET /ai/recommendations (Python API) */
+export async function getRecommendations(
+  params: RecommendationQuery = {}
+): Promise<RecommendationItem[]> {
+  const { data } = await pythonClient.get("/ai/recommendations", { params });
+  return data as RecommendationItem[];
+}
+
+/** POST /ai/recommendations/feedback (Python API) */
+export async function sendRecommendationFeedback(payload: {
+  recommendationId: string | number;
+  action: "like" | "dislike" | "dismiss";
+}) {
+  await pythonClient.post("/ai/recommendations/feedback", payload);
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\services\python\resume.ts
+
+import pythonClient from "../../clients/python";
+
+export type ResumeInsightsRequest = {
+  userId?: string;
+  resumeUrl?: string;
+  text?: string;
+};
+
+export type ResumeInsight = {
+  key: string;
+  value: string;
+  score?: number;
+};
+
+export async function getResumeInsights(
+  body: ResumeInsightsRequest
+): Promise<ResumeInsight[]> {
+  const { data } = await pythonClient.post("/ai/resume/insights", body);
+  return data as ResumeInsight[];
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\types\application.ts
+
+export interface Application { id: string; jobId: string; status: 'new' | 'in_review' | 'interview' | 'offer' | 'rejected'; }
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\types\common.ts
+
+export type Id = string | number;
+export interface ApiError { status: number; code?: string; message: string; details?: unknown; }
+export interface Paged<T> { items: T[]; total: number; page: number; pageSize: number; }
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\types\job.ts
+
+export interface Job {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  salaryMin?: number;
+  salaryMax?: number;
+  createdAt?: string;
+  description?: string;
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\types\notifications.ts
+
+export interface Notification { id: string; message: string; createdAt: string; read?: boolean; }
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\types\org.ts
+
+export interface Org { id: string; name: string; website?: string; }
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\types\search.ts
+
+export interface SearchQuery { q?: string; page?: number; pageSize?: number; }
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\types\user.ts
+
+import type { Role } from '../../utils/roles';
+export interface User { id: string; email: string; name: string; role: Role; }
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\types\python\analytics.ts
+
+export interface InsightPoint { label: string; value: number; }
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\types\python\recommendations.ts
+
+export interface Recommendation { id: string; jobId: string; score: number; reason?: string; }
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\api\types\python\resume.ts
+
+export interface ResumeInsight { id: string; key: string; value: string; }
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\auth\ClerkProviderWithRoutes.tsx
+
+export default function ClerkProviderWithRoutes(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\auth\RequireAuth.tsx
+
+import { useUser, RedirectToSignIn } from '@clerk/clerk-react';
+import React from 'react';
+
+export default function RequireAuth({ children }: { children: React.JSX.Element }) {
+  const { isSignedIn } = useUser();
+  if (!isSignedIn) return <RedirectToSignIn />;
+  return children;
+}
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\auth\RequireRole.tsx
+
+import { useUser } from '@clerk/clerk-react';
+import { Navigate } from 'react-router-dom';
+import React from 'react';
+
+export default function RequireRole({ role, children }: { role: 'admin'|'user'; children: React.JSX.Element }) {
+  const { user } = useUser();
+  const current = (user?.publicMetadata?.role as 'admin'|'user'|undefined) || 'user';
+  if (current !== role) return <Navigate to='/403' replace />;
+  return children;
+}
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\charts\AreaChart.tsx
+
+import Chart from 'react-apexcharts';
+export default function AreaChart({ series, categories }:{ series:{name:string; data:number[]}[]; categories:string[] }){
+  return <Chart type='area' height={300} series={series} options={{
+    chart:{ toolbar:{ show:false } }, dataLabels:{enabled:false},
+    xaxis:{ categories }, stroke:{ curve:'smooth' }, legend:{ position:'top' }
+  }} />;
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\charts\BarChart.tsx
+
+import Chart from 'react-apexcharts';
+export default function BarChart({ series, categories }:{ series:{name:string; data:number[]}[]; categories:string[] }){
+  return <Chart type='bar' height={300} series={series} options={{ xaxis:{ categories }, legend:{ position:'top' } }} />;
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\charts\KPI.tsx
+
+import { Paper, Box, Typography } from '@mui/material';
+export default function KPI({ label, value }: { label: string; value: string | number }){
+  return <Paper sx={{ p:2 }}>
+    <Typography variant='overline' color='text.secondary'>{label}</Typography>
+    <Box sx={{ mt:1 }}><Typography variant='h4'>{value}</Typography></Box>
+  </Paper>;
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\charts\PieChart.tsx
+
+import Chart from 'react-apexcharts';
+export default function PieChart({ labels, data }:{ labels:string[]; data:number[] }){
+  return <Chart type='donut' height={300} series={data} options={{ labels }} />;
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\common\AvatarMenu.tsx
+
+import { UserButton } from '@clerk/clerk-react';
+export default function AvatarMenu(){ return <UserButton afterSignOutUrl='/' />; }
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\common\Chip.tsx
+
+export default function Chip(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\common\FileDropzone.tsx
+
+import React from "react";
+import { useDropzone } from "react-dropzone";
+import {
+  Box,
+  Paper,
+  Typography,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  IconButton,
+  Stack,
+} from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import DescriptionIcon from "@mui/icons-material/Description";
+import DeleteIcon from "@mui/icons-material/DeleteForever";
+
+export type FileDropzoneProps = {
+  value?: File[];
+  onChange?: (files: File[]) => void;
+  accept?: Record<string, string[]>;
+  maxSize?: number; // bytes
+  multiple?: boolean;
+  height?: number | string;
+  helperText?: string;
+};
+
+const formatBytes = (bytes: number) => {
+  if (bytes === 0) return "0 B";
+  const k = 1024;
+  const sizes = ["B", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+};
+
+export default function FileDropzone({
+  value = [],
+  onChange,
+  accept,
+  maxSize = 10 * 1024 * 1024,
+  multiple = true,
+  height = 180,
+  helperText,
+}: FileDropzoneProps) {
+  const [files, setFiles] = React.useState<File[]>(value);
+
+  const onDrop = React.useCallback(
+    (accepted: File[]) => {
+      const next = multiple ? [...files, ...accepted] : accepted.slice(0, 1);
+      setFiles(next);
+      onChange?.(next);
+    },
+    [files, multiple, onChange]
+  );
+
+  const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
+    onDrop,
+    accept,
+    multiple,
+    maxSize,
+  });
+
+  const removeAt = (idx: number) => {
+    const next = files.filter((_, i) => i !== idx);
+    setFiles(next);
+    onChange?.(next);
+  };
+
+  return (
+    <Stack spacing={1.5}>
+      <Paper
+        variant="outlined"
+        sx={{
+          p: 2,
+          borderStyle: "dashed",
+          bgcolor: isDragActive ? "action.hover" : "background.paper",
+          transition: "background-color 0.2s ease",
+        }}
+      >
+        <Box
+          {...getRootProps()}
+          sx={{
+            minHeight: height,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            cursor: "pointer",
+            p: 2,
+          }}
+        >
+          <input {...getInputProps()} />
+          <Stack spacing={1} alignItems="center">
+            <CloudUploadIcon fontSize="large" />
+            <Typography variant="subtitle1" fontWeight={600}>
+              {isDragActive ? "Drop the files here…" : "Drag & drop files here"}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              or click to browse
+            </Typography>
+            {helperText && (
+              <Typography variant="caption" color="text.secondary">
+                {helperText}
+              </Typography>
+            )}
+          </Stack>
+        </Box>
+      </Paper>
+
+      {!!fileRejections.length && (
+        <Typography variant="caption" color="error">
+          Some files were rejected (type or size). Max size: {formatBytes(maxSize)}.
+        </Typography>
+      )}
+
+      {!!files.length && (
+        <Paper variant="outlined" sx={{ p: 1 }}>
+          <List dense disablePadding>
+            {files.map((f, i) => (
+              <ListItem
+                key={i}
+                secondaryAction={
+                  <IconButton edge="end" aria-label="remove" onClick={() => removeAt(i)}>
+                    <DeleteIcon />
+                  </IconButton>
+                }
+              >
+                <ListItemIcon>
+                  <DescriptionIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={f.name}
+                  secondary={`${f.type || "unknown"} • ${formatBytes(f.size)}`}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </Paper>
+      )}
+    </Stack>
+  );
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\common\RouteProgress.tsx
+
+import nprogress from 'nprogress';
+import 'nprogress/nprogress.css';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+
+export default function RouteProgress() {
+  const loc = useLocation();
+  useEffect(() => {
+    nprogress.start();
+    const timer = setTimeout(() => nprogress.done(), 200);
+    return () => clearTimeout(timer);
+  }, [loc]);
+  return null;
+}
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\common\ThemeSwitcher.tsx
+
+import { IconButton } from '@mui/material';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setTheme } from '../../store/slices/uiSlice';
+
+export default function ThemeSwitcher(){
+  const dispatch = useAppDispatch();
+  const mode = useAppSelector(s=>s.ui.theme);
+  return <IconButton onClick={()=>dispatch(setTheme(mode==='light'?'dark':'light'))} aria-label='theme'>
+    {mode==='light'?<DarkModeIcon/>:<LightModeIcon/>}
+  </IconButton>;
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\feedback\ErrorBoundary.tsx
+
+import { Component } from 'react';
+import type { ReactNode } from 'react';
+import ErrorFallback from './ErrorFallback';
+
+export class ErrorBoundary extends Component<{children: ReactNode}, {hasError: boolean}> {
+  constructor(props: any){ super(props); this.state={hasError:false}; }
+  static getDerivedStateFromError(){ return { hasError:true }; }
+  componentDidCatch(e: any){ console.error(e); }
+  render(){ return this.state.hasError ? <ErrorFallback /> : this.props.children; }
+}
+export default ErrorBoundary;
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\feedback\ErrorFallback.tsx
+
+import { Box, Button, Typography } from '@mui/material';
+export default function ErrorFallback(){
+  return <Box sx={{ p:4, textAlign:'center' }}>
+    <Typography variant='h5' gutterBottom>Something went wrong</Typography>
+    <Button variant='contained' onClick={()=>location.reload()}>Reload</Button>
+  </Box>;
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\feedback\LoadingOverlay.tsx
+
+import { Backdrop, CircularProgress } from '@mui/material';
+export default function LoadingOverlay({ open }: { open: boolean }){
+  return <Backdrop open={open} sx={{ color:'#fff', zIndex: (t)=>t.zIndex.drawer + 1 }}>
+    <CircularProgress />
+  </Backdrop>;
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\feedback\RetryButton.tsx
+
+import { Button } from '@mui/material';
+export default function RetryButton({ onClick }: { onClick: ()=>void }){ return <Button onClick={onClick}>Retry</Button>; }
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\feedback\SnackbarProvider.tsx
+
+import { SnackbarProvider as NSP } from 'notistack';
+export default function SnackbarProvider({ children }: { children: React.ReactNode }) {
+  return <NSP maxSnack={3} autoHideDuration={3500} anchorOrigin={{ vertical:'bottom', horizontal:'right' }}>{children}</NSP>;
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\feedback\Spinner.tsx
+
+import { Box, CircularProgress } from '@mui/material';
+export default function Spinner(){ return <Box sx={{ p:4, textAlign:'center' }}><CircularProgress /></Box>; }
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\forms\FormNumber.tsx
+
+export default function FormNumber(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\forms\FormRichText.tsx
+
+export default function FormRichText(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\forms\FormSelect.tsx
+
+export default function FormSelect(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\forms\FormTextField.tsx
+
+import { TextField } from '@mui/material';
+import { Controller } from 'react-hook-form';
+import type { Control } from 'react-hook-form';
+
+export default function FormTextField({ name, control, label, type='text' }:{ name: string; control: Control<any>; label: string; type?: string; }){
+  return <Controller name={name} control={control} render={({ field, fieldState })=>(
+    <TextField {...field} type={type} label={label} error={!!fieldState.error} helperText={fieldState.error?.message} fullWidth />
+  )} />;
+}
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\forms\SubmitButton.tsx
+
+import { Button } from '@mui/material';
+export default function SubmitButton({ disabled, children }:{ disabled?: boolean; children: React.ReactNode }){
+  return <Button type='submit' variant='contained' disabled={disabled}>{children}</Button>;
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\layout\AppBar.tsx
+
+import { AppBar as MAppBar, Toolbar, IconButton, Typography, Box } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+
+export default function AppBar({ onMenu }: { onMenu: ()=>void }) {
+  return (
+    <MAppBar position='fixed' color='inherit'>
+      <Toolbar>
+        <IconButton edge='start' onClick={onMenu} sx={{ mr: 2, display: { md: 'none' } }}>
+          <MenuIcon />
+        </IconButton>
+        <Typography variant='h6' sx={{ flexGrow: 1 }}>Job Portal</Typography>
+        <Box />
+      </Toolbar>
+    </MAppBar>
+  );
+}
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\layout\AppLayout.tsx
+
+import { Box, Toolbar, Container } from '@mui/material';
+import { useState } from 'react';
+import AppBar from './AppBar';
+import SideNav from './SideNav';
+import Footer from './Footer';
+
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <Box sx={{ display: 'flex' }}>
+      <AppBar onMenu={() => setOpen(true)} />
+      <SideNav mobileOpen={open} onClose={() => setOpen(false)} />
+      <Box component='main' sx={{ flexGrow: 1 }}>
+        <Toolbar />
+        <Container maxWidth='xl' sx={{ py: 3 }}>
+          {children}
+        </Container>
+        <Footer />
+      </Box>
+    </Box>
+  );
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\layout\Breadcrumbs.tsx
+
+export default function Breadcrumbs(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\layout\Footer.tsx
+
+import { Box, Typography } from '@mui/material';
+export default function Footer(){
+  return <Box sx={{ p:2, textAlign:'center', color:'text.secondary' }}>
+    <Typography variant='body2'>© {new Date().getFullYear()} Job Portal</Typography>
+  </Box>;
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\layout\SideNav.tsx
+
+import { Drawer, List, ListItemButton, ListItemText, Toolbar } from '@mui/material';
+import { Link, useLocation } from 'react-router-dom';
+import { ROUTES } from '../../config/routes';
+
+const items = [
+  { label: 'Home', to: ROUTES.home },
+  { label: 'Jobs', to: ROUTES.jobs.list },
+  { label: 'Dashboard', to: ROUTES.dashboard.user },
+  { label: 'AI', to: ROUTES.ai.recommendations },
+  { label: 'Profile', to: ROUTES.profile },
+];
+
+export default function SideNav({
+  mobileOpen,
+  onClose,
+}: {
+  mobileOpen: boolean;
+  onClose: () => void;
+}) {
+  const location = useLocation();
+
+  const list = (
+    <>
+      <Toolbar />
+      <List>
+        {items.map((it) => (
+          <ListItemButton
+            key={it.to}
+            component={Link}
+            to={it.to}
+            selected={location.pathname === it.to}
+            onClick={onClose}
+          >
+            <ListItemText primary={it.label} />
+          </ListItemButton>
+        ))}
+      </List>
+    </>
+  );
+
+  return (
+    <>
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={onClose}
+        sx={{ display: { xs: 'block', md: 'none' } }}
+      >
+        {list}
+      </Drawer>
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: { md: 260 },
+          display: { xs: 'none', md: 'block' },
+          '& .MuiDrawer-paper': { width: 260 },
+        }}
+        open
+      >
+        {list}
+      </Drawer>
+    </>
+  );
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\navigation\NavItem.tsx
+
+export default function NavItem(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\navigation\NavSection.tsx
+
+export default function NavSection(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\tables\DataTable.tsx
+
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+export interface Column<T>{ key: keyof T | string; header: string; render?: (row:T)=>React.ReactNode; }
+export default function DataTable<T extends {id: string|number}>({ rows, columns }: { rows: T[]; columns: Column<T>[] }){
+  return (
+    <TableContainer component={Paper}>
+      <Table size='small'>
+        <TableHead><TableRow>{columns.map(c=><TableCell key={String(c.key)}>{c.header}</TableCell>)}</TableRow></TableHead>
+        <TableBody>
+          {rows.map(r=>(
+            <TableRow key={r.id}>
+              {columns.map(c=><TableCell key={String(c.key)}>{c.render?c.render(r):(r as any)[c.key]}</TableCell>)}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\tables\EmptyState.tsx
+
+export default function EmptyState(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\components\tables\Pagination.tsx
+
+export default function Pagination(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\config\clerk.ts
+
+export const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\config\env.d.ts
+
+/// <reference types='vite/client' />
+interface ImportMetaEnv {
+  readonly VITE_CLERK_PUBLISHABLE_KEY: string;
+  readonly VITE_API_BASE_URL: string;
+  readonly VITE_PY_API_BASE_URL?: string;
+  readonly VITE_SIGNALR_URL?: string;
+}
+interface ImportMeta { readonly env: ImportMetaEnv; }
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\config\featureFlags.ts
+
+export const featureFlags = {
+  aiRecommendations: true,
+  resumeInsights: true,
+  analyticsInsights: true
+} as const;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\config\routes.ts
+
+export type RoutePath = string | ((...args: any[]) => string);
+
+export const ROUTES = {
+  home: "/",
+  search: "/search",
+
+  jobs: {
+    root: "/jobs",
+    list: "/jobs",
+    create: "/jobs/create",
+    detail: (id: string | number) => `/jobs/${id}`,
+    edit: (id: string | number) => `/jobs/${id}/edit`,
+  },
+
+  orgs: {
+    root: "/orgs",
+    list: "/orgs",
+    create: "/orgs/create",
+    detail: (id: string | number) => `/orgs/${id}`,
+    edit: (id: string | number) => `/orgs/${id}/edit`,
+  },
+
+  applications: {
+    root: "/applications",
+    list: "/applications",
+    detail: (id: string | number) => `/applications/${id}`,
+    status: (id: string | number) => `/applications/${id}/status`,
+  },
+
+  dashboard: {
+    user: "/dashboard",
+    admin: "/admin",
+  },
+
+  ai: {
+    recommendations: "/ai/recommendations",
+    resume: "/ai/resume",
+    analytics: "/ai/analytics",
+  },
+
+  profile: "/profile",
+  settings: "/settings",
+
+  errors: {
+    notFound: "/404",
+    forbidden: "/403",
+    rateLimited: "/429",
+  },
+} as const;
+
+export default ROUTES;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\hooks\useApi.ts
+
+import { useAuth } from "@clerk/clerk-react";
+import { useEffect } from "react";
+import { setAuthTokenGetter } from "../api/axios";
+
+/**
+ * Registers a token getter so all Axios clients include the Clerk JWT.
+ * Call this once near app startup (e.g., in AppProviders).
+ */
+export function useApiBridge() {
+  const { isLoaded, isSignedIn, getToken } = useAuth();
+
+  useEffect(() => {
+    // Provide a stable async getter to axios; it can be called on every request.
+    const getter = async (): Promise<string | null> => {
+      if (!isLoaded || !isSignedIn) return null;
+      try {
+        // If you use Clerk JWT templates, set it here; otherwise omit.
+        const token = await getToken();
+        return token ?? null;
+      } catch {
+        return null;
+      }
+    };
+
+    setAuthTokenGetter(getter);
+  }, [isLoaded, isSignedIn, getToken]);
+}
+
+export default useApiBridge;
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\hooks\useAuthGuard.ts
+
+import { useUser } from '@clerk/clerk-react';
+import { Navigate } from 'react-router-dom';
+import React from 'react';
+
+export const RequireSignedIn = ({ children }: { children: React.JSX.Element }) => {
+  const { isSignedIn } = useUser();
+  if (!isSignedIn) return <Navigate to='/sign-in' replace />;
+  return children;
+};
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\hooks\useDebounce.ts
+
+import * as React from "react";
+
+/**
+ * Debounce any changing value. Returns the debounced value after `delay` ms.
+ */
+export function useDebounce<T>(value: T, delay = 300): T {
+  const [debounced, setDebounced] = React.useState<T>(value);
+
+  React.useEffect(() => {
+    const id = window.setTimeout(() => setDebounced(value), delay);
+    return () => window.clearTimeout(id);
+  }, [value, delay]);
+
+  return debounced;
+}
+
+/**
+ * Debounced callback creator.
+ */
+export function useDebouncedCallback<T extends (...args: any[]) => void>(
+  cb: T,
+  delay = 300
+): T {
+  const ref = React.useRef(cb);
+  React.useEffect(() => {
+    ref.current = cb;
+  }, [cb]);
+
+  // @ts-ignore
+  return React.useMemo(
+    () =>
+      ((...args: any[]) => {
+        const id = (useDebouncedCallback as any)._id;
+        if (id) window.clearTimeout(id);
+        (useDebouncedCallback as any)._id = window.setTimeout(() => ref.current(...args), delay);
+      }) as T,
+    [delay]
+  );
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\hooks\usePagination.ts
+
+export const usePagination=()=>({page:1,pageSize:10,setPage:()=>{},setPageSize:()=>{}});
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\hooks\useSignalR.ts
+
+import { useEffect } from 'react';
+import { useAuth } from '@clerk/clerk-react';
+import { createHub } from '../lib/signalr/hub';
+import { useAppDispatch } from '../store/hooks';
+import { addNotification } from '../store/slices/notificationsSlice';
+
+export const useSignalR = () => {
+  const { getToken } = useAuth();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const hub = createHub(() => getToken());
+    if (!hub) return;
+    hub.onNotification((n)=>dispatch(addNotification(n)));
+    hub.start();
+
+    return () => { hub.stop(); };
+  }, [getToken, dispatch]);
+};
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\lib\analytics\events.ts
+
+export const AnalyticsEvents={ VIEW_DASH:'view_dashboard', APPLY_JOB:'apply_job' } as const;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\lib\analytics\index.ts
+
+import { AnalyticsEvents } from './events';
+export const track = (name: keyof typeof AnalyticsEvents | string, payload?: Record<string,unknown>) => {
+  // hook to any analytics destination
+  // eslint-disable-next-line no-console
+  console.log('[analytics]', name, payload || {});
+};
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\lib\signalr\events.ts
+
+export const SignalREvents = { Notification: 'Notification' } as const;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\lib\signalr\hub.ts
+
+import * as signalR from '@microsoft/signalr';
+import { SignalREvents } from './events';
+import { v4 as uuid } from 'uuid';
+
+export const createHub = (accessTokenFactory?: () => Promise<string | null>) => {
+  const url = import.meta.env.VITE_SIGNALR_URL;
+  if (!url) return null;
+  const conn = new signalR.HubConnectionBuilder()
+    .withUrl(url, {
+      accessTokenFactory: async () => (accessTokenFactory ? (await accessTokenFactory()) || '' : ''),
+      withCredentials: true
+    })
+    .withAutomaticReconnect()
+    .build();
+
+  const start = async () => { if (conn.state === 'Disconnected') await conn.start(); };
+  const stop = async () => { if (conn.state !== 'Disconnected') await conn.stop(); };
+  const onNotification = (cb: (n: any)=>void) => { conn.on(SignalREvents.Notification, (p)=>cb({ id: uuid(), ...p })); };
+
+  return { conn, start, stop, onNotification };
+};
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\lib\telemetry\otel.ts
+
+export const initOtel=()=>{ /* attach here if needed */ };
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\lib\webVitals\vitals.ts
+
+import { onCLS, onFCP, onINP, onLCP, onTTFB, type Metric } from "web-vitals";
+
+export type WebVitalsReporter = (metric: Metric) => void;
+
+export default function reportWebVitals(report?: WebVitalsReporter) {
+  if (!report) return;
+  onCLS(report);
+  onFCP(report);
+  onINP(report);
+  onLCP(report);
+  onTTFB(report);
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\ai\AnalyticsInsightsPage.tsx
+
+export default function AnalyticsInsightsPage(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\ai\RecommendationsPage.tsx
+
+export default function RecommendationsPage(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\ai\ResumeInsightsPage.tsx
+
+export default function ResumeInsightsPage(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\applications\ApplicationDetailPage.tsx
+
+export default function ApplicationDetailPage(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\applications\ApplicationsListPage.tsx
+
+export default function ApplicationsListPage(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\applications\ApplicationStatusPage.tsx
+
+export default function ApplicationStatusPage(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\dashboard\AdminDashboardPage.tsx
+
+import { Grid, Paper, Typography } from '@mui/material';
+import KPI from '../../components/charts/KPI';
+import PieChart from '../../components/charts/PieChart';
+export default function AdminDashboardPage(){
+  return (
+    <Grid container spacing={2}>
+      <Grid item xs={12} md={4}><KPI label='Open Jobs' value={42}/></Grid>
+      <Grid item xs={12} md={4}><KPI label='Applicants' value={876}/></Grid>
+      <Grid item xs={12} md={4}><KPI label='Hires' value={23}/></Grid>
+      <Grid item xs={12}>
+        <Paper sx={{ p:2 }}>
+          <Typography variant='h6' gutterBottom>Pipeline</Typography>
+          <PieChart labels={['New','Review','Interview','Offer','Rejected']} data={[120,300,90,18,200]} />
+        </Paper>
+      </Grid>
+    </Grid>
+  );
+}
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\dashboard\UserDashboardPage.tsx
+
+import { Grid, Paper, Typography } from '@mui/material';
+import KPI from '../../components/charts/KPI';
+import BarChart from '../../components/charts/BarChart';
+export default function UserDashboardPage(){
+  return (
+    <Grid container spacing={2}>
+      <Grid item xs={12} md={4}><KPI label='My Applications' value={14}/></Grid>
+      <Grid item xs={12} md={4}><KPI label='Interviews' value={4}/></Grid>
+      <Grid item xs={12} md={4}><KPI label='Offers' value={1}/></Grid>
+      <Grid item xs={12}>
+        <Paper sx={{ p:2 }}>
+          <Typography variant='h6' gutterBottom>Monthly Applications</Typography>
+          <BarChart series={[{name:'Applications', data:[2,3,1,4,2,2,0,0,0,0,0,0]}]} categories={['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']}/>
+        </Paper>
+      </Grid>
+    </Grid>
+  );
+}
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\errors\ForbiddenPage.tsx
+
+import { Box, Typography } from '@mui/material';
+export default function ForbiddenPage(){ return <Box sx={{ p:4, textAlign:'center' }}><Typography variant='h4'>403 - Forbidden</Typography></Box>; }
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\errors\NotFoundPage.tsx
+
+import { Box, Typography, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
+export default function NotFoundPage(){
+  return <Box sx={{ p:4, textAlign:'center' }}>
+    <Typography variant='h4' gutterBottom>404 - Not Found</Typography>
+    <Button component={Link} to='/' variant='contained'>Go Home</Button>
+  </Box>;
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\errors\RateLimitedPage.tsx
+
+import * as React from "react";
+import { useSearchParams, Link as RouterLink } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Container,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
+import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
+
+export default function RateLimitedPage() {
+  const [sp] = useSearchParams();
+  const retryAfter = Math.max(0, Number(sp.get("retryAfter") || 0));
+  const [remaining, setRemaining] = React.useState<number>(retryAfter);
+
+  React.useEffect(() => {
+    if (!retryAfter) return;
+    const id = window.setInterval(() => {
+      setRemaining((r) => (r > 0 ? r - 1 : 0));
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, [retryAfter]);
+
+  return (
+    <Container maxWidth="sm" sx={{ py: 8 }}>
+      <Paper elevation={2} sx={{ p: 4 }}>
+        <Stack spacing={3} alignItems="center" textAlign="center">
+          <HourglassBottomIcon fontSize="large" color="primary" />
+          <Typography variant="h5" fontWeight={700}>
+            You’re being rate limited
+          </Typography>
+          <Typography color="text.secondary">
+            Our API is receiving too many requests right now. Please wait a moment and try again.
+          </Typography>
+
+          {retryAfter ? (
+            <Box>
+              <Typography variant="body2" color="text.secondary">
+                You can retry in <strong>{remaining}</strong> second{remaining === 1 ? "" : "s"}…
+              </Typography>
+            </Box>
+          ) : null}
+
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ width: "100%" }} justifyContent="center">
+            <Button
+              variant="contained"
+              onClick={() => window.location.reload()}
+              disabled={remaining > 0}
+            >
+              Retry now
+            </Button>
+            <Button component={RouterLink} to="/" variant="outlined">
+              Go to Home
+            </Button>
+          </Stack>
+
+          <Typography variant="caption" color="text.secondary">
+            If this keeps happening, please contact support and include your correlation ID if shown in errors.
+          </Typography>
+        </Stack>
+      </Paper>
+    </Container>
+  );
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\home\HomePage.tsx
+
+import { Box, Grid, Paper, Typography } from '@mui/material';
+import KPI from '../../components/charts/KPI';
+import AreaChart from '../../components/charts/AreaChart';
+
+export default function HomePage(){
+  return (
+    <Box>
+      <Typography variant='h4' gutterBottom>Welcome to Job Portal</Typography>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={4}><KPI label='Total Jobs' value={128} /></Grid>
+        <Grid item xs={12} md={4}><KPI label='Applications' value={312} /></Grid>
+        <Grid item xs={12} md={4}><KPI label='Interviews' value={27} /></Grid>
+        <Grid item xs={12}>
+          <Paper sx={{ p:2 }}>
+            <Typography variant='h6' gutterBottom>Weekly Views</Typography>
+            <AreaChart series={[{ name:'Views', data:[10,20,35,30,50,65,80] }]} categories={['Mon','Tue','Wed','Thu','Fri','Sat','Sun']} />
+          </Paper>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+}
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\jobs\JobCreatePage.tsx
+
+export default function JobCreatePage(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\jobs\JobDetailPage.tsx
+
+export default function JobDetailPage(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\jobs\JobEditPage.tsx
+
+export default function JobEditPage(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\jobs\JobsListPage.tsx
+
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { fetchJobs } from '../../store/slices/jobsSlice';
+import DataTable from '../../components/tables/DataTable';
+import Spinner from '../../components/feedback/Spinner';
+import { Box, Button, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
+
+export default function JobsListPage(){
+  const d = useAppDispatch();
+  const { items, loading } = useAppSelector(s=>s.jobs);
+
+  useEffect(()=>{ d(fetchJobs({ page:1, pageSize:20 })); }, [d]);
+  if (loading) return <Spinner />;
+
+  return (
+    <Box>
+      <Box sx={{ display:'flex', justifyContent:'space-between', alignItems:'center', mb:2 }}>
+        <Typography variant='h5'>Jobs</Typography>
+        <Button component={Link} to='/jobs/new' variant='contained'>Post Job</Button>
+      </Box>
+      <DataTable rows={items} columns={[
+        { key: 'title', header:'Title' },
+        { key: 'company', header:'Company' },
+        { key: 'location', header:'Location' },
+        { key: 'id', header:'Open', render:(r)=><Button component={Link} to={'/jobs/'+r.id} size='small'>Open</Button> }
+      ]}/>
+    </Box>
+  );
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\orgs\OrgCreatePage.tsx
+
+export default function OrgCreatePage(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\orgs\OrgDetailPage.tsx
+
+export default function OrgDetailPage(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\orgs\OrgEditPage.tsx
+
+export default function OrgEditPage(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\orgs\OrgsListPage.tsx
+
+export default function OrgsListPage(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\profile\ProfilePage.tsx
+
+import { UserProfile } from '@clerk/clerk-react';
+export default function ProfilePage(){ return <UserProfile routing='path' path='/profile' />; }
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\profile\SettingsPage.tsx
+
+export default function SettingsPage(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\pages\search\SearchPage.tsx
+
+export default function SearchPage(){return null}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\providers\AppProviders.tsx
+
+import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn, useUser } from '@clerk/clerk-react';
+import { Provider } from "react-redux";
+import { store } from '../store';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import { buildTheme } from '../theme';
+import SnackbarProvider from '../components/feedback/SnackbarProvider';
+import ErrorBoundary from '../components/feedback/ErrorBoundary';
+import { useAppSelector, useAppDispatch } from '../store/hooks';
+import { signedIn, signedOut } from '../store/slices/authSlice';
+import { useEffect } from 'react';
+import { clerkPublishableKey } from '../config/clerk';
+import { useApiBridge } from '../hooks/useApi';
+import { useSignalR } from '../hooks/useSignalR';
+
+function SyncAuthToRedux(){
+  const { isSignedIn, user } = useUser();
+  const dispatch = useAppDispatch();
+  useEffect(()=>{
+    if (isSignedIn && user) {
+      const role = (user.publicMetadata?.role as any) || 'user';
+      dispatch(signedIn({ role, email: user.primaryEmailAddress?.emailAddress || '', name: user.fullName || '' }));
+    } else {
+      dispatch(signedOut());
+    }
+  }, [isSignedIn, user, dispatch]);
+  return null;
+}
+
+function Theming({ children }: { children: React.ReactNode }){
+  const mode = useAppSelector(s=>s.ui.theme);
+  return <ThemeProvider theme={buildTheme(mode)}><CssBaseline />{children}</ThemeProvider>;
+}
+
+function AppGuards({ children }:{ children: React.ReactNode }){
+  useApiBridge();
+  useSignalR();
+  return <>{children}</>;
+}
+
+export default function AppProviders({ children }: { children: React.ReactNode }){
+  return (
+    <ClerkProvider publishableKey={clerkPublishableKey}>
+      <Provider store={store}>
+        <Theming>
+          <SnackbarProvider>
+            <ErrorBoundary>
+              <SignedIn>
+                <AppGuards>
+                  <SyncAuthToRedux />
+                  {children}
+                </AppGuards>
+              </SignedIn>
+              <SignedOut><RedirectToSignIn /></SignedOut>
+            </ErrorBoundary>
+          </SnackbarProvider>
+        </Theming>
+      </Provider>
+    </ClerkProvider>
+  );
+}
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\routes\AdminRoute.tsx
+
+import RequireRole from '../components/auth/RequireRole';
+import React from 'react';
+
+export default function AdminRoute({ children }: { children: React.JSX.Element }) {
+  return <RequireRole role='admin'>{children}</RequireRole>;
+}
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\routes\index.tsx
+
+import { lazy, Suspense } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import AppLayout from '../components/layout/AppLayout';
+import ProtectedRoute from './ProtectedRoute';
+import AdminRoute from './AdminRoute';
+import Spinner from '../components/feedback/Spinner';
+
+const Home = lazy(()=>import('../pages/home/HomePage'));
+const Jobs = lazy(()=>import('../pages/jobs/JobsListPage'));
+const UserDash = lazy(()=>import('../pages/dashboard/UserDashboardPage'));
+const AdminDash = lazy(()=>import('../pages/dashboard/AdminDashboardPage'));
+const Profile = lazy(()=>import('../pages/profile/ProfilePage'));
+const NotFound = lazy(()=>import('../pages/errors/NotFoundPage'));
+const Forbidden = lazy(()=>import('../pages/errors/ForbiddenPage'));
+
+export default function AppRoutes(){
+  return (
+    <AppLayout>
+      <Suspense fallback={<Spinner />}>
+        <Routes>
+          <Route path='/' element={<Home/>} />
+          <Route path='/jobs' element={<ProtectedRoute><Jobs/></ProtectedRoute>} />
+          <Route path='/dashboard' element={<ProtectedRoute><UserDash/></ProtectedRoute>} />
+          <Route path='/admin' element={<ProtectedRoute><AdminRoute><AdminDash/></AdminRoute></ProtectedRoute>} />
+          <Route path='/profile' element={<ProtectedRoute><Profile/></ProtectedRoute>} />
+          <Route path='/403' element={<Forbidden/>} />
+          <Route path='*' element={<NotFound/>} />
+        </Routes>
+      </Suspense>
+    </AppLayout>
+  );
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\routes\ProtectedRoute.tsx
+
+import RequireAuth from '../components/auth/RequireAuth';
+export default RequireAuth;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\store\hooks.ts
+
+import type { TypedUseSelectorHook } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch } from './index';
+import type { RootState } from './rootReducer';
+
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\store\index.ts
+
+import { configureStore } from "@reduxjs/toolkit";
+import { rootReducer } from './rootReducer';
+
+export const store = configureStore({ reducer: rootReducer, devTools: true });
+export type AppDispatch = typeof store.dispatch;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\store\rootReducer.ts
+
+import { combineReducers } from "@reduxjs/toolkit";
+import auth from './slices/authSlice';
+import jobs from './slices/jobsSlice';
+import ui from './slices/uiSlice';
+import errors from './slices/errorSlice';
+import notifications from './slices/notificationsSlice';
+
+export const rootReducer = combineReducers({ auth, jobs, ui, errors, notifications });
+export type RootState = ReturnType<typeof rootReducer>;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\store\selectors.ts
+
+import type { RootState } from './rootReducer';
+export const selectAuth = (s: RootState) => s.auth;
+export const selectJobs = (s: RootState) => s.jobs;
+export const selectUI = (s: RootState) => s.ui;
+export const selectErrors = (s: RootState) => s.errors;
+export const selectNotifications = (s: RootState) => s.notifications;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\store\slices\applicationSlice.ts
+
+export default function reducer(state:any=null){return state}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\store\slices\applicationsSlice.ts
+
+export default function reducer(state:any=null){return state}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\store\slices\authSlice.ts
+
+import { createSlice } from "@reduxjs/toolkit";
+import type { Role } from '../../utils/roles';
+
+interface AuthState { isSignedIn: boolean; role: Role | null; email?: string | null; name?: string | null; }
+const initialState: AuthState = { isSignedIn: false, role: null, email: null, name: null };
+
+const slice = createSlice({
+  name: 'auth',
+  initialState,
+  reducers: {
+    signedIn(s, a: { payload: { role: Role; email?: string; name?: string } }) {
+      s.isSignedIn = true; s.role = a.payload.role; s.email = a.payload.email ?? null; s.name = a.payload.name ?? null;
+    },
+    signedOut(s) { Object.assign(s, initialState); }
+  }
+});
+
+export const { signedIn, signedOut } = slice.actions;
+export default slice.reducer;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\store\slices\errorSlice.ts
+
+import { createSlice } from "@reduxjs/toolkit";
+interface ErrorState { lastError?: string | null; }
+const initial: ErrorState = { lastError: null };
+const slice = createSlice({
+  name: 'errors',
+  initialState: initial,
+  reducers: { setError(s, a: { payload: string | null }) { s.lastError = a.payload; } }
+});
+export const { setError } = slice.actions;
+export default slice.reducer;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\store\slices\jobsSlice.ts
+
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { jobsService } from '../../api/services/jobs';
+import type { Job } from '../../api/types/job';
+import type { Paged } from '../../api/types/common';
+
+interface JobsState { items: Job[]; total: number; loading: boolean; error?: string | null; }
+const initialState: JobsState = { items: [], total: 0, loading: false, error: null };
+
+export const fetchJobs = createAsyncThunk('jobs/list', async (query?: any) => {
+  const res = await jobsService.list(query);
+  return res as Paged<Job>;
+});
+
+const slice = createSlice({
+  name: 'jobs',
+  initialState,
+  reducers: {},
+  extraReducers(builder) {
+    builder
+      .addCase(fetchJobs.pending, (s) => { s.loading = true; s.error = null; })
+      .addCase(fetchJobs.fulfilled, (s, a) => { s.loading = false; s.items = a.payload.items; s.total = a.payload.total; })
+      .addCase(fetchJobs.rejected, (s, a) => { s.loading = false; s.error = (a.error.message || 'Failed to load jobs'); });
+  }
+});
+
+export default slice.reducer;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\store\slices\notificationsSlice.ts
+
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
+import type { Notification } from '../../api/types/notifications';
+
+interface State { items: Notification[]; }
+const initialState: State = { items: [] };
+
+const slice = createSlice({
+  name: 'notifications',
+  initialState,
+  reducers: {
+    addNotification(s, a: PayloadAction<Notification>) { s.items.unshift(a.payload); },
+    markRead(s, a: PayloadAction<string>) { const n = s.items.find(i => i.id === a.payload); if (n) n.read = true; }
+  }
+});
+
+export const { addNotification, markRead } = slice.actions;
+export default slice.reducer;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\store\slices\orgsSlice.ts
+
+export default function reducer(state:any=null){return state}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\store\slices\searchSlice.ts
+
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import dotnetClient from "../../api/clients/dotnet";
+
+export type SearchResult = {
+  id: string;
+  title: string;
+  company?: string;
+  location?: string;
+  postedAt?: string;
+  [key: string]: any;
+};
+
+export type SearchState = {
+  query: string;
+  results: SearchResult[];
+  total: number;
+  status: "idle" | "loading" | "succeeded" | "failed";
+  error?: { code: string; message: string; correlationId?: string };
+  lastFetchedAt?: number;
+};
+
+const initialState: SearchState = {
+  query: "",
+  results: [],
+  total: 0,
+  status: "idle",
+};
+
+export const searchJobs = createAsyncThunk<
+  { items: SearchResult[]; total: number },
+  { q: string; page?: number; pageSize?: number }
+>("search/query", async ({ q, page = 1, pageSize = 20 }, { rejectWithValue }) => {
+  try {
+    const resp = await dotnetClient.get("/search", { params: { q, page, pageSize } });
+    const data = resp.data;
+    const items: SearchResult[] = Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : [];
+    const total: number = typeof data?.total === "number" ? data.total : items.length;
+    return { items, total };
+  } catch (e: any) {
+    // e is ApiError from interceptors.ts (mapAxiosError)
+    return rejectWithValue({
+      code: e.code || "SEARCH_ERROR",
+      message: e.message || "Search failed",
+      correlationId: e.correlationId,
+    });
+  }
+});
+
+const slice = createSlice({
+  name: "search",
+  initialState,
+  reducers: {
+    setQuery(state, action: PayloadAction<string>) {
+      state.query = action.payload;
+    },
+    clear(state) {
+      state.results = [];
+      state.total = 0;
+      state.status = "idle";
+      state.error = undefined;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(searchJobs.pending, (state) => {
+        state.status = "loading";
+        state.error = undefined;
+      })
+      .addCase(searchJobs.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.results = action.payload.items;
+        state.total = action.payload.total;
+        state.lastFetchedAt = Date.now();
+      })
+      .addCase(searchJobs.rejected, (state, action: any) => {
+        state.status = "failed";
+        state.error = action.payload || { code: "SEARCH_ERROR", message: "Search failed" };
+      });
+  },
+});
+
+export const { setQuery, clear } = slice.actions;
+export const searchReducer = slice.reducer;
+export default slice.reducer;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\store\slices\uiSlice.ts
+
+import { createSlice } from "@reduxjs/toolkit";
+
+interface UIState { theme: 'light'|'dark'; globalLoading: boolean; }
+const initialState: UIState = { theme: 'light', globalLoading: false };
+
+const slice = createSlice({
+  name: 'ui',
+  initialState,
+  reducers: {
+    setTheme(s, a: { payload: 'light'|'dark' }) { s.theme = a.payload; },
+    setGlobalLoading(s, a: { payload: boolean }) { s.globalLoading = a.payload; }
+  }
+});
+
+export const { setTheme, setGlobalLoading } = slice.actions;
+export default slice.reducer;
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\store\slices\python\insightsSlice.ts
+
+export default function reducer(state:any=null){return state}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\store\slices\python\recommendationsSlice.ts
+
+export default function reducer(state:any=null){return state}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\store\slices\python\resumeSlice.ts
+
+export default function reducer(state:any=null){return state}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\styles\components.css
+
+/* Reusable utility classes for layout and cards */
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+  max-width: 1200px;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  padding: var(--space-4);
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.text-muted { color: var(--color-text-secondary); }
+
+.btn-primary {
+  display: inline-block;
+  background: var(--color-primary);
+  color: #fff;
+  border: 0;
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  filter: brightness(0.95);
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\styles\globals.css
+
+/* CSS reset and global tweaks */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: var(--color-background);
+  color: var(--color-text);
+  line-height: 1.45;
+}
+
+a { color: var(--color-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+img, svg, video, canvas { max-width: 100%; height: auto; }
+
+:focus-visible {
+  outline: 3px solid color-mix(in oklab, var(--color-primary) 60%, white);
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-outline-strong);
+  border-radius: 8px;
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\styles\theme.css
+
+:root {
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #0e1116;
+    --color-surface: #141922;
+    --color-text: #e5e7eb;
+    --color-text-secondary: #9ca3af;
+    --color-outline: #242a36;
+    --color-outline-strong: #2f3747;
+    --shadow-1: 0 2px 10px rgba(0,0,0,.25);
+  }
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\styles\variables.css
+
+:root {
+  --color-primary: #1976d2;
+  --color-background: #f6f8fb;
+  --color-surface: #ffffff;
+  --color-text: #0f172a;
+  --color-text-secondary: #5b6475;
+  --color-outline: #e5e7eb;
+  --color-outline-strong: #c7cdd9;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+
+  --shadow-1: 0 2px 8px rgba(16,24,40,.08);
+}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\test\setupTests.ts
+
+export {}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\test\__mocks__\handlers.ts
+
+export {}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\test\__mocks__\server.ts
+
+export {}
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\theme\componentsOverrides.ts
+
+import type { Components } from '@mui/material/styles';
+
+export const componentsOverrides: Components = {
+  MuiButton: {
+    styleOverrides: {
+      root: { borderRadius: 12, textTransform: 'none', boxShadow: 'none' }
+    }
+  },
+  MuiAppBar: {
+    styleOverrides: {
+      root: { boxShadow: 'none', borderBottom: '1px solid #eaeff4' }
+    }
+  },
+  MuiPaper: {
+    styleOverrides: { root: { borderRadius: 16 } }
+  }
+};
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\theme\index.ts
+
+import { createTheme } from '@mui/material/styles';
+import { palette } from './palette';
+import { typography } from './typography';
+import { componentsOverrides } from './componentsOverrides';
+
+export const buildTheme = (mode: 'light' | 'dark' = 'light') =>
+  createTheme({
+    palette: { ...palette, mode },
+    typography,
+    components: componentsOverrides
+  });
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\theme\palette.ts
+
+import type { PaletteOptions } from '@mui/material/styles';
+
+export const palette: PaletteOptions = {
+  mode: 'light',
+  primary: { main: '#1976d2' },
+  secondary: { main: '#9c27b0' },
+  background: { default: '#f7f9fc', paper: '#ffffff' }
+};
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\theme\typography.ts
+
+import type { TypographyOptions } from '@mui/material/styles/createTypography';
+
+export const typography: TypographyOptions = {
+  fontFamily: [
+    'Roboto',
+    '-apple-system',
+    'BlinkMacSystemFont',
+    'Segoe UI',
+    'Oxygen',
+    'Ubuntu',
+    'Cantarell',
+    'Helvetica Neue',
+    'sans-serif'
+  ].join(','),
+  h1: { fontSize: '2.2rem', fontWeight: 700 },
+  h2: { fontSize: '1.8rem', fontWeight: 700 },
+  h3: { fontSize: '1.5rem', fontWeight: 700 }
+};
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\utils\constants.ts
+
+export const APP = { name: 'Job Portal', drawerWidth: 260 };
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\utils\correlation.ts
+
+import { v4 as uuid } from 'uuid';
+export const newCorrelationId = () => uuid();
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\utils\dates.ts
+
+import dayjs from 'dayjs';
+export const fmtDate = (d?: string | number | Date) => (d ? dayjs(d).format('YYYY-MM-DD') : '');
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\utils\format.ts
+
+export const truncate = (s: string, n = 100) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
+export const currency = (n: number, code = 'USD') =>
+  new Intl.NumberFormat(undefined, { style: 'currency', currency: code }).format(n);
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\utils\logger.ts
+
+export const log = (...a: unknown[]) => console.log('[JP]', ...a);
+export const warn = (...a: unknown[]) => console.warn('[JP]', ...a);
+export const error = (...a: unknown[]) => console.error('[JP]', ...a);
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\utils\roles.ts
+
+export type Role = 'admin' | 'user';
+export const ROLES: Record<Role, Role> = { admin: 'admin', user: 'user' };
+
+
+
+### FILE: C:\Users\ADMIN\Downloads\Tutorials\DEMO\job-portal-demo\job-portal-web\src\utils\storage.ts
+
+export const storage = {
+  set<T>(k: string, v: T) { localStorage.setItem(k, JSON.stringify(v)); },
+  get<T>(k: string): T | null { const v = localStorage.getItem(k); return v ? JSON.parse(v) as T : null; },
+  del(k: string) { localStorage.removeItem(k); }
+};
+
+
+

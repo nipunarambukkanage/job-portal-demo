@@ -3,22 +3,27 @@ import { useEffect } from "react";
 import { setAuthTokenGetter } from "../api/axios";
 
 /**
- * Hook that registers a token getter with axios once and keeps it fresh.
- * Call this at app bootstrap (e.g., AppProviders) so all API calls carry the Clerk token.
+ * Registers a token getter so all Axios clients include the Clerk JWT.
+ * Call this once near app startup (e.g., in AppProviders).
  */
-export default function useApi() {
-  const { getToken, isSignedIn } = useAuth();
+export function useApiBridge() {
+  const { isLoaded, isSignedIn, getToken } = useAuth();
 
   useEffect(() => {
-    setAuthTokenGetter(async () => {
-      if (!isSignedIn) return null;
+    // Provide a stable async getter to axios; it can be called on every request.
+    const getter = async (): Promise<string | null> => {
+      if (!isLoaded || !isSignedIn) return null;
       try {
-        // If you use a specific JWT template for your backend, set it here:
-        //  - Clerk dashboard -> JWT templates -> e.g. "jobportal-api"
-        return await getToken({ template: "jobportal-api" }).catch(() => getToken());
+        // If you use Clerk JWT templates, set it here; otherwise omit.
+        const token = await getToken();
+        return token ?? null;
       } catch {
         return null;
       }
-    });
-  }, [getToken, isSignedIn]);
+    };
+
+    setAuthTokenGetter(getter);
+  }, [isLoaded, isSignedIn, getToken]);
 }
+
+export default useApiBridge;

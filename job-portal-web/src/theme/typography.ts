@@ -1,6 +1,5 @@
-import { TypographyOptions } from '@mui/material/styles';
-
-export const typography: TypographyOptions = {
+// No type import needed for MUI v7 here; a plain object works with createTheme.
+export const typography = {
   fontFamily: [
     'Roboto',
     '-apple-system',
@@ -10,9 +9,9 @@ export const typography: TypographyOptions = {
     'Ubuntu',
     'Cantarell',
     'Helvetica Neue',
-    'sans-serif'
+    'sans-serif',
   ].join(','),
   h1: { fontSize: '2.2rem', fontWeight: 700 },
   h2: { fontSize: '1.8rem', fontWeight: 700 },
-  h3: { fontSize: '1.5rem', fontWeight: 700 }
+  h3: { fontSize: '1.5rem', fontWeight: 700 },
 };

@@ -1,4 +1,4 @@
-﻿import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn, useUser, useAuth } from '@clerk/clerk-react';
+﻿import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn, useUser } from '@clerk/clerk-react';
 import { Provider } from "react-redux";
 import { store } from '../store';
 import { ThemeProvider, CssBaseline } from '@mui/material';

@@ -2,6 +2,9 @@ import './style.css'
 import typescriptLogo from './typescript.svg'
 import viteLogo from '/vite.svg'
 import { setupCounter } from './counter.ts'
+import reportWebVitals from './lib/webVitals/vitals';
+
+reportWebVitals((m) => console.log(m));
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>

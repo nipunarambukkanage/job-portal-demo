@@ -1,2 +1,6 @@
 import RequireRole from '../components/auth/RequireRole';
-export default function AdminRoute({ children }:{ children: JSX.Element }){ return <RequireRole role='admin'>{children}</RequireRole>; }
+import React from 'react';
+
+export default function AdminRoute({ children }: { children: React.JSX.Element }) {
+  return <RequireRole role='admin'>{children}</RequireRole>;
+}
