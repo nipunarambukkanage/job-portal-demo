@@ -44,16 +44,16 @@ export default function SideNav({
         variant="temporary"
         open={mobileOpen}
         onClose={onClose}
-        sx={{ display: { xs: 'block', md: 'none' } }}
+        sx={{ display: { xs: 'block', md: 'none', top: 70 } }}
       >
         {list}
       </Drawer>
       <Drawer
         variant="permanent"
         sx={{
-          width: { md: 260 },
+          width: { md: 260, top: 70 },
           display: { xs: 'none', md: 'block' },
-          '& .MuiDrawer-paper': { width: 260 },
+          '& .MuiDrawer-paper': { width: 260 , top: 70},
         }}
         open
       >

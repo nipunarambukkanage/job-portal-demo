@@ -5,9 +5,14 @@ import AreaChart from '../../components/charts/AreaChart';
 export default function HomePage() {
   return (
     <Box>
-      <Typography variant="h4" gutterBottom>
-        Welcome to Job Portal
-      </Typography>
+      <Box sx={{ mb: 12 }} flexDirection="column">
+        <Typography variant="h4" gutterBottom>
+          Welcome to Job Portal
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          by Nipuna Rambukkanage
+        </Typography>
+      </Box>
 
       {/* KPIs in a responsive grid */}
       <Box

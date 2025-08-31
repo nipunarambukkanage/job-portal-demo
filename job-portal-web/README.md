@@ -1,4 +1,4 @@
-# Job Portal Web
+# Job Portal Web by Nipuna Rambukkanage
 
 - React + Vite + TypeScript
 - Clerk auth (admin/user roles)
