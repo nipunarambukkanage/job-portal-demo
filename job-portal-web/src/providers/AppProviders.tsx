@@ -1,5 +1,5 @@
 ﻿import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn, useUser } from '@clerk/clerk-react';
-import { Provider } from "react-redux";
+import { Provider } from 'react-redux';
 import { store } from '../store';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { buildTheme } from '../theme';
@@ -12,13 +12,19 @@ import { clerkPublishableKey } from '../config/clerk';
 import { useApiBridge } from '../hooks/useApi';
 import { useSignalR } from '../hooks/useSignalR';
 
-function SyncAuthToRedux(){
+function SyncAuthToRedux() {
   const { isSignedIn, user } = useUser();
   const dispatch = useAppDispatch();
-  useEffect(()=>{
+  useEffect(() => {
     if (isSignedIn && user) {
       const role = (user.publicMetadata?.role as any) || 'user';
-      dispatch(signedIn({ role, email: user.primaryEmailAddress?.emailAddress || '', name: user.fullName || '' }));
+      dispatch(
+        signedIn({
+          role,
+          email: user.primaryEmailAddress?.emailAddress || '',
+          name: user.fullName || '',
+        }),
+      );
     } else {
       dispatch(signedOut());
     }
@@ -26,18 +32,23 @@ function SyncAuthToRedux(){
   return null;
 }
 
-function Theming({ children }: { children: React.ReactNode }){
-  const mode = useAppSelector(s=>s.ui.theme);
-  return <ThemeProvider theme={buildTheme(mode)}><CssBaseline />{children}</ThemeProvider>;
+function Theming({ children }: { children: React.ReactNode }) {
+  const mode = useAppSelector((s) => s.ui.theme);
+  return (
+    <ThemeProvider theme={buildTheme(mode)}>
+      <CssBaseline />
+      {children}
+    </ThemeProvider>
+  );
 }
 
-function AppGuards({ children }:{ children: React.ReactNode }){
+function AppGuards({ children }: { children: React.ReactNode }) {
   useApiBridge();
   useSignalR();
   return <>{children}</>;
 }
 
-export default function AppProviders({ children }: { children: React.ReactNode }){
+export default function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider publishableKey={clerkPublishableKey}>
       <Provider store={store}>
@@ -50,7 +61,9 @@ export default function AppProviders({ children }: { children: React.ReactNode }
                   {children}
                 </AppGuards>
               </SignedIn>
-              <SignedOut><RedirectToSignIn /></SignedOut>
+              <SignedOut>
+                <RedirectToSignIn />
+              </SignedOut>
             </ErrorBoundary>
           </SnackbarProvider>
         </Theming>
