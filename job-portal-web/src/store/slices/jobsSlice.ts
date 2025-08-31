@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+﻿import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { jobsService } from '../../api/services/jobs';
 import type { Job } from '../../api/types/job';
 import type { Paged } from '../../api/types/common';

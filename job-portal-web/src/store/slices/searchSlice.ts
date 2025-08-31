@@ -1,5 +1,5 @@
 ﻿import type { PayloadAction } from '@reduxjs/toolkit';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import dotnetClient from "../../api/clients/dotnet";
 
 export type SearchResult = {

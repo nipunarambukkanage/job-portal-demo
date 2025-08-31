@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+﻿import { createSlice } from "@reduxjs/toolkit";
 import type { Role } from '../../utils/roles';
 
 interface AuthState { isSignedIn: boolean; role: Role | null; email?: string | null; name?: string | null; }

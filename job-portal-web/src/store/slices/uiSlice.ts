@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+﻿import { createSlice } from "@reduxjs/toolkit";
 
 interface UIState { theme: 'light'|'dark'; globalLoading: boolean; }
 const initialState: UIState = { theme: 'light', globalLoading: false };

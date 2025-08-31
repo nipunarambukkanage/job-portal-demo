@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+﻿import { createSlice } from "@reduxjs/toolkit";
 interface ErrorState { lastError?: string | null; }
 const initial: ErrorState = { lastError: null };
 const slice = createSlice({
