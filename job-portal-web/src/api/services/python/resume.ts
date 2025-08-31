@@ -1,8 +1,20 @@
-import { pythonClient } from '../../axios';
-import { post } from '../../client';
-import { py } from '../../endpoints.python';
-import type { ResumeInsight } from '../../types/python/resume';
+﻿import pythonClient from "../../clients/python";
 
-export const resumeService = {
-  analyze: (form: FormData) => post<ResumeInsight[]>(pythonClient(), py.resume.analyze, form)
+export type ResumeInsightsRequest = {
+  userId?: string;
+  resumeUrl?: string;
+  text?: string;
 };
+
+export type ResumeInsight = {
+  key: string;
+  value: string;
+  score?: number;
+};
+
+export async function getResumeInsights(
+  body: ResumeInsightsRequest
+): Promise<ResumeInsight[]> {
+  const { data } = await pythonClient.post("/ai/resume/insights", body);
+  return data as ResumeInsight[];
+}

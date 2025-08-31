@@ -1,26 +1,14 @@
-import axios, { AxiosInstance } from 'axios';
-import { errorMapper } from './errorMapper';
+﻿import axios from "axios";
+import { applyInterceptors } from "./interceptors";
 
-let tokenGetter: (() => Promise<string | null>) | null = null;
-export const setAuthTokenGetter = (fn: () => Promise<string | null>) => { tokenGetter = fn; };
+const baseURL = (import.meta.env.VITE_API_BASE_URL as string) || "";
 
-const withInterceptors = (client: AxiosInstance) => {
-  client.interceptors.request.use(async (config) => {
-    if (tokenGetter) {
-      const t = await tokenGetter();
-      if (t) config.headers = { ...config.headers, Authorization: \Bearer \\ };
-    }
-    return config;
-  });
-  client.interceptors.response.use(
-    (res) => res,
-    (err) => Promise.reject(errorMapper(err))
-  );
-  return client;
-};
+export const api = axios.create({
+  baseURL,
+  timeout: 20_000,
+  withCredentials: true,
+});
 
-export const dotnetClient = () =>
-  withInterceptors(axios.create({ baseURL: import.meta.env.VITE_API_BASE_URL }));
+applyInterceptors(api, { service: "dotnet" });
 
-export const pythonClient = () =>
-  withInterceptors(axios.create({ baseURL: import.meta.env.VITE_PY_API_BASE_URL || '' }));
+export default api;

@@ -1,18 +1,22 @@
-export const ROUTES = {
-  home: '/',
-  search: '/search',
-  jobs: '/jobs',
-  job: (id: string | number) => \/jobs/\\,
-  orgs: '/orgs',
-  applications: '/applications',
-  dashboard: '/dashboard',
-  admin: '/admin',
-  ai: '/ai',
-  profile: '/profile',
-  settings: '/settings',
-  errors: {
-    notFound: '/404',
-    forbidden: '/403',
-    rateLimited: '/429'
-  }
+﻿/**
+ * Client-side routes/path builders.
+ */
+const routes = {
+  home: "/",
+  search: "/search",
+  jobs: "/jobs",
+  job: (id: string | number) => `/jobs/${id}`,
+  orgs: "/orgs",
+  org: (id: string | number) => `/orgs/${id}`,
+  applications: "/applications",
+  application: (id: string | number) => `/applications/${id}`,
+  dashboard: "/dashboard",
+  admin: "/admin",
+  profile: "/profile",
+  settings: "/settings",
+  rateLimited: "/rate-limited",
+  notFound: "*",
 } as const;
+
+export type AppRoutes = typeof routes;
+export default routes;
