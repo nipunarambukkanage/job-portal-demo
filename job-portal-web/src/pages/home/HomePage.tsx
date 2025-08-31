@@ -1,6 +1,5 @@
 ﻿import * as React from "react";
 import { Box, Paper, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid2";
 import KPI from "../../components/charts/KPI";
 import AreaChart from "../../components/charts/AreaChart";
 import { jobsService } from "../../api/services/jobs";
@@ -56,27 +55,28 @@ export default function HomePage() {
       <Typography variant="h4" gutterBottom>
         Welcome to Job Portal
       </Typography>
-      <Grid container spacing={2}>
-        <Grid xs={12} md={4}>
-          <KPI label="Total Jobs" value={kpis.jobs} />
-        </Grid>
-        <Grid xs={12} md={4}>
-          <KPI label="Applications" value={kpis.apps} />
-        </Grid>
-        <Grid xs={12} md={4}>
-          <KPI label="Interviews" value={kpis.interviews} />
-        </Grid>
-        {chart && (
-          <Grid xs={12}>
-            <Paper sx={{ p: 2 }}>
-              <Typography variant="h6" gutterBottom>
-                Activity
-              </Typography>
-              <AreaChart series={chart.series} categories={chart.categories} />
-            </Paper>
-          </Grid>
-        )}
-      </Grid>
+
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" },
+          gap: 2,
+          mb: 2,
+        }}
+      >
+        <KPI label="Total Jobs" value={kpis.jobs} />
+        <KPI label="Applications" value={kpis.apps} />
+        <KPI label="Interviews" value={kpis.interviews} />
+      </Box>
+
+      {chart && (
+        <Paper sx={{ p: 2 }}>
+          <Typography variant="h6" gutterBottom>
+            Activity
+          </Typography>
+          <AreaChart series={chart.series} categories={chart.categories} />
+        </Paper>
+      )}
     </Box>
   );
 }

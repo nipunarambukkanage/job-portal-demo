@@ -1,6 +1,5 @@
 ﻿import * as React from "react";
-import { Paper, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid2";
+import { Box, Paper, Typography } from "@mui/material";
 import KPI from "../../components/charts/KPI";
 import BarChart from "../../components/charts/BarChart";
 import Spinner from "../../components/feedback/Spinner";
@@ -43,26 +42,27 @@ export default function UserDashboardPage() {
   if (loading) return <Spinner />;
 
   return (
-    <Grid container spacing={2}>
-      <Grid xs={12} md={4}>
+    <Box sx={{ display: "grid", gap: 2 }}>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" },
+          gap: 2,
+        }}
+      >
         <KPI label="My Applications" value={kpis.applications} />
-      </Grid>
-      <Grid xs={12} md={4}>
         <KPI label="Interviews" value={kpis.interviews} />
-      </Grid>
-      <Grid xs={12} md={4}>
         <KPI label="Offers" value={kpis.offers} />
-      </Grid>
+      </Box>
+
       {chart && (
-        <Grid xs={12}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              My Application Trend
-            </Typography>
-            <BarChart series={chart.series} categories={chart.categories} />
-          </Paper>
-        </Grid>
+        <Paper sx={{ p: 2 }}>
+          <Typography variant="h6" gutterBottom>
+            My Application Trend
+          </Typography>
+          <BarChart series={chart.series} categories={chart.categories} />
+        </Paper>
       )}
-    </Grid>
+    </Box>
   );
 }

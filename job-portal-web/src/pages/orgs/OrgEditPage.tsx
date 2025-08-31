@@ -1,6 +1,5 @@
 ﻿import * as React from "react";
 import { Box, Paper, Typography, Stack } from "@mui/material";
-import Grid from "@mui/material/Grid2";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -56,14 +55,16 @@ export default function OrgEditPage() {
       </Typography>
       <Paper sx={{ p: 2 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={2}>
-            <Grid xs={12} md={6}>
-              <FormTextField name="name" control={control} label="Name" />
-            </Grid>
-            <Grid xs={12} md={6}>
-              <FormTextField name="website" control={control} label="Website (https://…)" />
-            </Grid>
-          </Grid>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" },
+              gap: 2,
+            }}
+          >
+            <FormTextField name="name" control={control} label="Name" />
+            <FormTextField name="website" control={control} label="Website (https://…)" />
+          </Box>
           <Stack direction="row" justifyContent="flex-end" sx={{ mt: 2 }}>
             <SubmitButton disabled={formState.isSubmitting}>Save</SubmitButton>
           </Stack>

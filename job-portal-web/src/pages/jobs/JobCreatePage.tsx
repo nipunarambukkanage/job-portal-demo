@@ -1,6 +1,4 @@
-﻿import * as React from "react";
-import { Box, Paper, Typography, Stack } from "@mui/material";
-import Grid from "@mui/material/Grid2";
+﻿import { Box, Paper, Typography, Stack } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,26 +47,23 @@ export default function JobCreatePage() {
       </Typography>
       <Paper sx={{ p: 2 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={2}>
-            <Grid xs={12} md={6}>
-              <FormTextField name="title" control={control} label="Title" />
-            </Grid>
-            <Grid xs={12} md={6}>
-              <FormTextField name="company" control={control} label="Company" />
-            </Grid>
-            <Grid xs={12} md={6}>
-              <FormTextField name="location" control={control} label="Location" />
-            </Grid>
-            <Grid xs={12} md={3}>
-              <FormNumber name="salaryMin" control={control} label="Salary Min" />
-            </Grid>
-            <Grid xs={12} md={3}>
-              <FormNumber name="salaryMax" control={control} label="Salary Max" />
-            </Grid>
-            <Grid xs={12}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" },
+              gap: 2,
+            }}
+          >
+            <FormTextField name="title" control={control} label="Title" />
+            <FormTextField name="company" control={control} label="Company" />
+            <FormTextField name="location" control={control} label="Location" />
+            <FormNumber name="salaryMin" control={control} label="Salary Min" />
+            <FormNumber name="salaryMax" control={control} label="Salary Max" />
+            <Box sx={{ gridColumn: "1 / -1" }}>
               <FormRichText name="description" control={control} label="Description" />
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
+
           <Stack direction="row" justifyContent="flex-end" sx={{ mt: 2 }}>
             <SubmitButton disabled={formState.isSubmitting}>Create</SubmitButton>
           </Stack>

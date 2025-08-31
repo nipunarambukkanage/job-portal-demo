@@ -1,6 +1,5 @@
 ﻿import * as React from "react";
 import { Box, Paper, Stack, TextField, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid2";
 import AreaChart from "../../components/charts/AreaChart";
 import { getAiAnalytics, type AnalyticsSeries } from "../../api/services/python/analytics";
 
@@ -34,20 +33,32 @@ export default function AnalyticsInsightsPage() {
       <Typography variant="h5" sx={{ mb: 2 }}>
         Analytics
       </Typography>
+
       <Paper sx={{ p: 2, mb: 2 }}>
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-          <TextField type="date" label="From" InputLabelProps={{ shrink: true }} value={from} onChange={(e) => setFrom(e.target.value)} />
-          <TextField type="date" label="To" InputLabelProps={{ shrink: true }} value={to} onChange={(e) => setTo(e.target.value)} />
+          <TextField
+            type="date"
+            label="From"
+            InputLabelProps={{ shrink: true }}
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+          />
+          <TextField
+            type="date"
+            label="To"
+            InputLabelProps={{ shrink: true }}
+            value={to}
+            onChange={(e) => setTo(e.target.value)}
+          />
         </Stack>
       </Paper>
+
       {chart && (
-        <Grid container spacing={2}>
-          <Grid xs={12}>
-            <Paper sx={{ p: 2 }}>
-              <AreaChart series={chart.series} categories={chart.categories} />
-            </Paper>
-          </Grid>
-        </Grid>
+        <Box sx={{ display: "grid", gridTemplateColumns: "1fr", gap: 2 }}>
+          <Paper sx={{ p: 2 }}>
+            <AreaChart series={chart.series} categories={chart.categories} />
+          </Paper>
+        </Box>
       )}
     </Box>
   );
