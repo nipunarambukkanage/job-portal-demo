@@ -1,22 +1,51 @@
-﻿/**
- * Client-side routes/path builders.
- */
-const routes = {
+﻿export type RoutePath = string | ((...args: any[]) => string);
+
+export const ROUTES = {
   home: "/",
   search: "/search",
-  jobs: "/jobs",
-  job: (id: string | number) => `/jobs/${id}`,
-  orgs: "/orgs",
-  org: (id: string | number) => `/orgs/${id}`,
-  applications: "/applications",
-  application: (id: string | number) => `/applications/${id}`,
-  dashboard: "/dashboard",
-  admin: "/admin",
+
+  jobs: {
+    root: "/jobs",
+    list: "/jobs",
+    create: "/jobs/create",
+    detail: (id: string | number) => `/jobs/${id}`,
+    edit: (id: string | number) => `/jobs/${id}/edit`,
+  },
+
+  orgs: {
+    root: "/orgs",
+    list: "/orgs",
+    create: "/orgs/create",
+    detail: (id: string | number) => `/orgs/${id}`,
+    edit: (id: string | number) => `/orgs/${id}/edit`,
+  },
+
+  applications: {
+    root: "/applications",
+    list: "/applications",
+    detail: (id: string | number) => `/applications/${id}`,
+    status: (id: string | number) => `/applications/${id}/status`,
+  },
+
+  dashboard: {
+    user: "/dashboard",
+    admin: "/admin",
+  },
+
+  ai: {
+    recommendations: "/ai/recommendations",
+    resume: "/ai/resume",
+    analytics: "/ai/analytics",
+  },
+
   profile: "/profile",
   settings: "/settings",
-  rateLimited: "/rate-limited",
-  notFound: "*",
+
+  errors: {
+    notFound: "/404",
+    forbidden: "/403",
+    rateLimited: "/429",
+  },
 } as const;
 
-export type AppRoutes = typeof routes;
-export default routes;
+export default ROUTES;

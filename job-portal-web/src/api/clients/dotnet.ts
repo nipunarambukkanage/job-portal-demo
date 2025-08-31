@@ -1,18 +1,11 @@
-﻿import axios from "axios";
-import { applyInterceptors } from "../interceptors";
+﻿import axios, { type AxiosInstance } from "axios";
 
-const baseURL = (import.meta.env.VITE_API_BASE_URL as string) || "";
-if (!baseURL) {
-  // eslint-disable-next-line no-console
-  console.warn("[dotnetClient] VITE_API_BASE_URL is not set");
-}
+const baseURL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/+$/, "");
 
-export const dotnetClient = axios.create({
+export const dotnetClient: AxiosInstance = axios.create({
   baseURL,
-  timeout: 20_000,
   withCredentials: true,
+  headers: { "Content-Type": "application/json" },
 });
-
-applyInterceptors(dotnetClient, { service: "dotnet" });
 
 export default dotnetClient;

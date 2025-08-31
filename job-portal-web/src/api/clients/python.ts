@@ -1,21 +1,11 @@
-﻿import axios, { AxiosInstance } from "axios";
-import { applyInterceptors } from "../interceptors";
+﻿import axios, { type AxiosInstance } from "axios";
 
-/**
- * Prefer a dedicated Python base URL if provided, otherwise fall back to VITE_API_BASE_URL.
- * In Azure, set VITE_PY_API_BASE_URL to your api-python Container App ingress URL (e.g., https://api-python.<env>.azurecontainerapps.io/api).
- */
-const baseURL =
-  (import.meta.env.VITE_PY_API_BASE_URL as string) ||
-  (import.meta.env.VITE_API_BASE_URL as string) ||
-  "";
+const baseURL = (import.meta.env.VITE_PY_API_BASE_URL ?? "").replace(/\/+$/, "");
 
 export const pythonClient: AxiosInstance = axios.create({
   baseURL,
-  timeout: 20000,
   withCredentials: true,
+  headers: { "Content-Type": "application/json" },
 });
-
-applyInterceptors(pythonClient, { service: "python" });
 
 export default pythonClient;

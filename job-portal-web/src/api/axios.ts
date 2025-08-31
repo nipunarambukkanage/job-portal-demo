@@ -1,14 +1,6 @@
-﻿import axios from "axios";
-import { applyInterceptors } from "./interceptors";
+﻿import dotnetClientDefault, { dotnetClient } from "./clients/dotnet";
+import pythonClientDefault, { pythonClient } from "./clients/python";
 
-const baseURL = (import.meta.env.VITE_API_BASE_URL as string) || "";
+export { dotnetClient, pythonClient };
 
-export const api = axios.create({
-  baseURL,
-  timeout: 20_000,
-  withCredentials: true,
-});
-
-applyInterceptors(api, { service: "dotnet" });
-
-export default api;
+export default dotnetClientDefault;
