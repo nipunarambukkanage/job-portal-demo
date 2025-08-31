@@ -14,7 +14,7 @@ namespace JobPortal.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize] 
+    [Authorize]
     public class OrgsController : ControllerBase
     {
         private readonly IOrganizationRepository _repo;
@@ -28,7 +28,9 @@ namespace JobPortal.Api.Controllers
             _mapper = mapper;
         }
 
+        // Admin creates org metadata (rare; single org portal)
         [HttpPost]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<OrgDto>> Create([FromBody] CreateOrgRequest request, CancellationToken ct)
         {
             if (!ModelState.IsValid) return ValidationProblem(ModelState);
@@ -46,7 +48,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        [AllowAnonymous]
+        [Authorize(Policy = "OrgUser")]
         public async Task<ActionResult<OrgDto>> GetById(Guid id, CancellationToken ct)
         {
             var org = await _repo.GetByIdAsync(id, ct);
@@ -55,7 +57,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(Policy = "OrgUser")]
         public async Task<ActionResult<PagedOrgsResponse>> Search(
             [FromQuery] string? q,
             [FromQuery] string? location,
@@ -84,6 +86,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpPut("{id:guid}")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<OrgDto>> Update(Guid id, [FromBody] UpdateOrgRequest request, CancellationToken ct)
         {
             var org = await _repo.GetByIdAsync(id, ct);
@@ -103,6 +106,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
         {
             var org = await _repo.GetByIdAsync(id, ct);

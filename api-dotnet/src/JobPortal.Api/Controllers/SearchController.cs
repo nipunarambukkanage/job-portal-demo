@@ -13,7 +13,7 @@ namespace JobPortal.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [AllowAnonymous]
+    [Authorize(Policy = "OrgUser")]
     public class SearchController : ControllerBase
     {
         private readonly IJobRepository _jobs;
@@ -86,7 +86,6 @@ namespace JobPortal.Api.Controllers
 
             return Ok(resp);
         }
-
 
         [HttpGet("jobs")]
         public async Task<ActionResult<PagedJobsResponse>> Jobs(

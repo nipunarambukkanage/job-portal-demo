@@ -32,10 +32,26 @@ namespace JobPortal.Infrastructure.Security
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Aggregate((a, b) => $"{a} {b}") ?? null);
 
-        public IEnumerable<string> Roles =>
-            Principal?.FindAll(ClaimTypes.Role).Select(c => c.Value)
-            ?? Principal?.FindAll("roles").Select(c => c.Value)
-            ?? Enumerable.Empty<string>();
+        // Include Clerk's single org role claim "org_role"
+        public IEnumerable<string> Roles
+        {
+            get
+            {
+                var roles = new List<string>();
+
+                if (Principal is not null)
+                {
+                    roles.AddRange(Principal.FindAll(ClaimTypes.Role).Select(c => c.Value));
+                    roles.AddRange(Principal.FindAll("roles").Select(c => c.Value));
+
+                    var orgRole = Principal.FindFirst("org_role")?.Value;
+                    if (!string.IsNullOrWhiteSpace(orgRole))
+                        roles.Add(orgRole);
+                }
+
+                return roles;
+            }
+        }
 
         public Dictionary<string, string[]> Claims =>
             Principal?.Claims

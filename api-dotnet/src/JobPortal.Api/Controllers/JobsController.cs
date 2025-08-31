@@ -28,6 +28,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<JobDto>> Create([FromBody] CreateJobRequest request)
         {
             if (!ModelState.IsValid) return ValidationProblem(ModelState);
@@ -45,6 +46,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpGet("{id:guid}")]
+        [Authorize(Policy = "OrgUser")]
         public async Task<ActionResult<JobDto>> GetById(Guid id)
         {
             var job = await _repo.GetByIdAsync(id);
@@ -52,13 +54,14 @@ namespace JobPortal.Api.Controllers
             return Ok(_mapper.Map<JobDto>(job));
         }
 
+        // Members can browse/search jobs (internal portal)
         [HttpGet]
-        [AllowAnonymous] 
+        [Authorize(Policy = "OrgUser")]
         public async Task<ActionResult<PagedJobsResponse>> Search(
             [FromQuery] string? q,
             [FromQuery] Guid? orgId,
             [FromQuery] string? location,
-            [FromQuery] string? employmentType, 
+            [FromQuery] string? employmentType,
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 20)
         {
@@ -85,6 +88,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpPut("{id:guid}")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<JobDto>> Update(Guid id, [FromBody] UpdateJobRequest request)
         {
             var job = await _repo.GetByIdAsync(id);
@@ -105,6 +109,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var job = await _repo.GetByIdAsync(id);

@@ -31,6 +31,8 @@ services.AddSingleton<ValidationProblemDetailsMapper>();
 
 services.AddControllers(opt => { opt.Filters.Add<ApiExceptionFilter>(); });
 
+
+
 // Swagger
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen(c =>
