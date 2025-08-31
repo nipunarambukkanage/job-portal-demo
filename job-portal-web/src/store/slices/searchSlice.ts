@@ -1,6 +1,6 @@
-﻿import type { PayloadAction } from '@reduxjs/toolkit';
+﻿import type { PayloadAction } from "@reduxjs/toolkit";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import dotnetClient from "../../api/clients/dotnet";
+import { searchService } from "../../api/services/search";
 
 export type SearchResult = {
   id: string;
@@ -32,13 +32,11 @@ export const searchJobs = createAsyncThunk<
   { q: string; page?: number; pageSize?: number }
 >("search/query", async ({ q, page = 1, pageSize = 20 }, { rejectWithValue }) => {
   try {
-    const resp = await dotnetClient.get("/search", { params: { q, page, pageSize } });
-    const data = resp.data;
-    const items: SearchResult[] = Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : [];
-    const total: number = typeof data?.total === "number" ? data.total : items.length;
+    const data = await searchService.search({ q, page, pageSize });
+    const items: SearchResult[] = Array.isArray(data?.items) ? data.items : Array.isArray(data) ? (data as any) : [];
+    const total: number = typeof (data as any)?.total === "number" ? (data as any).total : items.length;
     return { items, total };
   } catch (e: any) {
-    // e is ApiError from interceptors.ts (mapAxiosError)
     return rejectWithValue({
       code: e.code || "SEARCH_ERROR",
       message: e.message || "Search failed",

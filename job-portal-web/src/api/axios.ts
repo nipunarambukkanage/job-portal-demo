@@ -32,7 +32,6 @@ function attachInterceptors(client: AxiosInstance) {
   client.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
       try {
-        // Ensure headers exists without assigning '{}' to a typed field
         let headers: any = config.headers as any;
         if (!headers) {
           (config as any).headers = {};
@@ -65,25 +64,21 @@ function attachInterceptors(client: AxiosInstance) {
 
   client.interceptors.response.use(
     (resp) => resp,
-    (error: AxiosError) => {
-      // Place to normalize .NET/Python API error shapes if desired.
-      return Promise.reject(error);
-    }
+    (error: AxiosError) => Promise.reject(error)
   );
 }
 
 export const dotnetClient: AxiosInstance = axios.create({
-  baseURL: apiBaseUrl,
+  baseURL: apiBaseUrl?.replace(/\/+$/, ""),
   withCredentials: false,
 });
 
 export const pythonClient: AxiosInstance = axios.create({
-  baseURL: pyApiBaseUrl,
+  baseURL: pyApiBaseUrl?.replace(/\/+$/, ""),
   withCredentials: false,
 });
 
 attachInterceptors(dotnetClient);
 attachInterceptors(pythonClient);
 
-// Default export keeps existing imports working if any file uses default.
 export default dotnetClient;

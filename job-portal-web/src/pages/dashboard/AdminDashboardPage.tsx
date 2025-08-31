@@ -1,34 +1,68 @@
-import { Box, Paper, Typography } from '@mui/material';
-import KPI from '../../components/charts/KPI';
-import PieChart from '../../components/charts/PieChart';
+﻿import * as React from "react";
+import { Grid, Paper, Typography } from "@mui/material";
+import KPI from "../../components/charts/KPI";
+import PieChart from "../../components/charts/PieChart";
+import Spinner from "../../components/feedback/Spinner";
+import { jobsService } from "../../api/services/jobs";
+import { applicationsService } from "../../api/services/applications";
 
 export default function AdminDashboardPage() {
-  return (
-    <Box>
-      {/* KPIs in a responsive grid */}
-      <Box
-        sx={{
-          display: 'grid',
-          gap: 2,
-          gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
-          mb: 2,
-        }}
-      >
-        <KPI label="Open Jobs" value={42} />
-        <KPI label="Applicants" value={876} />
-        <KPI label="Hires" value={23} />
-      </Box>
+  const [loading, setLoading] = React.useState(true);
+  const [kpis, setKpis] = React.useState({ openJobs: 0, applicants: 0, hires: 0 });
+  const [pipeline, setPipeline] = React.useState<{ labels: string[]; data: number[] }>();
 
-      {/* Chart */}
-      <Paper sx={{ p: 2 }}>
-        <Typography variant="h6" gutterBottom>
-          Pipeline
-        </Typography>
-        <PieChart
-          labels={['New', 'Review', 'Interview', 'Offer', 'Rejected']}
-          data={[120, 300, 90, 18, 200]}
-        />
-      </Paper>
-    </Box>
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const [jobs, apps, appsOffer, appsAllForPie] = await Promise.all([
+          jobsService.list({ page: 1, pageSize: 1 }),
+          applicationsService.list({ page: 1, pageSize: 1 }),
+          applicationsService.list({ page: 1, pageSize: 1, status: "offer" }),
+          applicationsService.list({ page: 1, pageSize: 100 }),
+        ]);
+
+        setKpis({
+          openJobs: jobs.total,
+          applicants: apps.total,
+          hires: appsOffer.total,
+        });
+
+        const counts: Record<string, number> = {};
+        for (const a of appsAllForPie.items) {
+          counts[a.status] = (counts[a.status] ?? 0) + 1;
+        }
+        const labels = Object.keys(counts);
+        const data = labels.map((l) => counts[l]);
+        setPipeline({ labels, data });
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  if (loading) return <Spinner />;
+
+  return (
+    <Grid container spacing={2}>
+      <Grid item xs={12} md={4}>
+        <KPI label="Open Jobs" value={kpis.openJobs} />
+      </Grid>
+      <Grid item xs={12} md={4}>
+        <KPI label="Applicants" value={kpis.applicants} />
+      </Grid>
+      <Grid item xs={12} md={4}>
+        <KPI label="Hires (Offers)" value={kpis.hires} />
+      </Grid>
+      {pipeline && (
+        <Grid item xs={12}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Pipeline
+            </Typography>
+            <PieChart labels={pipeline.labels} data={pipeline.data} />
+          </Paper>
+        </Grid>
+      )}
+    </Grid>
   );
 }

@@ -1,43 +1,81 @@
-import { Box, Paper, Typography } from '@mui/material';
-import KPI from '../../components/charts/KPI';
-import AreaChart from '../../components/charts/AreaChart';
+﻿import * as React from "react";
+import { Box, Grid, Paper, Typography } from "@mui/material";
+import KPI from "../../components/charts/KPI";
+import AreaChart from "../../components/charts/AreaChart";
+import { jobsService } from "../../api/services/jobs";
+import { applicationsService } from "../../api/services/applications";
+import { getAiAnalytics, type AnalyticsSeries } from "../../api/services/python/analytics";
+import Spinner from "../../components/feedback/Spinner";
+
+function toApex(series: AnalyticsSeries[]) {
+  const categoriesSet = new Set<string>();
+  series.forEach((s) => s.data.forEach((p) => categoriesSet.add(String(p.x))));
+  const categories = Array.from(categoriesSet);
+  const apexSeries = series.map((s) => ({
+    name: s.name,
+    data: categories.map((c) => s.data.find((p) => String(p.x) === c)?.y ?? 0),
+  }));
+  return { categories, series: apexSeries };
+}
 
 export default function HomePage() {
+  const [loading, setLoading] = React.useState(true);
+  const [kpis, setKpis] = React.useState<{ jobs: number; apps: number; interviews: number }>({
+    jobs: 0,
+    apps: 0,
+    interviews: 0,
+  });
+  const [chart, setChart] = React.useState<{ categories: string[]; series: { name: string; data: number[] }[] }>();
+
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const [jobs, appsAll, appsInterview, analytics] = await Promise.all([
+          jobsService.list({ page: 1, pageSize: 1 }),
+          applicationsService.list({ page: 1, pageSize: 1 }),
+          applicationsService.list({ page: 1, pageSize: 1, status: "interview" }),
+          getAiAnalytics({}),
+        ]);
+        setKpis({
+          jobs: jobs.total,
+          apps: appsAll.total,
+          interviews: appsInterview.total,
+        });
+        setChart(toApex(analytics));
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  if (loading) return <Spinner />;
+
   return (
     <Box>
-      <Box sx={{ mb: 12 }} flexDirection="column">
-        <Typography variant="h4" gutterBottom>
-          Welcome to Job Portal
-        </Typography>
-        <Typography variant="h6" gutterBottom>
-          by Nipuna Rambukkanage
-        </Typography>
-      </Box>
-
-      {/* KPIs in a responsive grid */}
-      <Box
-        sx={{
-          display: 'grid',
-          gap: 2,
-          gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
-          mb: 2,
-        }}
-      >
-        <KPI label="Total Jobs" value={128} />
-        <KPI label="Applications" value={312} />
-        <KPI label="Interviews" value={27} />
-      </Box>
-
-      {/* Chart */}
-      <Paper sx={{ p: 2 }}>
-        <Typography variant="h6" gutterBottom>
-          Weekly Views
-        </Typography>
-        <AreaChart
-          series={[{ name: 'Views', data: [10, 20, 35, 30, 50, 65, 80] }]}
-          categories={['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']}
-        />
-      </Paper>
+      <Typography variant="h4" gutterBottom>
+        Welcome to Job Portal
+      </Typography>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={4}>
+          <KPI label="Total Jobs" value={kpis.jobs} />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <KPI label="Applications" value={kpis.apps} />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <KPI label="Interviews" value={kpis.interviews} />
+        </Grid>
+        {chart && (
+          <Grid item xs={12}>
+            <Paper sx={{ p: 2 }}>
+              <Typography variant="h6" gutterBottom>
+                Activity
+              </Typography>
+              <AreaChart series={chart.series} categories={chart.categories} />
+            </Paper>
+          </Grid>
+        )}
+      </Grid>
     </Box>
   );
 }
