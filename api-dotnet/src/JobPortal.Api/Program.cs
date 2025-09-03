@@ -111,8 +111,9 @@ app.UseRouting();
 
 app.UseCors();
 
-app.UseAuthentication();
-app.UseAuthorization();
+//Temporarily stoped authentication for dev purposes
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 app.UseRequestLogging();
 app.UseAppRateLimiting();
