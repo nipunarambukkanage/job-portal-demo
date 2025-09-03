@@ -14,9 +14,9 @@ from app.db.base import Base
 
 
 class UserRole(str, Enum):
-    candidate = "candidate"
-    employer = "employer"
-    admin = "admin"
+    candidate = "org:member"
+    employer = "org:admin"
+    admin = "org:admin"
 
 
 class User(Base):

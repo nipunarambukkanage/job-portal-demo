@@ -16,7 +16,7 @@ async def _get_conn():
 
 # Upsert ranking for all resumes for a job
 @router.post("/jobs/{job_id}/rank", summary="Rank resumes for a job (admin)")
-async def rank_resumes(job_id: str, user=Depends(require_role("admin"))):
+async def rank_resumes(job_id: str, user=Depends(require_role("org:admin"))):
     """
     Simple keyword-based ranker demo:
     - Reads job keywords from jobs table (or metadata), reads resume_features/resumes,
@@ -55,7 +55,7 @@ async def rank_resumes(job_id: str, user=Depends(require_role("admin"))):
         await conn.close()
 
 @router.get("/jobs/{job_id}/rankings", summary="Get current rankings (admin)")
-async def get_rankings(job_id: str, user=Depends(require_role("admin"))):
+async def get_rankings(job_id: str, user=Depends(require_role("org:admin"))):
     conn = await _get_conn()
     try:
         rows = await conn.fetch("""

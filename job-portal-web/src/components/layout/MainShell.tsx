@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import AppHeader from './AppHeader';
 import SideNav from './SideNav';
 
 export default function MainShell({ children }: { children: React.ReactNode }) {
@@ -8,7 +7,6 @@ export default function MainShell({ children }: { children: React.ReactNode }) {
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
       <SideNav />
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <AppHeader />
         <Box component="main" sx={{ p: 2, flex: 1 }}>
           {children}
         </Box>

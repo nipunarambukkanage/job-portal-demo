@@ -10,5 +10,5 @@ async def me(user=Depends(require_org_member)):
 
 # Admin can view any candidate profile
 @router.get("/{candidate_id}", summary="Get candidate")
-async def get_candidate(candidate_id: str, user=Depends(require_role("admin"))):
+async def get_candidate(candidate_id: str, user=Depends(require_role("org:admin"))):
     return {"id": candidate_id, "skills": [], "experience": []}

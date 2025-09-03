@@ -43,7 +43,9 @@ export default function Profile() {
 
   if (!user) return null;
 
-  const userRole = (user.publicMetadata?.role as string) || 'User';
+  console.log('User profile*********************:', user);
+
+  const userRole = (user.organizationMemberships[0]?.roleName as string) || 'User';
   const userName = user.fullName || 'User';
   const userInitials =
     user.fullName

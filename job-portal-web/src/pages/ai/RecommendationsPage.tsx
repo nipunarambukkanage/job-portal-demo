@@ -11,12 +11,14 @@ import TextField from "@mui/material/TextField";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import {
-  CandidateProfile,
-  Job,
+  // CandidateProfile,
+  // Job,
   getCandidateMe,
   listJobs,
   getJobCandidates,
   overlapScore,
+  type CandidateProfile,
+  type Job,
 } from "../../api/services/ai";
 
 /**
@@ -26,8 +28,8 @@ import {
  */
 export default function RecommendationsPage() {
   const { user } = useUser();
-  const role = (user?.publicMetadata as any)?.role ?? "candidate"; // "admin" | "employer" | "candidate"
-  const isEmployer = role === "employer" || role === "admin";
+  const role = (user?.publicMetadata as any)?.role ?? "org:member"; // "admin" | "employer" | "candidate"
+  const isEmployer = role === "org:admin";
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

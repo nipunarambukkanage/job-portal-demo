@@ -1,22 +1,22 @@
-﻿import * as React from "react";
-import { NavLink } from "react-router-dom";
-import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import Divider from "@mui/material/Divider";
-import WorkIcon from "@mui/icons-material/Work";
-import AddIcon from "@mui/icons-material/Add";
-import GroupIcon from "@mui/icons-material/Group";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import StarIcon from "@mui/icons-material/Star";
-import InsightsIcon from "@mui/icons-material/Insights";
-import SearchIcon from "@mui/icons-material/Search";
-import DescriptionIcon from "@mui/icons-material/Description";
-import useRole from "../../hooks/useRole";
-import ROUTES from "../../config/routes"; // routes object exists already
+﻿import * as React from 'react';
+import { NavLink } from 'react-router-dom';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
+import WorkIcon from '@mui/icons-material/Work';
+import AddIcon from '@mui/icons-material/Add';
+import GroupIcon from '@mui/icons-material/Group';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import StarIcon from '@mui/icons-material/Star';
+import InsightsIcon from '@mui/icons-material/Insights';
+import SearchIcon from '@mui/icons-material/Search';
+import DescriptionIcon from '@mui/icons-material/Description';
+import useRole from '../../hooks/useRole';
+import ROUTES from '../../config/routes'; // routes object exists already
 // (ROUTES jobs/applications/ai etc.) :contentReference[oaicite:8]{index=8}
 
 const width = 240;
@@ -37,24 +37,42 @@ export default function SideNav() {
     <Drawer
       open
       variant="permanent"
-      PaperProps={{ sx: { position: "relative", width, borderRight: "1px solid #eee", top: 70 } }}
+      PaperProps={{
+        sx: {
+          position: 'relative',
+          width,
+          borderRight: '1px solid #eee',
+          top: 70,
+          height: 'calc(100% - 90px)',
+        },
+      }}
     >
-      <List sx={{ pt: 2 }}>
-        <LinkItem to={ROUTES.search} icon={<SearchIcon />} label="Search Jobs" />
-        <LinkItem to={ROUTES.jobs.list} icon={<WorkIcon />} label="All Jobs" />
-        <LinkItem to={ROUTES.ai.recommendations} icon={<InsightsIcon />} label="Recommendations" />
-        <LinkItem to={ROUTES.applications.list} icon={<DescriptionIcon />} label="My Applications" />
-        <LinkItem to={ROUTES.dashboard.user} icon={<BarChartIcon />} label="My Analytics" />
-        <LinkItem to="/stars" icon={<StarIcon />} label="Starred Jobs" />
-      </List>
-
-      {role === "admin" && (
+      {role === 'org:admin' && (
         <>
-          <Divider sx={{ my: 1 }} />
-          <List subheader={<li style={{ padding: "8px 16px", fontWeight: 600 }}>Admin</li> as any}>
+          <List>
+            <LinkItem
+              to={ROUTES.ai.recommendations}
+              icon={<InsightsIcon />}
+              label="Recommendations"
+            />
             <LinkItem to={ROUTES.jobs.create} icon={<AddIcon />} label="Create Job" />
             <LinkItem to={ROUTES.applications.list} icon={<GroupIcon />} label="Applicants" />
             <LinkItem to={ROUTES.dashboard.admin} icon={<BarChartIcon />} label="Admin Analytics" />
+          </List>
+        </>
+      )}
+      {role === 'org:member' && (
+        <>
+          <List sx={{ pt: 2 }}>
+            <LinkItem to={ROUTES.search} icon={<SearchIcon />} label="Search Jobs" />
+            <LinkItem to={ROUTES.jobs.list} icon={<WorkIcon />} label="All Jobs" />
+            <LinkItem
+              to={ROUTES.applications.list}
+              icon={<DescriptionIcon />}
+              label="My Applications"
+            />
+            <LinkItem to={ROUTES.dashboard.user} icon={<BarChartIcon />} label="My Analytics" />
+            {/* <LinkItem to="/stars" icon={<StarIcon />} label="Starred Jobs" /> */}
           </List>
         </>
       )}
