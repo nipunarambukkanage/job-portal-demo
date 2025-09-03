@@ -13,7 +13,14 @@ namespace JobPortal.Api.Configuration
         public static IServiceCollection AddAppAuthentication(this IServiceCollection services, IConfiguration config)
         {
             var issuer = config["Clerk:Issuer"] ?? "https://trusted-swan-44.clerk.accounts.dev";
-            var audience = config["Clerk:Audience"] ?? "jobportal-api";
+
+            var validAudiences = new[]
+            {
+                config["Clerk:Audience"] ?? "jobportal-api",
+                "http://localhost:5173",
+                "https://jobportal.nipunarambukkanage.dev"
+            };
+
             var skewStr = config["Clerk:ClockSkewSeconds"];
             var clockSkew = TimeSpan.FromSeconds(int.TryParse(skewStr, out var s) ? s : 5);
 
@@ -21,25 +28,37 @@ namespace JobPortal.Api.Configuration
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    // Clerk OpenID issuer
                     options.Authority = issuer;
-                    options.Audience = audience;
-
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
                         ValidIssuer = issuer,
 
                         ValidateAudience = true,
-                        ValidAudience = audience,
+                        ValidAudiences = validAudiences,
 
                         ValidateIssuerSigningKey = true,
                         ValidateLifetime = true,
                         ClockSkew = clockSkew,
 
-                        // map Clerk custom claims
+                        // Map Clerk custom claims
                         NameClaimType = "sub",
                         RoleClaimType = "org_role"
+                    };
+
+                    // For development/debugging
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+                            return Task.CompletedTask;
+                        },
+                        OnTokenValidated = context =>
+                        {
+                            Console.WriteLine("Token validated successfully");
+                            return Task.CompletedTask;
+                        }
                     };
                 });
 
@@ -77,7 +96,6 @@ namespace JobPortal.Api.Configuration
         }
     }
 
-    // Require user to belong to the configured Clerk organization (if set).
     public sealed class SameOrgRequirement : IAuthorizationRequirement { }
 
     public sealed class SameOrgHandler : AuthorizationHandler<SameOrgRequirement>
@@ -88,8 +106,7 @@ namespace JobPortal.Api.Configuration
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, SameOrgRequirement requirement)
         {
             var tokenOrg = context.User.FindFirst("org_id")?.Value;
-            // Prefer appsettings: Clerk:OrgId; allow env override CLERK_ORG_ID
-            var requiredOrg = "org_324HWYiVx3PUVVPyHsjwOaOWSDl"; //TODO; Move to env variables. This is only for testing purposes
+            var requiredOrg = _config["Clerk:OrgId"] ?? "org_324HWYiVx3PUVVPyHsjwOaOWSDl";
 
             if (!string.IsNullOrWhiteSpace(tokenOrg) &&
                 (string.IsNullOrWhiteSpace(requiredOrg) || string.Equals(tokenOrg, requiredOrg, StringComparison.Ordinal)))

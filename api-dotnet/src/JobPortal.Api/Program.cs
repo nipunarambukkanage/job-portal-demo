@@ -20,6 +20,12 @@ var config = builder.Configuration;
 var env = builder.Environment;
 var services = builder.Services;
 
+// Configuration
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+    .AddEnvironmentVariables();
+
 // Logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -30,8 +36,6 @@ services.AddScoped<ApiExceptionFilter>();
 services.AddSingleton<ValidationProblemDetailsMapper>();
 
 services.AddControllers(opt => { opt.Filters.Add<ApiExceptionFilter>(); });
-
-
 
 // Swagger
 services.AddEndpointsApiExplorer();
@@ -62,10 +66,10 @@ services.AddSwaggerGen(c =>
 });
 
 // CORS
+var corsOrigins = config.GetSection("Cors:Origins").Get<string[]>() ?? new[] { "http://localhost:5173", "https://jobportal.nipunarambukkanage.dev" };
 services.AddCors(o => o.AddDefaultPolicy(p =>
 {
-    var origins = config.GetSection("Cors:Origins").Get<string[]>() ?? new[] { "http://localhost:5173" };
-    p.WithOrigins(origins)
+    p.WithOrigins(corsOrigins)
      .AllowAnyHeader()
      .AllowAnyMethod()
      .AllowCredentials();
@@ -97,11 +101,11 @@ var app = builder.Build();
 app.UseCorrelationId();
 
 
-app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "JobPortal API v1");
-});
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "JobPortal API v1");
+    });
 
 app.UseRouting();
 
