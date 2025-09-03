@@ -55,11 +55,9 @@ export default function AppProviders({ children }: { children: React.ReactNode }
         <Theming>
           <SnackbarProvider>
             <ErrorBoundary>
+              <SyncAuthToRedux />
               <SignedIn>
-                <AppGuards>
-                  <SyncAuthToRedux />
-                  {children}
-                </AppGuards>
+                <AppGuards>{children}</AppGuards>
               </SignedIn>
               <SignedOut>
                 <RedirectToSignIn />

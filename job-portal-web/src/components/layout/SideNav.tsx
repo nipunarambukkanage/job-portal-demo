@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { NavLink } from "react-router-dom";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -37,7 +37,7 @@ export default function SideNav() {
     <Drawer
       open
       variant="permanent"
-      PaperProps={{ sx: { position: "relative", width, borderRight: "1px solid #eee" } }}
+      PaperProps={{ sx: { position: "relative", width, borderRight: "1px solid #eee", top: 70 } }}
     >
       <List sx={{ pt: 2 }}>
         <LinkItem to={ROUTES.search} icon={<SearchIcon />} label="Search Jobs" />

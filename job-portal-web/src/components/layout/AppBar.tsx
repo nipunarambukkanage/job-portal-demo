@@ -1,7 +1,8 @@
 import { AppBar as MAppBar, Toolbar, IconButton, Typography, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import Profile from './Profile';
 
-export default function AppBar({ onMenu }: { onMenu: ()=>void }) {
+export default function AppBar({ onMenu }: { onMenu: () => void }) {
   return (
     <MAppBar position='fixed' color='inherit'>
       <Toolbar>
@@ -9,7 +10,9 @@ export default function AppBar({ onMenu }: { onMenu: ()=>void }) {
           <MenuIcon />
         </IconButton>
         <Typography variant='h6' sx={{ flexGrow: 1 }}>Job Portal</Typography>
-        <Box />
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Profile />
+        </Box>
       </Toolbar>
     </MAppBar>
   );
