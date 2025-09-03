@@ -28,7 +28,7 @@ import {
  */
 export default function RecommendationsPage() {
   const { user } = useUser();
-  const role = (user?.publicMetadata as any)?.role ?? "org:member"; // "admin" | "employer" | "candidate"
+  const role = (user?.organizationMemberships[0]?.role as any)?.role ?? "org:member";
   const isEmployer = role === "org:admin";
 
   const [loading, setLoading] = useState(true);

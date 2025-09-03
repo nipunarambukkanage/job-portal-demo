@@ -24,7 +24,7 @@ type FormValues = z.infer<typeof schema>;
 export default function JobCreatePage() {
   const { control, handleSubmit, formState } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { title: "", company: "", location: "", salaryMin: undefined, salaryMax: undefined, description: "" },
+    defaultValues: { title: "", company: "Nipuna Rambukkanage (Pvt) Ltd", location: "", salaryMin: undefined, salaryMax: undefined, description: "" },
   });
   const nav = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
@@ -55,7 +55,6 @@ export default function JobCreatePage() {
             }}
           >
             <FormTextField name="title" control={control} label="Title" />
-            <FormTextField name="company" control={control} label="Company" />
             <FormTextField name="location" control={control} label="Location" />
             <FormNumber name="salaryMin" control={control} label="Salary Min" />
             <FormNumber name="salaryMax" control={control} label="Salary Max" />

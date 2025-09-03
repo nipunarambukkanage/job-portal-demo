@@ -55,9 +55,10 @@ export default function SideNav() {
               icon={<InsightsIcon />}
               label="Recommendations"
             />
+            <LinkItem to={ROUTES.search} icon={<SearchIcon />} label="Jobs" />
             <LinkItem to={ROUTES.jobs.create} icon={<AddIcon />} label="Create Job" />
             <LinkItem to={ROUTES.applications.list} icon={<GroupIcon />} label="Applicants" />
-            <LinkItem to={ROUTES.dashboard.admin} icon={<BarChartIcon />} label="Admin Analytics" />
+            <LinkItem to={ROUTES.ai.analytics} icon={<BarChartIcon />} label="Admin Analytics" />
           </List>
         </>
       )}
@@ -71,7 +72,7 @@ export default function SideNav() {
               icon={<DescriptionIcon />}
               label="My Applications"
             />
-            <LinkItem to={ROUTES.dashboard.user} icon={<BarChartIcon />} label="My Analytics" />
+            <LinkItem to={ROUTES.ai.analytics} icon={<BarChartIcon />} label="My Analytics" />
             {/* <LinkItem to="/stars" icon={<StarIcon />} label="Starred Jobs" /> */}
           </List>
         </>

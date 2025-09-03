@@ -1,2 +1,2 @@
-export type Role = 'admin' | 'user';
-export const ROLES: Record<Role, Role> = { admin: 'admin', user: 'user' };
+export type Role = 'org:admin' | 'org:member';
+export const ROLES: Record<Role, Role> = { 'org:admin': 'org:admin', 'org:member': 'org:member' };

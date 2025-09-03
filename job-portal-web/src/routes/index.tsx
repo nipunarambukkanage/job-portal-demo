@@ -4,6 +4,7 @@ import AppLayout from "../components/layout/AppLayout";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "./AdminRoute";
 import Spinner from "../components/feedback/Spinner";
+import AnalyticsInsightsPage from "../pages/ai/AnalyticsInsightsPage";
 
 const Home = lazy(() => import("../pages/home/HomePage"));
 const Jobs = lazy(() => import("../pages/jobs/JobsListPage"));

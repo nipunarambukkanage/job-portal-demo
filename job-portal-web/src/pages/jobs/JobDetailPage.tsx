@@ -12,7 +12,7 @@ export default function JobDetailPage() {
   const [job, setJob] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
   const { user } = useUser();
-  const role = ((user?.publicMetadata?.role as string) || "user") as "admin" | "user";
+  const role = ((user?.organizationMemberships[0]?.role as string) || "org:member") as "org:admin" | "org:member";
   const { enqueueSnackbar } = useSnackbar();
 
   React.useEffect(() => {
@@ -39,7 +39,7 @@ export default function JobDetailPage() {
     <Box>
       <Stack direction="row" justifyContent="space-between" sx={{ mb: 2 }}>
         <Typography variant="h5">{job.title}</Typography>
-        {role === "admin" && (
+        {role === "org:admin" && (
           <Button component={RouterLink} to={`/jobs/${job.id}/edit`} variant="outlined">
             Edit
           </Button>
@@ -57,7 +57,7 @@ export default function JobDetailPage() {
         <Typography sx={{ mt: 2, whiteSpace: "pre-wrap" }}>{job.description}</Typography>
 
         <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
-          {role === "user" && (
+          {role === "org:member" && (
             <Button variant="contained" onClick={onApply}>
               Apply
             </Button>

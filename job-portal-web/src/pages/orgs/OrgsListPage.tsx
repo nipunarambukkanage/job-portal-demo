@@ -14,7 +14,7 @@ export default function OrgsListPage() {
   const [page, setPage] = React.useState(1);
   const pageSize = 20;
   const { user } = useUser();
-  const role = ((user?.publicMetadata?.role as string) || "user") as "admin" | "user";
+  const role = ((user?.organizationMemberships[0]?.role as string) || "org:member") as "org:admin" | "org:member";
 
   React.useEffect(() => {
     (async () => {
@@ -35,7 +35,7 @@ export default function OrgsListPage() {
     <Box>
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
         <Typography variant="h5">Organizations</Typography>
-        {role === "admin" && (
+        {role === "org:admin" && (
           <Button component={Link} to="/orgs/create" variant="contained">
             New Organization
           </Button>
@@ -56,7 +56,7 @@ export default function OrgsListPage() {
               </Button>
             ),
           },
-          ...(role === "admin"
+          ...(role === "org:admin"
             ? [
                 {
                   key: "edit",

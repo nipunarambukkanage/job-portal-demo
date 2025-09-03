@@ -47,7 +47,7 @@ export default function Profile() {
   console.log('User profile*********************:', user);
 
   const userRole = (user.organizationMemberships[0]?.roleName as string) || 'User';
-  const userName = user.fullName || 'User';
+  const userName = user.fullName || 'Job Portal User';
   const userInitials =
     user.fullName
       ?.split(' ')

@@ -17,7 +17,7 @@ function SyncAuthToRedux() {
   const dispatch = useAppDispatch();
   useEffect(() => {
     if (isSignedIn && user) {
-      const role = (user.publicMetadata?.role as any) || 'user';
+      const role = (user?.organizationMemberships[0]?.role as any) || 'org:member';
       dispatch(
         signedIn({
           role,

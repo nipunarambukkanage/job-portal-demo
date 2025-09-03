@@ -10,7 +10,7 @@ export default function OrgDetailPage() {
   const [org, setOrg] = React.useState<any>();
   const [loading, setLoading] = React.useState(true);
   const { user } = useUser();
-  const role = ((user?.publicMetadata?.role as string) || "user") as "admin" | "user";
+  const role = ((user?.organizationMemberships[0]?.role as string) || "org:member") as "org:admin" | "org:member";
 
   React.useEffect(() => {
     (async () => {
@@ -30,7 +30,7 @@ export default function OrgDetailPage() {
     <Box>
       <Stack direction="row" justifyContent="space-between" sx={{ mb: 2 }}>
         <Typography variant="h5">{org.name}</Typography>
-        {role === "admin" && (
+        {role === "org:admin" && (
           <Button component={RouterLink} to={`/orgs/${org.id}/edit`} variant="outlined">
             Edit
           </Button>
