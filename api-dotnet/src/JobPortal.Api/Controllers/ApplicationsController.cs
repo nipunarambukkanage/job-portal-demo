@@ -13,7 +13,7 @@ namespace JobPortal.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     public class ApplicationsController : ControllerBase
     {
         private readonly IApplicationRepository _repo;

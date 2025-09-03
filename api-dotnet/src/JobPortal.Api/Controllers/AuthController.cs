@@ -19,7 +19,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpGet("me")]
-        [Authorize]
+        //[Authorize]
         public ActionResult<CurrentUserDto> Me()
         {
             if (!_current.IsAuthenticated)
@@ -36,7 +36,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpGet("claims")]
-        [Authorize]
+        //[Authorize]
         public ActionResult<object> Claims()
         {
             var claims = User.Claims
