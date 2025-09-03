@@ -1,79 +1,96 @@
-﻿import * as React from "react";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { fetchJobs } from "../../store/slices/jobsSlice";
-import DataTable from "../../components/tables/DataTable";
-import Spinner from "../../components/feedback/Spinner";
-import { Box, Button, Typography, Stack, TextField } from "@mui/material";
-import { Link } from "react-router-dom";
-import Pagination from "../../components/tables/Pagination";
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardActions from "@mui/material/CardActions";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import StarIcon from "@mui/icons-material/Star";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { useUser } from "@clerk/clerk-react";
+import type { Job } from "../../api/types/job";
+import { listStarred, addStar, removeStar } from "../../api/python/starred";
+import ROUTES from "../../config/routes";
 
 export default function JobsListPage() {
-  const dispatch = useAppDispatch();
-  const { items, loading, total } = useAppSelector((s) => s.jobs);
-  const [page, setPage] = React.useState(1);
-  const pageSize = 20;
-  const [q, setQ] = React.useState("");
-  const { user } = useUser();
-  const role = ((user?.publicMetadata?.role as string) || "user") as "admin" | "user";
+  const { isSignedIn } = useUser();
+  const [jobs, setJobs] = React.useState<Job[]>([]);
+  const [stars, setStars] = React.useState<string[]>([]);
+  const [dropping, setDropping] = React.useState(false);
 
   React.useEffect(() => {
-    dispatch(fetchJobs({ page, pageSize, q }));
-  }, [dispatch, page, q]);
+    // TODO: replace with your .NET GET /api/jobs list once wired
+    (async () => {
+      const resp = await fetch("/mock/jobs.json").catch(() => null);
+      const items: Job[] = resp ? await resp.json() : [];
+      setJobs(items);
+    })();
+  }, []);
 
-  if (loading) return <Spinner />;
+  React.useEffect(() => {
+    if (!isSignedIn) return;
+    listStarred().then(setStars).catch(() => {});
+  }, [isSignedIn]);
+
+  const toggleStar = async (jobId: string) => {
+    try {
+      if (stars.includes(jobId)) {
+        await removeStar(jobId);
+        setStars(s => s.filter(x => x !== jobId));
+      } else {
+        await addStar(jobId);
+        setStars(s => [...s, jobId]);
+      }
+    } catch {}
+  };
+
+  const onDropFile = async (file: File) => {
+    // TODO: Post to Python /v1/resumes/ingest with file (already exists in your API)
+    console.log("Upload CV", file.name);
+  };
 
   return (
-    <Box>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
-        <Typography variant="h5">Jobs</Typography>
-        <Stack direction="row" spacing={1}>
-          <TextField
-            size="small"
-            placeholder="Search jobs…"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-          />
-          {role === "admin" && (
-            <Button component={Link} to="/jobs/create" variant="contained">
-              Post Job
-            </Button>
-          )}
-        </Stack>
-      </Stack>
+    <Stack spacing={2}>
+      {jobs.map((j) => (
+        <Card key={j.id} variant="outlined">
+          <CardContent>
+            <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={2}>
+              <Box>
+                <Typography variant="h6">{j.title}</Typography>
+                <Typography variant="body2" color="text.secondary">{j.company} � {j.location}</Typography>
+              </Box>
+              <IconButton onClick={() => toggleStar(j.id)} aria-label="star">
+                {stars.includes(j.id) ? <StarIcon /> : <StarBorderIcon />}
+              </IconButton>
+            </Stack>
 
-      <DataTable
-        rows={items}
-        columns={[
-          { key: "title", header: "Title" },
-          { key: "company", header: "Company" },
-          { key: "location", header: "Location" },
-          {
-            key: "id",
-            header: "Open",
-            render: (r) => (
-              <Button component={Link} to={"/jobs/" + r.id} size="small" variant="outlined">
-                Open
-              </Button>
-            ),
-          },
-          ...(role === "admin"
-            ? [
-                {
-                  key: "edit",
-                  header: "Edit",
-                  render: (r: any) => (
-                    <Button component={Link} to={"/jobs/" + r.id + "/edit"} size="small">
-                      Edit
-                    </Button>
-                  ),
-                },
-              ]
-            : []),
-        ]}
-      />
-
-      <Pagination page={page} pageSize={pageSize} total={total} onChange={setPage} />
-    </Box>
+            {/* Drag & drop area */}
+            <Box
+              onDragOver={(e) => { e.preventDefault(); setDropping(true); }}
+              onDragLeave={() => setDropping(false)}
+              onDrop={(e) => {
+                e.preventDefault(); setDropping(false);
+                const f = e.dataTransfer.files?.[0]; if (f) onDropFile(f);
+              }}
+              sx={{
+                mt: 2, p: 2, border: "1px dashed",
+                borderColor: dropping ? "primary.main" : "divider",
+                borderRadius: 2, textAlign: "center",
+              }}
+            >
+              <UploadFileIcon />
+              <Typography variant="body2">Drag & drop your CV here to compare & get recommendations</Typography>
+            </Box>
+          </CardContent>
+          <CardActions>
+            <Button variant="outlined" href={ROUTES.applications.list}>Compare with applicants</Button>
+            <Button variant="contained" href={ROUTES.ai.recommendations}>See job matches</Button>
+          </CardActions>
+        </Card>
+      ))}
+    </Stack>
   );
 }
