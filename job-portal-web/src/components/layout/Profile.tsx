@@ -9,6 +9,7 @@ import {
   ListItemIcon,
   ListItemText,
   ButtonBase,
+  Chip,
 } from '@mui/material';
 import {
   Person as ProfileIcon,
@@ -61,10 +62,13 @@ export default function Profile() {
         onClick={handleOpenMenu}
         sx={{
           display: 'flex',
-          alignItems: 'center',
-          gap: 2,
-          p: 1,
-          borderRadius: 3,
+          alignItems: 'left',
+          gap: 1,
+          pt: 0.5,
+          pb: 0.5,
+          pl: 1,
+          pr: 3,
+          borderRadius: 10,
           border: '1px solid',
           borderColor: 'divider',
           backgroundColor: 'background.paper',
@@ -89,9 +93,13 @@ export default function Profile() {
           <Typography variant="subtitle2" sx={{ lineHeight: 1.2, fontWeight: 600 }}>
             {userName}
           </Typography>
-          <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.2 }}>
-            {userRole}
-          </Typography>
+          <Chip
+            label={userRole === 'Admin' ? 'Admin' : 'Member'}
+            variant="outlined"
+            color={userRole === 'Admin' ? 'secondary' : 'default'}
+            size="small"
+            sx={{ mt: 0.5, p: -1, fontWeight: 400, fontSize: '0.55rem' }}
+          />
         </Box>
       </ButtonBase>
 

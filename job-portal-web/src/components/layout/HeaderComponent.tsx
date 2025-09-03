@@ -7,10 +7,9 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import Divider from '@mui/material/Divider';
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
+import { SignedIn, SignedOut, SignInButton } from '@clerk/clerk-react';
 import useRole from '../../hooks/useRole';
 import MenuIcon from '@mui/icons-material/Menu';
-
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -19,19 +18,26 @@ import '@fontsource/space-grotesk/700.css';
 import '@fontsource/dm-sans/400.css';
 import Profile from './Profile';
 
-export default function HeaderComponent({ onMenu }: { onMenu: () => void }) {
+type Props = {
+  onMenu: () => void;
+};
+
+export default function HeaderComponent({ onMenu }: Props) {
   const role = useRole();
 
-  console.log('Role in header***************:', role);
-
   return (
-    <AppBar position="static" elevation={0} color="transparent">
+    <AppBar position="fixed" color="inherit">
       <Toolbar>
-        <IconButton edge='start' onClick={onMenu} sx={{ mr: 2, display: { md: 'none' } }}>
-          <MenuIcon />
-        </IconButton>
-        {/* Left: Title */}
-        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'baseline' }}>
+          <IconButton
+            edge="start"
+            onClick={onMenu}
+            aria-label="Open menu"
+            sx={{ display: { md: 'none' } }}
+          >
+            <MenuIcon />
+          </IconButton>
+
           <Typography
             variant="h5"
             sx={{ fontFamily: "'Space Grotesk', sans-serif", letterSpacing: 0.5 }}
@@ -40,51 +46,39 @@ export default function HeaderComponent({ onMenu }: { onMenu: () => void }) {
           </Typography>
           <Typography
             variant="subtitle2"
-            sx={{ fontFamily: "'DM Sans', sans-serif", opacity: 0.8 }}
+            sx={{ fontFamily: "'DM Sans', sans-serif", opacity: 0.8, ml: 1 }}
           >
             by Nipuna Rambukkanage
           </Typography>
         </Box>
 
+        <Box sx={{ flexGrow: 1 }} />
+
         <Stack direction="row" spacing={1} alignItems="center">
           <SignedIn>
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ mr: 2 }}>
-              <IconButton disabled sx={{ color: 'text.secondary', mx: 0.5 }}>
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ mr: 1 }}>
+              <IconButton aria-label="Mail" disabled sx={{ color: 'text.secondary' }}>
                 <MailOutlineIcon fontSize="small" />
               </IconButton>
 
-              <Divider
-                orientation="vertical"
-                flexItem
-                sx={{ mx: 0.5, height: 24, alignSelf: 'center' }}
-              />
+              <Divider orientation="vertical" flexItem sx={{ height: 24 }} />
 
-              <IconButton disabled sx={{ color: 'text.secondary', mx: 0.5 }}>
+              <IconButton aria-label="Notifications" disabled sx={{ color: 'text.secondary' }}>
                 <NotificationsNoneIcon fontSize="small" />
               </IconButton>
 
-              <Divider
-                orientation="vertical"
-                flexItem
-                sx={{ mx: 0.5, height: 24, alignSelf: 'center' }}
-              />
+              <Divider orientation="vertical" flexItem sx={{ height: 24 }} />
 
-              <IconButton disabled sx={{ color: 'text.secondary', mx: 0.5 }}>
+              <IconButton aria-label="Help" disabled sx={{ color: 'text.secondary' }}>
                 <HelpOutlineIcon fontSize="small" />
               </IconButton>
             </Stack>
 
-            <Chip
-              label={role === 'org:admin' ? 'Admin' : 'Member'}
-              variant="outlined"
-              color={role === 'org:admin' ? 'secondary' : 'default'}
-              size="small"
-              sx={{ fontWeight: 600 }}
-            />
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', ml: 0.5 }}>
               <Profile />
             </Box>
           </SignedIn>
+
           <SignedOut>
             <SignInButton />
           </SignedOut>

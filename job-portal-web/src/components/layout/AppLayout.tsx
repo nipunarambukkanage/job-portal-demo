@@ -8,8 +8,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <Box sx={{ display: 'flex' }}>
       <HeaderComponent onMenu={() => setOpen(true)} />
-      <Box component="main" sx={{ flexGrow: 1 }}>
-        <Toolbar />
+      <Box component="main" sx={{ flexGrow: 1, mt: 8, mb: 2 }}>
         <Container maxWidth="xl" sx={{ py: 3 }}>
           {children}
         </Container>
