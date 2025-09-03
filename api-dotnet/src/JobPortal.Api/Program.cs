@@ -41,39 +41,43 @@ services.AddControllers(opt => { opt.Filters.Add<ApiExceptionFilter>(); });
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "JobPortal API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "JobPortal API by Nipuna Rambukkanage", Version = "v1" });
 
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT"
-    });
+    //commented out for dev purposes
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-            },
-            Array.Empty<string>()
-        }
-    });
+    //c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    //{
+    //    In = ParameterLocation.Header,
+    //    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+    //    Name = "Authorization",
+    //    Type = SecuritySchemeType.Http,
+    //    Scheme = "bearer",
+    //    BearerFormat = "JWT"
+    //});
+
+    //c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    //{
+    //    {
+    //        new OpenApiSecurityScheme
+    //        {
+    //            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+    //        },
+    //        Array.Empty<string>()
+    //    }
+    //});
 });
 
-// CORS
-var corsOrigins = config.GetSection("Cors:Origins").Get<string[]>() ?? new[] { "http://localhost:5173", "https://jobportal.nipunarambukkanage.dev" };
-services.AddCors(o => o.AddDefaultPolicy(p =>
-{
-    p.WithOrigins(corsOrigins)
-     .AllowAnyHeader()
-     .AllowAnyMethod()
-     .AllowCredentials();
-}));
+// CORS - Temporary commented out for dev purposes
+//var corsOrigins = config.GetSection("Cors:Origins").Get<string[]>() ?? new[] { "http://localhost:5173", "https://jobportal.nipunarambukkanage.dev" };
+//services.AddCors(o => o.AddDefaultPolicy(p =>
+//{
+//    p.WithOrigins(corsOrigins)
+//     .AllowAnyHeader()
+//     .AllowAnyMethod()
+//     .AllowCredentials();
+//}));
+
+
 
 // Realtime
 services.AddSignalR();
@@ -83,7 +87,7 @@ services.AddApplication();
 services.AddInfrastructure(config);
 
 // Auth / Health / Telemetry / Logging / Rate limiting
-services.AddAppAuthentication(config);
+//services.AddAppAuthentication(config);
 services.AddAppHealthChecks(config);
 services.AddAppOpenTelemetry(config, env);
 services.AddRequestLogging(config);
@@ -109,7 +113,12 @@ app.UseCorrelationId();
 
 app.UseRouting();
 
-app.UseCors();
+//app.UseCors();
+// In Program.cs, temporarily allow all origins
+app.UseCors(builder => builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
 
 //Temporarily stoped authentication for dev purposes
 //app.UseAuthentication();

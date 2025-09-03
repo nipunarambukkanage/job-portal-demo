@@ -27,55 +27,55 @@ namespace JobPortal.Api.Configuration
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "JobPortal API", Version = "v1" });
 
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    In = ParameterLocation.Header,
-                    Description = "JWT Authorization header. Example: Bearer {token}",
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "bearer",
-                    BearerFormat = "JWT"
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-                        },
-                        Array.Empty<string>()
-                    }
-                });
+                //c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                //{
+                //    In = ParameterLocation.Header,
+                //    Description = "JWT Authorization header. Example: Bearer {token}",
+                //    Name = "Authorization",
+                //    Type = SecuritySchemeType.Http,
+                //    Scheme = "bearer",
+                //    BearerFormat = "JWT"
+                //});
+                //c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                //{
+                //    {
+                //        new OpenApiSecurityScheme
+                //        {
+                //            Reference = new OpenApiReference
+                //            { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                //        },
+                //        Array.Empty<string>()
+                //    }
+                //});
             });
 
             var origins = config.GetSection("Cors:Origins").Get<string[]>() ?? Array.Empty<string>();
-            services.AddCors(opt =>
-            {
-                opt.AddPolicy(CorsPolicyName, builder =>
-                {
-                    if (origins.Length > 0)
-                    {
-                        builder.WithOrigins(origins)
-                               .AllowAnyHeader()
-                               .AllowAnyMethod()
-                               .AllowCredentials();
-                    }
-                    else
-                    {
-                        builder.WithOrigins("http://localhost:5173")
-                               .AllowAnyHeader()
-                               .AllowAnyMethod()
-                               .AllowCredentials();
-                    }
-                });
-            });
+            //services.AddCors(opt =>
+            //{
+            //    opt.AddPolicy(CorsPolicyName, builder =>
+            //    {
+            //        if (origins.Length > 0)
+            //        {
+            //            builder.WithOrigins(origins)
+            //                   .AllowAnyHeader()
+            //                   .AllowAnyMethod()
+            //                   .AllowCredentials();
+            //        }
+            //        else
+            //        {
+            //            builder.WithOrigins("http://localhost:5173")
+            //                   .AllowAnyHeader()
+            //                   .AllowAnyMethod()
+            //                   .AllowCredentials();
+            //        }
+            //    });
+            //});
 
             services.AddHealthChecks();
 
             services.AddSignalR();
 
-            services.AddAppAuthentication(config);
+            //services.AddAppAuthentication(config);
 
             return services;
         }
@@ -92,9 +92,13 @@ namespace JobPortal.Api.Configuration
 
             app.UseHttpsRedirection();
 
-            app.UseCors(CorsPolicyName);
-            app.UseAuthentication();
-            app.UseAuthorization();
+            //app.UseCors(CorsPolicyName);
+            app.UseCors(builder => builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
+            //app.UseAuthentication();
+            //app.UseAuthorization();
 
             // Controllers
             app.MapControllers();

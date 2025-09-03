@@ -22,8 +22,8 @@ namespace JobPortal.Api.Controllers
         //[Authorize]
         public ActionResult<CurrentUserDto> Me()
         {
-            if (!_current.IsAuthenticated)
-                return Unauthorized();
+            //if (!_current.IsAuthenticated)
+            //    return Unauthorized();
 
             return Ok(new CurrentUserDto
             {
