@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace JobPortal.Api.Hubs
 {
-    [Authorize(Policy = "OrgUser")]
+    //[Authorize(Policy = "OrgUser")]
     public class NotificationsHub : Hub<INotificationsClient>
     {
         public const string OrgGroupPrefix = "org:";

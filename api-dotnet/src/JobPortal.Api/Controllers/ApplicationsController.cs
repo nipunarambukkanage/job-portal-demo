@@ -28,7 +28,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "MemberOnly")]
+        //[Authorize(Policy = "MemberOnly")]
         public async Task<ActionResult<ApplicationDto>> Create([FromBody] CreateApplicationRequest request)
         {
             if (!ModelState.IsValid) return ValidationProblem(ModelState);
@@ -53,7 +53,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        [Authorize(Policy = "AdminOnly")]
+        //[Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<ApplicationDto>> GetById(Guid id)
         {
             var app = await _repo.GetByIdAsync(id);
@@ -63,7 +63,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "AdminOnly")]
+        //[Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<PagedApplicationsResponse>> List(
             [FromQuery] Guid jobId,
             [FromQuery] int page = 1,
@@ -83,7 +83,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpPatch("{id:guid}/status")]
-        [Authorize(Policy = "AdminOnly")]
+        //[Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<ApplicationDto>> UpdateStatus(Guid id, [FromBody] UpdateApplicationStatusRequest request)
         {
             var app = await _repo.GetByIdAsync(id);
@@ -99,7 +99,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpDelete("{id:guid}")]
-        [Authorize(Policy = "AdminOnly")]
+        //[Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var app = await _repo.GetByIdAsync(id);

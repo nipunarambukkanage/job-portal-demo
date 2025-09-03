@@ -13,7 +13,7 @@ namespace JobPortal.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Policy = "OrgUser")]
+    //[Authorize(Policy = "OrgUser")]
     public class SearchController : ControllerBase
     {
         private readonly IJobRepository _jobs;
