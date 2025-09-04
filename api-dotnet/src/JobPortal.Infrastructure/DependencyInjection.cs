@@ -67,6 +67,7 @@ namespace JobPortal.Infrastructure
 
             // Blob storage (Azure)
             var blobCs = config["Blob:ConnectionString"] ?? Environment.GetEnvironmentVariable("AZURE_BLOB_CONNECTION_STRING");
+
             if (!string.IsNullOrWhiteSpace(blobCs))
             {
                 services.AddSingleton(new BlobServiceClient(blobCs));
