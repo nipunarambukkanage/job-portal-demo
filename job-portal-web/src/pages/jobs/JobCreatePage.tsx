@@ -25,7 +25,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 // Hardcoded organization ID as requested
-const DUMMY_ORGANIZATION_ID = '00000000-0000-0000-0000-000000000000';
+const DUMMY_ORGANIZATION_ID = '123e4567-e89b-12d3-a456-426614174000';
 
 // Employment type options
 const EMPLOYMENT_TYPES = [
@@ -161,8 +161,8 @@ export default function JobCreatePage() {
               )}
             />
 
-            <FormNumber name="salaryMin" control={control} label="Minimum Salary (LKR)" />
-            <FormNumber name="salaryMax" control={control} label="Maximum Salary (LKR)" />
+            <FormNumber name="salaryMin" min={0} max={10000000} control={control} label="Minimum Salary (LKR)" />
+            <FormNumber name="salaryMax" min={0} max={10000000} control={control} label="Maximum Salary (LKR)" />
 
             <Box sx={{ gridColumn: '1 / -1' }}>
               <FormRichText name="description" control={control} label="Description" />

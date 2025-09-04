@@ -52,3 +52,14 @@ class Resume(Base):
 
     def __repr__(self) -> str:  # pragma: no cover
         return f"<Resume {self.id} user={self.user_id} status={self.parse_status}>"
+
+class ResumeIngestRequest(BaseModel):
+    """
+    Client notifies backend of a newly uploaded resume.
+    Provide blob_url (permanent) and blob_sas_url (temporary read SAS for analysis).
+    """
+    blob_url: str
+    blob_sas_url: str | None = None
+    file_name: str | None = None
+    mime_type: str | None = None
+    size_bytes: int | None = Field(default=None, ge=0)
