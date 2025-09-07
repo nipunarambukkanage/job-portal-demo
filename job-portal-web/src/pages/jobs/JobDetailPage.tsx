@@ -6,6 +6,7 @@ import Spinner from "../../components/feedback/Spinner";
 import { Box, Paper, Typography, Stack, Button } from "@mui/material";
 import { useUser } from "@clerk/clerk-react";
 import { useSnackbar } from "notistack";
+import { getUserByEmail } from "../../api/services/python/users";
 
 export default function JobDetailPage() {
   const { id } = useParams();
@@ -28,7 +29,9 @@ export default function JobDetailPage() {
 
   const onApply = async () => {
     if (!id) return;
-    await applicationsService.create({ jobId: id });
+    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    const fullUser = await getUserByEmail(userEmail || "");
+    await applicationsService.create({ jobId: id, candidateId: fullUser?.id ?? ''});
     enqueueSnackbar("Applied successfully", { variant: "success" });
   };
 

@@ -14,6 +14,7 @@ export type ApplicationsQuery = {
 
 export type ApplicationCreateDto = {
   jobId: string;
+  candidateId: string;
   resumeUrl?: string | null;
   coverLetter?: string | null;
 };

@@ -9,9 +9,7 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { useUser, useAuth } from '@clerk/clerk-react';
-import { useSnackbar } from 'notistack';
 
 import type { Job } from '../../api/types/job';
 import ROUTES from '../../config/routes';
@@ -20,12 +18,13 @@ import { jobsService } from '../../api/services/jobs';
 import { listStarred, addStar, removeStar } from '../../api/python/starred';
 import { uploadResumeToDotnet } from '../../api/services/uploads';
 import { ingestResumeToPython } from '../../api/services/python/resume';
+import { applicationsService } from '../../api/services/applications';
 
 import UpdateProfileDialog, {
   type UpdateProfileValues,
 } from '../../components/profile/UpdateProfileDialog';
 import { getUserByEmail, createUser } from '../../api/services/python/users';
-import { applicationsService } from '../../api/services/applications';
+import ApplyDialog from '../../components/apply/ApplyDialog';
 
 const isGuid = (s: string | undefined | null): s is string =>
   !!s &&
@@ -36,17 +35,19 @@ const isGuid = (s: string | undefined | null): s is string =>
 export default function JobsListPage() {
   const { isSignedIn, user } = useUser();
   const { getToken } = useAuth();
-  const { enqueueSnackbar } = useSnackbar();
 
   const [jobs, setJobs] = React.useState<Job[]>([]);
   const [stars, setStars] = React.useState<string[]>([]);
-  const [dropping, setDropping] = React.useState(false);
-  const [busy, setBusy] = React.useState(false);
 
+  // profile-gate
   const [profileOpen, setProfileOpen] = React.useState(false);
   const [profileSaving, setProfileSaving] = React.useState(false);
   const [pyUserId, setPyUserId] = React.useState<string | null>(null);
 
+  // apply dialog
+  const [applyJobId, setApplyJobId] = React.useState<string | null>(null);
+
+  // Load jobs (.NET)
   React.useEffect(() => {
     (async () => {
       const res = await jobsService.list({ page: 1, pageSize: 20 });
@@ -54,6 +55,7 @@ export default function JobsListPage() {
     })().catch(() => setJobs([]));
   }, []);
 
+  // Ensure Python user exists
   React.useEffect(() => {
     if (!isSignedIn || !user) return;
     (async () => {
@@ -74,6 +76,7 @@ export default function JobsListPage() {
     })();
   }, [isSignedIn, user]);
 
+  // Load starred (Python)
   React.useEffect(() => {
     if (!isSignedIn) return;
     listStarred()
@@ -86,29 +89,28 @@ export default function JobsListPage() {
       if (stars.includes(jobId)) {
         await removeStar(jobId);
         setStars((s) => s.filter((x) => x !== jobId));
-        enqueueSnackbar('Removed from starred', { variant: 'info' });
       } else {
         await addStar(jobId);
         setStars((s) => [...s, jobId]);
-        enqueueSnackbar('Added to starred', { variant: 'success' });
       }
     } catch {
-      enqueueSnackbar('Could not update starred list', { variant: 'error' });
+      // No notistack; you can surface an inline alert somewhere if you want.
+      console.error('Failed to update star');
     }
   };
 
+  // Save profile -> create Python user (optionally with Clerk GUID)
   const handleSaveProfile = async (values: UpdateProfileValues) => {
     if (!user) return;
     const email = user.primaryEmailAddress?.emailAddress || user.emailAddresses?.[0]?.emailAddress;
     if (!email) {
-      enqueueSnackbar('No email found in Clerk profile.', { variant: 'error' });
+      // Show error inside your UpdateProfileDialog if you implemented it
       return;
     }
 
     try {
       setProfileSaving(true);
       const externalId = isGuid(user.id) ? user.id : undefined;
-
       const created = await createUser(
         {
           email,
@@ -120,59 +122,63 @@ export default function JobsListPage() {
       );
       setPyUserId(created.id);
       setProfileOpen(false);
-      enqueueSnackbar('Profile saved!', { variant: 'success' });
     } catch (err) {
       console.error(err);
-      enqueueSnackbar('Failed to save your profile. Please try again.', { variant: 'error' });
     } finally {
       setProfileSaving(false);
     }
   };
 
-  // NOTE: we now receive the jobId
-  const onDropFile = async (file: File, jobId: string) => {
-    if (!isSignedIn || !user || !pyUserId) {
-      enqueueSnackbar('Please complete your profile first.', { variant: 'warning' });
+  // Open apply dialog for a job
+  const openApply = (jobId: string) => {
+    // guard: must have a Python user first
+    if (!pyUserId) {
+      setProfileOpen(true);
       return;
     }
+    setApplyJobId(jobId);
+  };
 
-    setBusy(true);
-    try {
-      // 1) Upload to Azure via .NET (uses your JWT)
-      const jwt = await getToken({ template: 'jobportal-api' });
-      const { blobUrl, sasUrl } = await uploadResumeToDotnet(file, jwt || undefined);
-
-      // 2) Tell Python to ingest & link to this job (also ties to user via header)
-      await ingestResumeToPython(
-        {
-          blob_url: blobUrl,
-          blob_sas_url: sasUrl,
-          file_name: file.name,
-          mime_type: file.type,
-          size_bytes: file.size,
-          job_id: jobId, // <—— NEW
-        },
-        pyUserId,
-      );
-
-      // 3) Create .NET Application so your Applications pages show the record
-      await applicationsService.create({
-        jobId,
-        resumeUrl: blobUrl, // or sasUrl if your server fetches with SAS
-        // coverLetter?: add if you collect one
-      });
-
-      enqueueSnackbar('Resume uploaded and application submitted.', { variant: 'success' });
-    } catch (err) {
-      console.error(err);
-      enqueueSnackbar('Failed to upload/ingest resume.', { variant: 'error' });
-    } finally {
-      setBusy(false);
+  // Upload + ingest + create .NET Application for the given job
+  // NOTE: We return a message string so the dialog can show an <Alert>.
+  const submitApplication = async (file: File): Promise<string> => {
+    if (!isSignedIn || !user || !pyUserId || !applyJobId) {
+      throw new Error('Please complete your profile first.');
     }
+
+    // 1) Upload to Azure via .NET
+    const jwt = await getToken({ template: 'jobportal-api' });
+    const { blobUrl, sasUrl } = await uploadResumeToDotnet(file, jwt || undefined);
+
+    // 2) Notify Python (includes user id header + job_id).
+    const ingest = await ingestResumeToPython(
+      {
+        blob_url: blobUrl,
+        blob_sas_url: sasUrl,
+        file_name: file.name,
+        mime_type: file.type,
+        size_bytes: file.size,
+        job_id: applyJobId,
+      },
+      pyUserId,
+    );
+
+    // 3) Create the .NET Application so it appears in your .NET list page
+    await applicationsService.create({
+      jobId: applyJobId,
+      candidateId: pyUserId,
+      resumeUrl: blobUrl, // Optional if your .NET API uses it
+    });
+
+    const extra = ingest.application_id
+      ? ' and application recorded'
+      : ' (application recorded in .NET only)';
+    return `Resume uploaded${extra}.`;
   };
 
   return (
     <>
+      {/* Mandatory profile gate */}
       <UpdateProfileDialog
         open={profileOpen}
         onClose={() => {}}
@@ -180,6 +186,14 @@ export default function JobsListPage() {
         saving={profileSaving}
       />
 
+      {/* Apply dialog (drag & drop + Choose File) */}
+      <ApplyDialog
+        open={!!applyJobId}
+        onClose={() => setApplyJobId(null)}
+        onSubmit={submitApplication}
+      />
+
+      {/* Jobs list */}
       {!profileOpen && (
         <Stack spacing={2}>
           {jobs.map((j) => (
@@ -194,50 +208,47 @@ export default function JobsListPage() {
                   <Box>
                     <Typography variant="h6">{j.title}</Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Nipuna Rambukkanage (Pvt) Ltd — {j.location}
+                      {j.company} — {j.location}
                     </Typography>
+                    {/* Optional details */}
+                    {(j.salaryMin || j.salaryMax) && (
+                      <Typography variant="body2" sx={{ mt: 0.5 }}>
+                        Salary:{' '}
+                        {j.salaryMin
+                          ? j.salaryMax
+                            ? `${j.salaryMin} - ${j.salaryMax}`
+                            : `${j.salaryMin}+`
+                          : j.salaryMax
+                            ? `Up to ${j.salaryMax}`
+                            : ''}
+                      </Typography>
+                    )}
+                    {j.createdAt && (
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ display: 'block', mt: 0.5 }}
+                      >
+                        Posted: {new Date(j.createdAt).toLocaleDateString()}
+                      </Typography>
+                    )}
+                    {j.description && (
+                      <Typography variant="body2" sx={{ mt: 1 }} noWrap>
+                        {j.description}
+                      </Typography>
+                    )}
                   </Box>
                   <IconButton onClick={() => toggleStar(j.id)} aria-label="star">
                     {stars.includes(j.id) ? <StarIcon /> : <StarBorderIcon />}
                   </IconButton>
                 </Stack>
-
-                {/* Drag & drop area (now passes the job id) */}
-                <Box
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    setDropping(true);
-                  }}
-                  onDragLeave={() => setDropping(false)}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    setDropping(false);
-                    const f = e.dataTransfer.files?.[0];
-                    if (f) onDropFile(f, j.id);
-                  }}
-                  sx={{
-                    mt: 2,
-                    p: 2,
-                    border: '1px dashed',
-                    borderColor: dropping ? 'primary.main' : 'divider',
-                    borderRadius: 2,
-                    textAlign: 'center',
-                    opacity: busy ? 0.6 : 1,
-                    pointerEvents: busy ? 'none' : 'auto',
-                  }}
-                >
-                  <UploadFileIcon />
-                  <Typography variant="body2">
-                    Drag &amp; drop your CV here to upload &amp; apply
-                  </Typography>
-                </Box>
               </CardContent>
               <CardActions>
-                <Button variant="outlined" href={ROUTES.applications.list}>
-                  Compare with applicants
+                <Button variant="contained" onClick={() => openApply(j.id)}>
+                  Apply
                 </Button>
-                <Button variant="contained" href={ROUTES.ai.recommendations}>
-                  See job matches
+                <Button variant="outlined" href={ROUTES.applications.list}>
+                  View Applications
                 </Button>
               </CardActions>
             </Card>
