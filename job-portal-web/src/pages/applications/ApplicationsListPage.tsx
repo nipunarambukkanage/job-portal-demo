@@ -1,7 +1,8 @@
-﻿import * as React from 'react';
+﻿// src/pages/applications/ApplicationsListPage.tsx
+import * as React from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { applicationsService } from '../../api/services/applications';
-import { getUserByEmail } from '../../api/services/python/users'; // ⬅️ use Python user lookup
+import { getUserByEmail } from '../../api/services/python/users';
 import DataTable from '../../components/tables/DataTable';
 import Spinner from '../../components/feedback/Spinner';
 import { Box, Button, Typography } from '@mui/material';
@@ -12,58 +13,79 @@ import EmptyState from '../../components/tables/EmptyState';
 export default function ApplicationsListPage() {
   const { isSignedIn, user } = useUser();
 
-  const [loading, setLoading] = React.useState(true);
+  const [userResolving, setUserResolving] = React.useState(true); // ⬅️ NEW: resolving Clerk→Python user
+  const [loading, setLoading] = React.useState(true); // data loading
   const [items, setItems] = React.useState<any[]>([]);
   const [total, setTotal] = React.useState(0);
   const [page, setPage] = React.useState(1);
-  const [pyUserId, setPyUserId] = React.useState<string | null>(null); // ⬅️ NEW
+  const [pyUserId, setPyUserId] = React.useState<string | null>(null);
   const pageSize = 20;
 
   React.useEffect(() => {
+    let cancelled = false;
+
     (async () => {
-      setLoading(true);
-      if (!isSignedIn || !user) {
-        setPyUserId(null);
-        return;
-      }
-      const email =
-        user.primaryEmailAddress?.emailAddress || user.emailAddresses?.[0]?.emailAddress;
-      if (!email) {
-        setPyUserId(null);
-        return;
-      }
+      setUserResolving(true);
       try {
+        if (!isSignedIn || !user) {
+          if (!cancelled) setPyUserId(null);
+          return;
+        }
+        const email =
+          user.primaryEmailAddress?.emailAddress || user.emailAddresses?.[0]?.emailAddress;
+        if (!email) {
+          if (!cancelled) setPyUserId(null);
+          return;
+        }
         const pyUser = await getUserByEmail(email);
-        setPyUserId(pyUser?.id ?? null);
+        if (!cancelled) setPyUserId(pyUser?.id ?? null);
       } catch {
-        setPyUserId(null);
+        if (!cancelled) setPyUserId(null);
       } finally {
-        setLoading(false);
+        if (!cancelled) setUserResolving(false);
       }
     })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [isSignedIn, user]);
 
   React.useEffect(() => {
+    let cancelled = false;
+
     (async () => {
-      if (!pyUserId) {
-        setLoading(true);
-        setItems([]);
-        setTotal(0);
-        setLoading(false);
-        return;
-      }
+      if (userResolving) return;
+
+      setLoading(true);
       try {
-        setLoading(true);
-        const res = await applicationsService.list({ page, pageSize, candidateId: pyUserId });
-        setItems(res.items);
-        setTotal(res.total);
+        if (!pyUserId) {
+          if (!cancelled) {
+            setItems([]);
+            setTotal(0);
+          }
+          return;
+        }
+        const res = await applicationsService.list({
+          page,
+          pageSize,
+          candidateId: pyUserId,
+        });
+        if (!cancelled) {
+          setItems(res.items ?? []);
+          setTotal(res.total ?? 0);
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     })();
-  }, [page, pageSize, pyUserId]);
 
-  if (loading) return <Spinner />;
+    return () => {
+      cancelled = true;
+    };
+  }, [pyUserId, page, pageSize, userResolving]);
+
+  if (userResolving || loading) return <Spinner />;
 
   return (
     <Box>
