@@ -9,6 +9,7 @@ export type ApplicationsQuery = {
   page?: number;
   pageSize?: number;
   jobId?: string;
+  candidateId?: string;
   status?: Application["status"];
 };
 

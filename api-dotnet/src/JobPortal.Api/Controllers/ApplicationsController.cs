@@ -1,3 +1,4 @@
+// Api/Controllers/ApplicationsController.cs
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -65,21 +66,38 @@ namespace JobPortal.Api.Controllers
         [HttpGet]
         //[Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<PagedApplicationsResponse>> List(
-            [FromQuery] Guid jobId,
+            [FromQuery] Guid? jobId,
+            [FromQuery] Guid? candidateId,
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 20)
         {
             if (page < 1) page = 1;
             if (pageSize < 1 || pageSize > 200) pageSize = 20;
 
-            var (items, total) = await _repo.ListByJobAsync(jobId, page, pageSize);
-            return Ok(new PagedApplicationsResponse
+            if (jobId.HasValue)
             {
-                Items = _mapper.Map<ApplicationDto[]>(items),
-                Total = total,
-                Page = page,
-                PageSize = pageSize
-            });
+                var (items, total) = await _repo.ListByJobAsync(jobId.Value, page, pageSize);
+                return Ok(new PagedApplicationsResponse
+                {
+                    Items = _mapper.Map<ApplicationDto[]>(items),
+                    Total = total,
+                    Page = page,
+                    PageSize = pageSize
+                });
+            }
+
+            if (candidateId.HasValue)
+            {
+                var (items, total) = await _repo.ListByCandidateAsync(candidateId.Value, page, pageSize);
+                return Ok(new PagedApplicationsResponse
+                {
+                    Items = _mapper.Map<ApplicationDto[]>(items),
+                    Total = total,
+                    Page = page,
+                    PageSize = pageSize
+                });
+            }
+            return BadRequest("Provide either jobId or candidateId to filter the applications.");
         }
 
         [HttpPatch("{id:guid}/status")]

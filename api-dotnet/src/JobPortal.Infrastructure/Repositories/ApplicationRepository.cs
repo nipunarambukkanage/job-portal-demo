@@ -1,3 +1,4 @@
+// Infrastructure/Repositories/ApplicationRepository.cs
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,8 +21,21 @@ namespace JobPortal.Infrastructure.Repositories
 
         public async Task<(IReadOnlyList<JobApplication> Items, int Total)> ListByJobAsync(Guid jobId, int page, int pageSize)
         {
-            var query = _db.Applications.AsNoTracking().Where(a => a.JobId == jobId)
-                        .OrderByDescending(a => a.CreatedAtUtc);
+            var query = _db.Applications.AsNoTracking()
+                .Where(a => a.JobId == jobId)
+                .OrderByDescending(a => a.CreatedAtUtc);
+
+            var total = await query.CountAsync();
+            var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return (items, total);
+        }
+
+        public async Task<(IReadOnlyList<JobApplication> Items, int Total)> ListByCandidateAsync(Guid candidateId, int page, int pageSize)
+        {
+            var query = _db.Applications.AsNoTracking()
+                .Where(a => a.CandidateId == candidateId)
+                .OrderByDescending(a => a.CreatedAtUtc);
 
             var total = await query.CountAsync();
             var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();

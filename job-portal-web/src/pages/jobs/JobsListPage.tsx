@@ -178,13 +178,14 @@ export default function JobsListPage() {
 
   return (
     <>
-      {/* Mandatory profile gate */}
-      <UpdateProfileDialog
-        open={profileOpen}
-        onClose={() => {}}
-        onSave={handleSaveProfile}
-        saving={profileSaving}
-      />
+      {(!pyUserId || profileOpen) && (
+        <UpdateProfileDialog
+          open={profileOpen}
+          onClose={() => {}}
+          onSave={handleSaveProfile}
+          saving={profileSaving}
+        />
+      )}
 
       {/* Apply dialog (drag & drop + Choose File) */}
       <ApplyDialog
