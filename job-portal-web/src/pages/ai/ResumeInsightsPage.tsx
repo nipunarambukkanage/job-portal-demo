@@ -23,7 +23,7 @@ export default function ResumeInsightsPage() {
   const [resumeId, setResumeId] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [features, setFeatures] = useState<unknown | null>(null);
+  const [features, setFeatures] = useState<any | null>(null);
 
   const onIngest = async () => {
     setError(null);

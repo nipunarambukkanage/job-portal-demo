@@ -50,6 +50,8 @@ namespace JobPortal.Api.Configuration
             });
 
             var origins = config.GetSection("Cors:Origins").Get<string[]>() ?? Array.Empty<string>();
+
+            // Original, origin-restricted CORS (kept commented for now)
             //services.AddCors(opt =>
             //{
             //    opt.AddPolicy(CorsPolicyName, builder =>
@@ -71,8 +73,10 @@ namespace JobPortal.Api.Configuration
             //    });
             //});
 
-            services.AddHealthChecks();
+            // TODO: DISABLE CORS (DEV ONLY) — minimal registration so UseCors(...) can allow all
+            services.AddCors();
 
+            services.AddHealthChecks();
             services.AddSignalR();
 
             //services.AddAppAuthentication(config);
@@ -93,10 +97,13 @@ namespace JobPortal.Api.Configuration
             app.UseHttpsRedirection();
 
             //app.UseCors(CorsPolicyName);
+
+            // TODO: DISABLE CORS (DEV ONLY) — allow any origin/headers/methods
             app.UseCors(builder => builder
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader());
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+
             //app.UseAuthentication();
             //app.UseAuthorization();
 

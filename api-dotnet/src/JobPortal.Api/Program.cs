@@ -67,7 +67,7 @@ services.AddSwaggerGen(c =>
     //});
 });
 
-// CORS - Temporary commented out for dev purposes
+// CORS
 //var corsOrigins = config.GetSection("Cors:Origins").Get<string[]>() ?? new[] { "http://localhost:5173", "https://jobportal.nipunarambukkanage.dev" };
 //services.AddCors(o => o.AddDefaultPolicy(p =>
 //{
@@ -77,6 +77,8 @@ services.AddSwaggerGen(c =>
 //     .AllowCredentials();
 //}));
 
+// TODO: DISABLE CORS (DEV ONLY) — minimal registration so UseCors(...) below can allow all
+services.AddCors();
 
 
 // Realtime
@@ -96,7 +98,8 @@ services.AddAppRateLimiting(config);
 // Notifications
 services.AddSingleton<INotificationGateway, SignalRNotificationGateway>();
 
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+//var port = Environment.GetEnvironmentVariable("PORT") ?? "8999";
+var port = "8999";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 var app = builder.Build();
@@ -104,17 +107,16 @@ var app = builder.Build();
 // Pipeline
 app.UseCorrelationId();
 
-
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "JobPortal API v1");
-    });
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "JobPortal API v1");
+});
 
 app.UseRouting();
 
-//app.UseCors();
-// In Program.cs, temporarily allow all origins
+// app.UseCors();
+// TODO: DISABLE CORS (DEV ONLY) — allow any origin/headers/methods for development
 app.UseCors(builder => builder
     .AllowAnyOrigin()
     .AllowAnyMethod()

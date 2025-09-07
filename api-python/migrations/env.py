@@ -1,120 +1,117 @@
 ﻿from __future__ import annotations
 
-import asyncio
 import os
 import ssl
-from logging.config import fileConfig
+from pathlib import Path
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
 
-from alembic import context
-from sqlalchemy import pool
-from sqlalchemy.engine import Connection
-from sqlalchemy.engine.url import make_url, URL
-from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
+from sqlalchemy.pool import NullPool
 
-# Alembic Config
-config = context.config
+from app.core.config import get_settings
 
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
-
-from app.db.base import Base  # noqa: E402
-
-target_metadata = Base.metadata
-
-DATABASE_URL = os.getenv("DATABASE_URL") or config.get_main_option("sqlalchemy.url")
-if not DATABASE_URL:
-    raise RuntimeError(
-        "DATABASE_URL not set (e.g., postgresql+asyncpg://user:pass@host:port/db)"
-    )
-
-config.set_main_option("sqlalchemy.url", DATABASE_URL)
-
-INCLUDE_SCHEMAS = True
+_engine: AsyncEngine | None = None
+_Session: async_sessionmaker[AsyncSession] | None = None
 
 
-def _normalized_asyncpg_url_and_connect_args(url_str: str) -> tuple[str, dict]:
-    url = make_url(url_str)
-    connect_args: dict = {}
+def _ca_file_path() -> Path:
+    """
+    Resolve the CA certificate path.
 
-    if url.drivername.startswith("postgresql+asyncpg"):
-        # Handle SSL certificate
-        cafile = os.getenv("PGSSLROOTCERT", r"C:\Users\ADMIN\Downloads\do-db-ca.crt")
-        
-        # Always use SSL context for DigitalOcean
-        if os.path.isfile(cafile):
-            ctx = ssl.create_default_context(cafile=cafile)
-            ctx.check_hostname = True
-            ctx.verify_mode = ssl.CERT_REQUIRED
-        else:
-            ctx = ssl.create_default_context()
-            ctx.check_hostname = True
-            ctx.verify_mode = ssl.CERT_REQUIRED
-        
-        connect_args["ssl"] = ctx
-
-        query_dict = dict(url.query)
-        query_dict.pop("sslmode", None)
-        query_dict.pop("sslrootcert", None)
-        url = url.set(query=query_dict)
-
-    return str(url), connect_args
+    Priority:
+      1) PGSSLROOTCERT env var (requested)
+      2) PG_SSL_CA_FILE env var (custom)
+      3) do-db-ca.crt in the same directory as this file (session.py)
+    """
+    for key in ("PGSSLROOTCERT", "PG_SSL_CA_FILE"):
+        val = os.getenv(key)
+        if val:
+            p = Path(val)
+            if p.exists():
+                return p
+    # fall back to a CA file sitting next to this module
+    return Path(__file__).resolve().with_name("do-db-ca.crt")
 
 
-def run_migrations_offline() -> None:
-    """Run migrations in 'offline' mode."""
-    url, connect_args = _normalized_asyncpg_url_and_connect_args(DATABASE_URL)
-    
-    context.configure(
-        url=url,
-        target_metadata=target_metadata,
-        literal_binds=True,
-        dialect_opts={"paramstyle": "named"},
-        include_schemas=INCLUDE_SCHEMAS,
-        version_table="alembic_version",
-        version_table_schema=target_metadata.schema or "pyapi",
-    )
-    
-    with context.begin_transaction():
-        context.run_migrations()
+def _needs_ssl(url: str) -> bool:
+    u = (url or "").lower()
+    return ("sslmode=require" in u) or ("ondigitalocean.com" in u) or (":25060" in u)
 
 
-def do_run_migrations(connection: Connection) -> None:
-    """Run migrations in 'online' mode with given connection."""
-    context.configure(
-        connection=connection,
-        target_metadata=target_metadata,
-        include_schemas=INCLUDE_SCHEMAS,
-        version_table="alembic_version",
-        version_table_schema=target_metadata.schema or "pyapi",
-        compare_type=True,
-        compare_server_default=True,
-    )
-    
-    with context.begin_transaction():
-        context.run_migrations()
-
-
-async def run_migrations_online() -> None:
-    """Run migrations in 'online' mode."""
-    url, connect_args = _normalized_asyncpg_url_and_connect_args(DATABASE_URL)
-    
-    # Create async engine with proper SSL configuration
-    engine: AsyncEngine = create_async_engine(
-        url, 
-        poolclass=pool.NullPool, 
-        connect_args=connect_args,
-        echo=True  # Enable SQL echo for debugging
-    )
-    
+def _create_ssl_context() -> ssl.SSLContext:
+    """Create SSL context (e.g., for DigitalOcean PostgreSQL)."""
+    ssl_context = ssl.create_default_context()
+    ca_path = _ca_file_path()
     try:
-        async with engine.connect() as conn:
-            await conn.run_sync(do_run_migrations)
+        if ca_path.exists():
+            ssl_context.load_verify_locations(cafile=str(ca_path))
+        else:
+            # Fall back to system trust store
+            print(f"Warning: CA file not found at {ca_path}; using system trust store.")
+        ssl_context.check_hostname = True
+        ssl_context.verify_mode = ssl.CERT_REQUIRED
+    except Exception as e:
+        print(f"Warning: Could not configure SSL context with CA {ca_path}: {e}")
+        ssl_context.check_hostname = True
+        ssl_context.verify_mode = ssl.CERT_REQUIRED
+    return ssl_context
+
+
+def get_engine() -> AsyncEngine:
+    global _engine, _Session
+    if _engine is None:
+        cfg = get_settings()
+
+        connect_args: dict = {}
+        if _needs_ssl(cfg.DATABASE_URL):
+            connect_args["ssl"] = _create_ssl_context()
+
+        # NullPool avoids holding idle connections (often preferred in serverless/containers).
+        # Switch to the default pool if you want persistent pooling.
+        _engine = create_async_engine(
+            cfg.DATABASE_URL,
+            echo=False,
+            pool_pre_ping=True,
+            poolclass=NullPool,
+            connect_args=connect_args,
+        )
+        _Session = async_sessionmaker(bind=_engine, expire_on_commit=False, class_=AsyncSession)
+    return _engine
+
+
+def get_sessionmaker() -> async_sessionmaker[AsyncSession]:
+    global _Session
+    if _Session is None:
+        get_engine()
+    assert _Session is not None
+    return _Session
+
+
+@asynccontextmanager
+async def async_session() -> AsyncGenerator[AsyncSession, None]:
+    maker = get_sessionmaker()
+    session = maker()
+    try:
+        yield session
+        await session.commit()
+    except Exception:
+        await session.rollback()
+        raise
     finally:
-        await engine.dispose()
+        await session.close()
 
 
-if context.is_offline_mode():
-    run_migrations_offline()
-else:
-    # Run the async migrations
-    asyncio.run(run_migrations_online())
+async def ping() -> bool:
+    """
+    Lightweight DB connectivity check for readiness probes.
+    """
+    async with async_session() as s:
+        result = await s.execute(text("SELECT 1"))
+        return result.scalar() == 1

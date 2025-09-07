@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 from typing import List, Optional
+from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
 
 from pydantic import AnyHttpUrl, Field, AliasChoices, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -30,7 +31,7 @@ class Settings(BaseSettings):
     # ===== Data plane (required via env in real deployments) =====
     DATABASE_URL: str = Field(
         default="",
-        description="e.g. postgresql+asyncpg://user:pass@host:port/db?sslmode=require",
+        description="e.g. postgresql+asyncpg://user:pass@host:port/db",
     )
     REDIS_URL: str = Field(
         default="",
@@ -62,12 +63,25 @@ class Settings(BaseSettings):
     @field_validator("DATABASE_URL", mode="before")
     @classmethod
     def normalize_db_url(cls, v: str) -> str:
+        """
+        Normalize Postgres URLs and strip sslmode for asyncpg.
+        """
         if not v:
             return v
+
+        # Normalize scheme
         if v.startswith("postgres://"):
             v = v.replace("postgres://", "postgresql://", 1)
         if v.startswith("postgresql://") and "+asyncpg" not in v:
             v = v.replace("postgresql://", "postgresql+asyncpg://", 1)
+
+        # For asyncpg, drop sslmode from the query string entirely.
+        if "+asyncpg" in v and "sslmode=" in v:
+            parts = urlsplit(v)
+            q = [(k, val) for k, val in parse_qsl(parts.query, keep_blank_values=True)
+                 if k.lower() != "sslmode"]
+            v = urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(q), parts.fragment))
+
         return v
 
 

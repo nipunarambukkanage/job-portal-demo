@@ -1,32 +1,26 @@
-﻿import pythonClient from "../../clients/python";
+﻿import { py } from "../../endpoints.python";
+import { pythonClient } from "../../axios";
 
-export type ResumeInsightsRequest = {
-  userId?: string;
-  resumeUrl?: string;
-  text?: string;
-};
-
-export type ResumeInsight = {
-  key: string;
-  value: string;
-  score?: number;
-};
-
-export async function getResumeInsights(
-  body: ResumeInsightsRequest
-): Promise<ResumeInsight[]> {
-  const { data } = await pythonClient.post("/ai/resume/insights", body);
-  return data as ResumeInsight[];
-}
-
-type Ingest = {
+export type IngestResumePayload = {
   blob_url: string;
-  blob_sas_url?: string;
-  file_name?: string;
-  mime_type?: string;
-  size_bytes?: number;
+  blob_sas_url?: string | null;
+  file_name?: string | null;
+  mime_type?: string | null;
+  size_bytes?: number | null;
+  job_id?: string | null;
 };
 
-export async function ingestResumeToPython(data: Ingest) {
-  return pythonClient.post("/v1/resumes/ingest", data);
+export async function ingestResumeToPython(data: IngestResumePayload, userId?: string) {
+  const headers: Record<string, string> = {};
+  if (userId) headers["X-User-Id"] = userId;
+
+  const resp = await pythonClient.post<{
+    resume_id: string;
+    status: string;
+    blob_url: string;
+    job_id?: string | null;
+    application_id?: string | null;
+  }>(py.resume.ingest, data, { headers });
+
+  return resp.data;
 }

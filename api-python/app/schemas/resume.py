@@ -4,9 +4,11 @@ import uuid
 from enum import Enum
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, AnyUrl
 
 from .common import ORMModel, EntityId, EntityTimestamps
+
+from typing import Optional
 
 
 class ParseStatus(str, Enum):
@@ -15,15 +17,14 @@ class ParseStatus(str, Enum):
     failed = "failed"
 
 
+
 class ResumeIngestRequest(BaseModel):
-    """
-    Request payload when client notifies backend of a newly uploaded resume.
-    Supply blob_url and optional file metadata (recommended).
-    """
-    blob_url: str
-    file_name: str | None = None
-    mime_type: str | None = None
-    size_bytes: int | None = Field(default=None, ge=0)
+    blob_url: AnyUrl
+    blob_sas_url: Optional[AnyUrl] = None
+    file_name: Optional[str] = None
+    mime_type: Optional[str] = None
+    size_bytes: Optional[int] = Field(default=0, ge=0)
+    job_id: Optional[uuid.UUID] = None
 
 
 class ResumeRead(EntityId, EntityTimestamps):
