@@ -196,7 +196,7 @@ export default function UserDashboardPage() {
           </Button>
         }
       >
-        Heads up! Some features are still under development. This dashboard is for demonstration
+        Some features are still under development. This dashboard is for demonstration
         purposes only.
       </Alert>
 

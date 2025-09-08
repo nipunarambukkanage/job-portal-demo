@@ -40,7 +40,7 @@ export default function SideNav() {
       variant="permanent"
       PaperProps={{
         sx: {
-          position: 'relative',
+          position: 'fixed',
           width,
           borderRight: '1px solid #eee',
           top: 70,
