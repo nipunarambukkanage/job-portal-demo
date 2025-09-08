@@ -4,6 +4,7 @@ import { applicationsService } from "../../api/services/applications";
 import Spinner from "../../components/feedback/Spinner";
 import { Box, Paper, Stack, Typography, Button, MenuItem, TextField } from "@mui/material";
 import { useSnackbar } from "notistack";
+import type { ApplicationStatus } from "../../api/types/application";
 
 const STATUSES = ["new", "in_review", "interview", "offer", "rejected"] as const;
 
@@ -12,7 +13,7 @@ export default function ApplicationStatusPage() {
   const nav = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = React.useState(true);
-  const [status, setStatus] = React.useState<typeof STATUSES[number]>("new");
+  const [status, setStatus] = React.useState<ApplicationStatus>(6);
 
   React.useEffect(() => {
     (async () => {

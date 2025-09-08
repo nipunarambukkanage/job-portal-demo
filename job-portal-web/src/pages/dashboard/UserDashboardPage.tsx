@@ -5,6 +5,9 @@ import BarChart from "../../components/charts/BarChart";
 import Spinner from "../../components/feedback/Spinner";
 import { applicationsService } from "../../api/services/applications";
 import { getAiAnalytics, type AnalyticsSeries } from "../../api/services/python/analytics";
+import { ApplicationStatus } from "../../api/types/application";
+import { getUserByEmail } from "../../api/services/python/users";
+import { useUser } from "@clerk/clerk-react";
 
 function toApex(series: AnalyticsSeries[]) {
   const categoriesSet = new Set<string>();
@@ -18,18 +21,42 @@ function toApex(series: AnalyticsSeries[]) {
 }
 
 export default function UserDashboardPage() {
+  const { isSignedIn, user } = useUser();
   const [loading, setLoading] = React.useState(true);
   const [kpis, setKpis] = React.useState({ applications: 0, interviews: 0, offers: 0 });
   const [chart, setChart] = React.useState<{ categories: string[]; series: { name: string; data: number[] }[] }>();
+    const [pyUserId, setPyUserId] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    (async () => {
+      if (!isSignedIn || !user) return;
+      const email =
+        user.primaryEmailAddress?.emailAddress ||
+        user.emailAddresses?.[0]?.emailAddress;
+      if (!email) return;
+      try {
+        const py = await getUserByEmail(email);
+        setPyUserId(py?.id ?? null);
+      } catch {
+        setPyUserId(null);
+      }
+    })();
+  }, [isSignedIn, user]);
 
   React.useEffect(() => {
     (async () => {
       try {
-        const [appsAll, appsInterview, appsOffer, analytics] = await Promise.all([
-          applicationsService.list({ page: 1, pageSize: 1 }),
-          applicationsService.list({ page: 1, pageSize: 1, status: "in_review" }),
-          applicationsService.list({ page: 1, pageSize: 1, status: "offer" }),
-          getAiAnalytics({ cohort: "user" }),
+        // const [appsAll, appsInterview, appsOffer, analytics] = await Promise.all([
+        //   applicationsService.list({ page: 1, pageSize: 1 }),
+        //   applicationsService.list({ page: 1, pageSize: 1, status: ApplicationStatus.Submitted }),
+        //   applicationsService.list({ page: 1, pageSize: 1, status: ApplicationStatus.Offered }),
+        //   getAiAnalytics({ cohort: "user" }),
+        // ]);
+const [appsAll, appsInterview, appsOffer, analytics] = await Promise.all([
+          applicationsService.list({ page: 1, pageSize: 1, candidateId: pyUserId ?? undefined }),
+          applicationsService.list({ page: 1, pageSize: 1, status: ApplicationStatus.Interview, candidateId: pyUserId ?? undefined }),
+          applicationsService.list({ page: 1, pageSize: 1, status: ApplicationStatus.Offered, candidateId: pyUserId ?? undefined }),
+          getAiAnalytics(pyUserId ? { user_id: pyUserId } : {}),
         ]);
         setKpis({ applications: appsAll.total, interviews: appsInterview.total, offers: appsOffer.total });
         setChart(toApex(analytics));
@@ -37,7 +64,7 @@ export default function UserDashboardPage() {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [pyUserId]);
 
   if (loading) return <Spinner />;
 

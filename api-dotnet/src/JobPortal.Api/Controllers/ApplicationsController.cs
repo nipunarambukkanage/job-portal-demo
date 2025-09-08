@@ -1,4 +1,3 @@
-// Api/Controllers/ApplicationsController.cs
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -49,7 +48,9 @@ namespace JobPortal.Api.Controllers
             await _repo.AddAsync(entity);
             await _uow.SaveChangesAsync();
 
-            var dto = _mapper.Map<ApplicationDto>(entity);
+            var (items, _) = await _repo.ListWithJobAsync(entity.JobId, entity.CandidateId, 1, 1);
+            var dto = items.Count > 0 ? items[0] : _mapper.Map<ApplicationDto>(entity);
+
             return CreatedAtAction(nameof(GetById), new { id = entity.Id }, dto);
         }
 
@@ -57,6 +58,12 @@ namespace JobPortal.Api.Controllers
         //[Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<ApplicationDto>> GetById(Guid id)
         {
+            var (items, _) = await _repo.ListWithJobAsync(null, null, 1, 1);
+            foreach (var item in items)
+            {
+                if (item.Id == id) return Ok(item);
+            }
+
             var app = await _repo.GetByIdAsync(id);
             if (app is null) return NotFound();
 
@@ -74,30 +81,15 @@ namespace JobPortal.Api.Controllers
             if (page < 1) page = 1;
             if (pageSize < 1 || pageSize > 200) pageSize = 20;
 
-            if (jobId.HasValue)
-            {
-                var (items, total) = await _repo.ListByJobAsync(jobId.Value, page, pageSize);
-                return Ok(new PagedApplicationsResponse
-                {
-                    Items = _mapper.Map<ApplicationDto[]>(items),
-                    Total = total,
-                    Page = page,
-                    PageSize = pageSize
-                });
-            }
+            var (items, total) = await _repo.ListWithJobAsync(jobId, candidateId, page, pageSize);
 
-            if (candidateId.HasValue)
+            return Ok(new PagedApplicationsResponse
             {
-                var (items, total) = await _repo.ListByCandidateAsync(candidateId.Value, page, pageSize);
-                return Ok(new PagedApplicationsResponse
-                {
-                    Items = _mapper.Map<ApplicationDto[]>(items),
-                    Total = total,
-                    Page = page,
-                    PageSize = pageSize
-                });
-            }
-            return BadRequest("Provide either jobId or candidateId to filter the applications.");
+                Items = items.ToArray(),
+                Total = total,
+                Page = page,
+                PageSize = pageSize
+            });
         }
 
         [HttpPatch("{id:guid}/status")]
@@ -113,7 +105,10 @@ namespace JobPortal.Api.Controllers
             _repo.Update(app);
             await _uow.SaveChangesAsync();
 
-            return Ok(_mapper.Map<ApplicationDto>(app));
+            var (items, _) = await _repo.ListWithJobAsync(app.JobId, app.CandidateId, 1, 1);
+            var dto = items.Count > 0 ? items[0] : _mapper.Map<ApplicationDto>(app);
+
+            return Ok(dto);
         }
 
         [HttpDelete("{id:guid}")]

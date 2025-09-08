@@ -1,9 +1,10 @@
 ﻿import pythonClient from "../../clients/python";
 
 export type AnalyticsQuery = {
-  from?: string; // ISO date
-  to?: string;   // ISO date
-  cohort?: string;
+  from?: string;    // ISO date (YYYY-MM-DD)
+  to?: string;      // ISO date (YYYY-MM-DD)
+  user_id?: string; // Python users.id (candidate)
+  job_id?: string;  // Job id (python jobs.id)
 };
 
 export type AnalyticsSeries = {

@@ -1,5 +1,4 @@
-﻿// src/api/services/applications.ts
-import { dotnet } from "../endpoints";
+﻿import { dotnet } from "../endpoints";
 import { dotnetClient } from "../axios";
 import { get, post, put } from "../client";
 import type { Application } from "../types/application";

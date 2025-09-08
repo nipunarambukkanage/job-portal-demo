@@ -6,6 +6,7 @@ import { jobsService } from "../../api/services/jobs";
 import { applicationsService } from "../../api/services/applications";
 import { getAiAnalytics, type AnalyticsSeries } from "../../api/services/python/analytics";
 import Spinner from "../../components/feedback/Spinner";
+import { ApplicationStatus } from "../../api/types/application";
 
 function toApex(series: AnalyticsSeries[]) {
   const categoriesSet = new Set<string>();
@@ -33,7 +34,7 @@ export default function HomePage() {
         const [jobs, appsAll, appsInterview, analytics] = await Promise.all([
           jobsService.list({ page: 1, pageSize: 1 }),
           applicationsService.list({ page: 1, pageSize: 1 }),
-          applicationsService.list({ page: 1, pageSize: 1, status: "interview" }),
+          applicationsService.list({ page: 1, pageSize: 1, status: ApplicationStatus.Interview }),
           getAiAnalytics({}),
         ]);
         setKpis({

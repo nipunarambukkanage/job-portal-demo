@@ -1,12 +1,13 @@
 // Infrastructure/Repositories/ApplicationRepository.cs
+using JobPortal.Application.Abstractions.Persistence.Repositories;
+using JobPortal.Application.DTO.Applications;
+using JobPortal.Domain.Entities;
+using JobPortal.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using JobPortal.Application.Abstractions.Persistence.Repositories;
-using JobPortal.Domain.Entities;
-using JobPortal.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace JobPortal.Infrastructure.Repositories
 {
@@ -19,26 +20,45 @@ namespace JobPortal.Infrastructure.Repositories
         public Task<JobApplication?> GetByIdAsync(Guid id)
             => _db.Applications.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
 
-        public async Task<(IReadOnlyList<JobApplication> Items, int Total)> ListByJobAsync(Guid jobId, int page, int pageSize)
+        public async Task<(IReadOnlyList<ApplicationDto> Items, int Total)> ListWithJobAsync(
+            Guid? jobId, Guid? candidateId, int page, int pageSize)
         {
-            var query = _db.Applications.AsNoTracking()
-                .Where(a => a.JobId == jobId)
-                .OrderByDescending(a => a.CreatedAtUtc);
+            var baseQuery =
+                from a in _db.Applications.AsNoTracking()
+                join j in _db.Jobs.AsNoTracking() on a.JobId equals j.Id
+                select new { a, j };
 
-            var total = await query.CountAsync();
-            var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            if (jobId.HasValue && jobId.Value != Guid.Empty)
+                baseQuery = baseQuery.Where(x => x.a.JobId == jobId.Value);
 
-            return (items, total);
-        }
+            if (candidateId.HasValue && candidateId.Value != Guid.Empty)
+                baseQuery = baseQuery.Where(x => x.a.CandidateId == candidateId.Value);
 
-        public async Task<(IReadOnlyList<JobApplication> Items, int Total)> ListByCandidateAsync(Guid candidateId, int page, int pageSize)
-        {
-            var query = _db.Applications.AsNoTracking()
-                .Where(a => a.CandidateId == candidateId)
-                .OrderByDescending(a => a.CreatedAtUtc);
+            var total = await baseQuery.CountAsync();
 
-            var total = await query.CountAsync();
-            var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            var items = await baseQuery
+                .OrderByDescending(x => x.a.CreatedAtUtc)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(x => new ApplicationDto
+                {
+                    Id = x.a.Id,
+                    JobId = x.a.JobId,
+                    CandidateId = x.a.CandidateId,
+                    CoverLetter = x.a.CoverLetter,
+                    ResumeUrl = x.a.ResumeUrl,
+                    Status = x.a.Status,
+                    CreatedAtUtc = x.a.CreatedAtUtc,
+                    UpdatedAtUtc = x.a.UpdatedAtUtc,
+                    Job = new JobSummaryDto
+                    {
+                        Id = x.j.Id,
+                        Title = x.j.Title,
+                        Company = "Nipuna Rambukkanage (Pvt) Ltd",
+                        Location = x.j.Location ?? "Colombo"
+                    }
+                })
+                .ToListAsync();
 
             return (items, total);
         }

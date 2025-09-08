@@ -1,42 +1,45 @@
-﻿// src/pages/applications/ApplicationsListPage.tsx
-import * as React from 'react';
+﻿import * as React from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { applicationsService } from '../../api/services/applications';
 import { getUserByEmail } from '../../api/services/python/users';
 import DataTable from '../../components/tables/DataTable';
 import Spinner from '../../components/feedback/Spinner';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Typography, Chip } from '@mui/material';
+import type { ChipProps } from '@mui/material/Chip';
 import { Link } from 'react-router-dom';
 import Pagination from '../../components/tables/Pagination';
 import EmptyState from '../../components/tables/EmptyState';
 
+import { ApplicationStatus, statusColor, statusText } from '../../api/types/application';
+import { Edit } from '@mui/icons-material';
+
 export default function ApplicationsListPage() {
   const { isSignedIn, user } = useUser();
 
-  const [userResolving, setUserResolving] = React.useState(true); // ⬅️ NEW: resolving Clerk→Python user
-  const [loading, setLoading] = React.useState(true); // data loading
+  const [userResolving, setUserResolving] = React.useState(true);
+  const [loading, setLoading] = React.useState(true);
   const [items, setItems] = React.useState<any[]>([]);
   const [total, setTotal] = React.useState(0);
   const [page, setPage] = React.useState(1);
   const [pyUserId, setPyUserId] = React.useState<string | null>(null);
   const pageSize = 20;
 
+
   React.useEffect(() => {
     let cancelled = false;
-
     (async () => {
       setUserResolving(true);
+      if (!isSignedIn || !user) {
+        if (!cancelled) setPyUserId(null);
+        return;
+      }
+      const email =
+        user.primaryEmailAddress?.emailAddress || user.emailAddresses?.[0]?.emailAddress;
+      if (!email) {
+        if (!cancelled) setPyUserId(null);
+        return;
+      }
       try {
-        if (!isSignedIn || !user) {
-          if (!cancelled) setPyUserId(null);
-          return;
-        }
-        const email =
-          user.primaryEmailAddress?.emailAddress || user.emailAddresses?.[0]?.emailAddress;
-        if (!email) {
-          if (!cancelled) setPyUserId(null);
-          return;
-        }
         const pyUser = await getUserByEmail(email);
         if (!cancelled) setPyUserId(pyUser?.id ?? null);
       } catch {
@@ -53,24 +56,19 @@ export default function ApplicationsListPage() {
 
   React.useEffect(() => {
     let cancelled = false;
-
     (async () => {
       if (userResolving) return;
 
       setLoading(true);
-      try {
-        if (!pyUserId) {
-          if (!cancelled) {
-            setItems([]);
-            setTotal(0);
-          }
-          return;
+      if (!pyUserId) {
+        if (!cancelled) {
+          setItems([]);
+          setTotal(0);
         }
-        const res = await applicationsService.list({
-          page,
-          pageSize,
-          candidateId: pyUserId,
-        });
+        return;
+      }
+      try {
+        const res = await applicationsService.list({ page, pageSize, candidateId: pyUserId });
         if (!cancelled) {
           setItems(res.items ?? []);
           setTotal(res.total ?? 0);
@@ -100,9 +98,22 @@ export default function ApplicationsListPage() {
           <DataTable
             rows={items}
             columns={[
-              { key: 'id', header: 'ID' },
-              { key: 'jobId', header: 'Job ID' },
-              { key: 'status', header: 'Status' },
+              //{ key: 'id', header: 'ID' },
+              { key: 'jobTitle', header: 'Job', render: (r) => r.job?.title ?? '-' },
+              { key: 'jobCompany', header: 'Company', render: (r) => r.job?.company ?? '-' },
+              { key: 'jobLocation', header: 'Location', render: (r) => r.job?.location ?? '-' },
+              {
+                key: 'status',
+                header: 'Status',
+                render: (r) => (
+                  <Chip
+                    size="small"
+                    label={statusText(r.status)}
+                    color={statusColor(r.status)}
+                    variant="outlined"
+                  />
+                ),
+              },
               {
                 key: 'open',
                 header: 'Open',
@@ -119,10 +130,15 @@ export default function ApplicationsListPage() {
               },
               {
                 key: 'update',
-                header: 'Status',
+                header: 'Actions',
                 render: (r) => (
-                  <Button component={Link} to={`/applications/${r.id}/status`} size="small">
-                    Update
+                  <Button
+                    disabled={user?.organizationMemberships?.[0]?.role !== 'org:admin'}
+                    component={Link}
+                    to={`/applications/${r.id}/status`}
+                    size="small"
+                  >
+                    <Edit fontSize='small' /> Update
                   </Button>
                 ),
               },

@@ -7,6 +7,7 @@ namespace JobPortal.Domain.Enums
         Interview = 2,
         Offered = 3,
         Rejected = 4,
-        Withdrawn = 5
+        Withdrawn = 5,
+        New = 6
     }
 }

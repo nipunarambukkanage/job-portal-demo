@@ -1,5 +1,6 @@
 ﻿using System;
 using JobPortal.Domain.Enums;
+using JobPortal.Application.DTO.Jobs;
 
 namespace JobPortal.Application.DTO.Applications
 {
@@ -13,6 +14,7 @@ namespace JobPortal.Application.DTO.Applications
         public ApplicationStatus Status { get; set; }
         public DateTime CreatedAtUtc { get; set; }
         public DateTime UpdatedAtUtc { get; set; }
+        public JobSummaryDto Job { get; set; } = new JobSummaryDto();
     }
 
     public class PagedApplicationsResponse

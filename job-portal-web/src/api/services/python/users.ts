@@ -1,3 +1,5 @@
+import { pythonClient } from "../../axios";
+
 const PY_BASE = import.meta.env.VITE_PY_API_BASE_URL as string;
 
 export type PyUser = {
@@ -48,4 +50,17 @@ export async function createUser(
     throw new Error(`createUser failed: ${res.status} ${text}`);
   }
   return (await res.json()) as PyUser;
+}
+
+
+export type PyUserForAnalytics = {
+  id: string;
+  email: string;
+  full_name?: string | null;
+  role: "org:member" | "org:admin";
+};
+
+export async function listUsers(limit = 100, offset = 0): Promise<PyUserForAnalytics[]> {
+  const { data } = await pythonClient.get("/v1/users", { params: { limit, offset } });
+  return data as PyUser[];
 }

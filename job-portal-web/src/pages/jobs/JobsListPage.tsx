@@ -1,3 +1,4 @@
+// src/pages/jobs/JobsListPage.tsx
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -26,6 +27,9 @@ import UpdateProfileDialog, {
 import { getUserByEmail, createUser } from '../../api/services/python/users';
 import ApplyDialog from '../../components/apply/ApplyDialog';
 
+// NEW: create Python application explicitly
+import { createPyApplication } from '../../api/services/python/applications';
+
 const isGuid = (s: string | undefined | null): s is string =>
   !!s &&
   /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(
@@ -43,6 +47,7 @@ export default function JobsListPage() {
   const [profileOpen, setProfileOpen] = React.useState(false);
   const [profileSaving, setProfileSaving] = React.useState(false);
   const [pyUserId, setPyUserId] = React.useState<string | null>(null);
+  const [checkingUser, setCheckingUser] = React.useState(true); // NEW: avoid flashing dialog
 
   // apply dialog
   const [applyJobId, setApplyJobId] = React.useState<string | null>(null);
@@ -57,23 +62,50 @@ export default function JobsListPage() {
 
   // Ensure Python user exists
   React.useEffect(() => {
-    if (!isSignedIn || !user) return;
+    let cancelled = false;
     (async () => {
+      if (!isSignedIn || !user) {
+        if (!cancelled) {
+          setPyUserId(null);
+          setProfileOpen(false);
+          setCheckingUser(false);
+        }
+        return;
+      }
       const email =
         user.primaryEmailAddress?.emailAddress || user.emailAddresses?.[0]?.emailAddress;
-      if (!email) return;
+      if (!email) {
+        if (!cancelled) {
+          setPyUserId(null);
+          setProfileOpen(true);
+          setCheckingUser(false);
+        }
+        return;
+      }
 
       try {
         const existing = await getUserByEmail(email);
-        if (existing) {
-          setPyUserId(existing.id);
-          return;
+        if (!cancelled) {
+          if (existing) {
+            setPyUserId(existing.id);
+            setProfileOpen(false); // ensure the dialog is closed if user exists
+          } else {
+            setPyUserId(null);
+            setProfileOpen(true);
+          }
         }
-        setProfileOpen(true);
       } catch {
-        setProfileOpen(true);
+        if (!cancelled) {
+          setPyUserId(null);
+          setProfileOpen(true);
+        }
+      } finally {
+        if (!cancelled) setCheckingUser(false);
       }
     })();
+    return () => {
+      cancelled = true;
+    };
   }, [isSignedIn, user]);
 
   // Load starred (Python)
@@ -94,7 +126,6 @@ export default function JobsListPage() {
         setStars((s) => [...s, jobId]);
       }
     } catch {
-      // No notistack; you can surface an inline alert somewhere if you want.
       console.error('Failed to update star');
     }
   };
@@ -103,10 +134,7 @@ export default function JobsListPage() {
   const handleSaveProfile = async (values: UpdateProfileValues) => {
     if (!user) return;
     const email = user.primaryEmailAddress?.emailAddress || user.emailAddresses?.[0]?.emailAddress;
-    if (!email) {
-      // Show error inside your UpdateProfileDialog if you implemented it
-      return;
-    }
+    if (!email) return;
 
     try {
       setProfileSaving(true);
@@ -139,8 +167,7 @@ export default function JobsListPage() {
     setApplyJobId(jobId);
   };
 
-  // Upload + ingest + create .NET Application for the given job
-  // NOTE: We return a message string so the dialog can show an <Alert>.
+  // Upload + ingest + create .NET Application + create Python Application
   const submitApplication = async (file: File): Promise<string> => {
     if (!isSignedIn || !user || !pyUserId || !applyJobId) {
       throw new Error('Please complete your profile first.');
@@ -150,7 +177,7 @@ export default function JobsListPage() {
     const jwt = await getToken({ template: 'jobportal-api' });
     const { blobUrl, sasUrl } = await uploadResumeToDotnet(file, jwt || undefined);
 
-    // 2) Notify Python (includes user id header + job_id).
+    // 2) Notify Python to ingest (includes job_id for enrichment)
     const ingest = await ingestResumeToPython(
       {
         blob_url: blobUrl,
@@ -158,34 +185,49 @@ export default function JobsListPage() {
         file_name: file.name,
         mime_type: file.type,
         size_bytes: file.size,
-        job_id: applyJobId,
+        job_id: applyJobId, // helps Python side link context if supported
       },
-      pyUserId,
+      pyUserId, // X-User-Id
     );
 
     // 3) Create the .NET Application so it appears in your .NET list page
     await applicationsService.create({
       jobId: applyJobId,
-      candidateId: pyUserId,
-      resumeUrl: blobUrl, // Optional if your .NET API uses it
-    });
+      // your .NET API requires CandidateId; if your DTO includes it, pass here.
+      // (you previously added candidateId on create — keep that if your API expects it)
+      candidateId: pyUserId as any, // if your DTO supports it; otherwise remove this line
+      resumeUrl: blobUrl,
+    } as any);
 
-    const extra = ingest.application_id
-      ? ' and application recorded'
-      : ' (application recorded in .NET only)';
-    return `Resume uploaded${extra}.`;
+    // 4) ALSO create Python application explicitly so analytics can count rows in public.applications
+    try {
+      await createPyApplication({
+        job_id: applyJobId,
+        applicant_user_id: pyUserId,          // TEXT in your Python table
+        resume_id: ingest?.resume_id ?? null, // if ingest returned it
+        resume_url: blobUrl,
+        // status: 'submitted',                // optional; server defaults
+      });
+    } catch (e) {
+      // Don’t fail the whole flow if Python-insert fails; just log
+      console.warn('Failed to create Python application row:', e);
+    }
+
+    return `Resume uploaded and application recorded.`;
   };
+
+  // Avoid rendering content while we’re checking the Python user to prevent flicker
+  if (checkingUser) return null;
 
   return (
     <>
-      {(!pyUserId || profileOpen) && (
-        <UpdateProfileDialog
-          open={profileOpen}
-          onClose={() => {}}
-          onSave={handleSaveProfile}
-          saving={profileSaving}
-        />
-      )}
+      {/* Mandatory profile gate */}
+      <UpdateProfileDialog
+        open={profileOpen}
+        onClose={() => {}}
+        onSave={handleSaveProfile}
+        saving={profileSaving}
+      />
 
       {/* Apply dialog (drag & drop + Choose File) */}
       <ApplyDialog
@@ -211,7 +253,6 @@ export default function JobsListPage() {
                     <Typography variant="body2" color="text.secondary">
                       {j.company} — {j.location}
                     </Typography>
-                    {/* Optional details */}
                     {(j.salaryMin || j.salaryMax) && (
                       <Typography variant="body2" sx={{ mt: 0.5 }}>
                         Salary:{' '}
