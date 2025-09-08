@@ -17,6 +17,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import DescriptionIcon from '@mui/icons-material/Description';
 import useRole from '../../hooks/useRole';
 import ROUTES from '../../config/routes'; // routes object exists already
+import { DashboardRounded } from '@mui/icons-material';
 // (ROUTES jobs/applications/ai etc.) :contentReference[oaicite:8]{index=8}
 
 const width = 240;
@@ -65,7 +66,8 @@ export default function SideNav() {
       {role === 'org:member' && (
         <>
           <List sx={{ pt: 2 }}>
-            <LinkItem to={ROUTES.search} icon={<SearchIcon />} label="Search Jobs" />
+            <LinkItem to={ROUTES.home} icon={<DashboardRounded />} label="Dashboard" />
+            {/* <LinkItem to={ROUTES.search} icon={<SearchIcon />} label="Search Jobs" /> */}
             <LinkItem to={ROUTES.jobs.list} icon={<WorkIcon />} label="All Jobs" />
             <LinkItem
               to={ROUTES.applications.list}

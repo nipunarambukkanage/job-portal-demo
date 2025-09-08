@@ -5,6 +5,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "./AdminRoute";
 import Spinner from "../components/feedback/Spinner";
 import AnalyticsInsightsPage from "../pages/ai/AnalyticsInsightsPage";
+import UserDashboardPage from "../pages/dashboard/UserDashboardPage";
 
 const Home = lazy(() => import("../pages/home/HomePage"));
 const Jobs = lazy(() => import("../pages/jobs/JobsListPage"));
@@ -38,7 +39,7 @@ export default function AppRoutes() {
     <AppLayout>
       <Suspense fallback={<Spinner />}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<UserDashboardPage />} />
 
           {/* Jobs */}
           <Route path="/jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
