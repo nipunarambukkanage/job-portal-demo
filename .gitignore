@@ -2,8 +2,44 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
+# Configuration files with secrets
 /api-dotnet/src/JobPortal.Api/appsettings.Development.json
 /api-dotnet/src/JobPortal.Api/appsettings.json
 **/appsettings.json
 **/appsettings.*.json
 **/appsettings.Development.json
+appsettings.json
+appsettings.Development.json
+
+# Text files (documentation, notes, etc.)
+*.txt
+**/*.txt
+
+# Specific text files with ALL CODES in name
+*ALL*CODES*.txt
+*ALL_CODES*.txt
+*ALL CODES*.txt
+**/*ALL*CODES*.txt
+**/*ALL_CODES*.txt
+**/*ALL CODES*.txt
+
+# Environment files
+.env
+.env.*
+**/.env
+**/.env.*
+.env.example
+**/.env.example
+
+# Additional patterns for specific files
+ALL_CODES*
+run_the_python_app*
+empty-files*
+find-empty-files*
+fix-*-imports*
+
+# Migration and deployment scripts
+migration_scripts.txt
+deploy.ps1
+_trigger*.txt
+_kick_ci.txt
