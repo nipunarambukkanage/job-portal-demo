@@ -1,5 +1,11 @@
 from __future__ import annotations
 
+# Core business services
+from .job_service import JobService
+from .user_service import UserService
+from .application_service import ApplicationService
+
+# Utility services
 from .parsing import parse_resume_via_docintel
 from .normalize import normalize_docintel_resume
 from .matching import (
@@ -19,6 +25,10 @@ from .analytics import (
 )
 
 __all__ = [
+    # core business services
+    "JobService",
+    "UserService", 
+    "ApplicationService",
     # parsing / normalization
     "parse_resume_via_docintel",
     "normalize_docintel_resume",

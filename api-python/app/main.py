@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
+from app.core.error_handlers import setup_exception_handlers
 from app.routes import health, auth, candidates, applications, analytics, jobs, resumes
 from app.routes.ranking import router as ranking_router
 from app.routes.ai_alias import router as ai_router
@@ -14,8 +15,8 @@ from app.routes.users import router as users_router
 def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(title="Job Portal Python API")
+    setup_exception_handlers(app)
 
-    # --- CORS: enables preflight (OPTIONS) and adds the proper headers ---
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_list or ["*"],
