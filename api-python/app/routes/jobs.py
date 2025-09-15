@@ -11,12 +11,12 @@ from typing import Dict, Any
 from fastapi import APIRouter, Depends, Query, status
 from fastapi.responses import JSONResponse
 
-from app.core.dependencies import JobServiceDep, current_user_dep
+from app.core.dependencies import get_job_service, current_user_dep
+from app.services.job_service import JobService
 from app.schemas.job import (
     JobCreateRequest,
     JobUpdateRequest,
     JobResponse,
-    JobListRequest,
     JobListResponse,
     EmploymentType,
 )
@@ -27,14 +27,14 @@ router = APIRouter(tags=["jobs"])
 
 @router.get("", response_model=JobListResponse, summary="List jobs")
 async def list_jobs(
-    job_service: JobServiceDep,
-    user: Dict[str, Any] = Depends(require_org_member),
     q: str | None = Query(None, max_length=100, description="Search query"),
     skills: list[str] | None = Query(None, description="Filter by skills"),
     employment_type: EmploymentType | None = Query(None, description="Filter by employment type"),
     only_active: bool = Query(True, description="Only show active jobs"),
     page: int = Query(1, ge=1, description="Page number (1-based)"),
     size: int = Query(20, ge=1, le=100, description="Page size (1-100)"),
+    job_service: JobService = Depends(get_job_service),
+    user: Dict[str, Any] = Depends(require_org_member),
 ) -> JobListResponse:
     """
     List jobs with optional filtering and pagination.
@@ -55,7 +55,6 @@ async def list_jobs(
         size=size,
     )
     
-    # Convert to response schema
     job_responses = [JobResponse.from_orm(job) for job in jobs]
     
     return JobListResponse(
@@ -69,7 +68,7 @@ async def list_jobs(
 @router.get("/{job_id}", response_model=JobResponse, summary="Get job by ID")
 async def get_job(
     job_id: uuid.UUID,
-    job_service: JobServiceDep,
+    job_service: JobService = Depends(get_job_service),
     user: Dict[str, Any] = Depends(require_org_member),
 ) -> JobResponse:
     """
@@ -84,7 +83,7 @@ async def get_job(
 @router.post("", response_model=JobResponse, status_code=status.HTTP_201_CREATED, summary="Create job")
 async def create_job(
     job_data: JobCreateRequest,
-    job_service: JobServiceDep,
+    job_service: JobService = Depends(get_job_service),
     user: Dict[str, Any] = Depends(require_role("org:admin")),
 ) -> JobResponse:
     """
@@ -93,7 +92,6 @@ async def create_job(
     Only organization admins can create jobs.
     The employer_id will be set to the current user's organization.
     """
-    # Extract employer_id from user context if not provided
     employer_id = job_data.employer_id or user.get("org_id")
     if not employer_id:
         raise ValueError("Employer ID is required")
@@ -115,7 +113,7 @@ async def create_job(
 async def update_job(
     job_id: uuid.UUID,
     job_update: JobUpdateRequest,
-    job_service: JobServiceDep,
+    job_service: JobService = Depends(get_job_service),
     user: Dict[str, Any] = Depends(require_role("org:admin")),
 ) -> JobResponse:
     """
@@ -124,11 +122,9 @@ async def update_job(
     Only organization admins can update jobs.
     Only fields provided in the request will be updated.
     """
-    # Create update dict with only non-None values
     update_data = job_update.dict(exclude_unset=True, exclude_none=True)
     
     if not update_data:
-        # No fields to update, just return current job
         job = await job_service.get_job(job_id)
         return JobResponse.from_orm(job)
     
@@ -139,7 +135,7 @@ async def update_job(
 @router.delete("/{job_id}", summary="Delete/deactivate job")
 async def delete_job(
     job_id: uuid.UUID,
-    job_service: JobServiceDep,
+    job_service: JobService = Depends(get_job_service),
     user: Dict[str, Any] = Depends(require_role("org:admin")),
 ) -> JSONResponse:
     """
@@ -159,7 +155,7 @@ async def delete_job(
 @router.get("/{job_id}/candidates", summary="Get matched candidates for a job")
 async def get_matched_candidates(
     job_id: uuid.UUID,
-    job_service: JobServiceDep,
+    job_service: JobService = Depends(get_job_service),
     user: Dict[str, Any] = Depends(require_role("org:admin")),
 ) -> Dict[str, Any]:
     """
@@ -167,15 +163,7 @@ async def get_matched_candidates(
     
     Only organization admins can view matched candidates.
     """
-    # First verify the job exists
     job = await job_service.get_job(job_id)
-    
-    # TODO: Implement candidate matching logic
-    # This would involve:
-    # 1. Getting the job requirements (skills, experience, etc.)
-    # 2. Finding candidates with matching profiles
-    # 3. Scoring the matches
-    # 4. Returning ranked candidates
     
     return {
         "job_id": str(job_id),

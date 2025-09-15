@@ -4,7 +4,7 @@ import uuid
 from enum import Enum
 from typing import List, Optional
 
-from sqlalchemy import DateTime, Enum as SAEnum, String, Text, func
+from sqlalchemy import Boolean, DateTime, Enum as SAEnum, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -27,9 +27,14 @@ class User(Base):
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
 
+    external_id: Mapped[Optional[str]] = mapped_column(String(255), unique=True, index=True)
     email: Mapped[str] = mapped_column(String(320), unique=True, index=True, nullable=False)
+    first_name: Mapped[Optional[str]] = mapped_column(String(100))
+    last_name: Mapped[Optional[str]] = mapped_column(String(100))
     full_name: Mapped[Optional[str]] = mapped_column(String(200))
     role: Mapped[UserRole] = mapped_column(SAEnum(UserRole, name="user_role"), nullable=False, index=True, default=UserRole.candidate)
+    org_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), index=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     headline: Mapped[Optional[str]] = mapped_column(String(200))
     about: Mapped[Optional[str]] = mapped_column(Text)

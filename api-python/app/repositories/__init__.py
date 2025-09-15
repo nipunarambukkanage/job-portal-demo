@@ -25,6 +25,18 @@ from .application_repo import (
     list_applications_by_job,
     list_applications_by_candidate,
     update_application_status,
+    get_application_by_job_and_candidate,
+)
+from .user_repo import (
+    create_user,
+    get_user,
+    get_user_by_email,
+    get_user_by_external_id,
+    list_users,
+    list_users_by_org,
+    update_user,
+    deactivate_user,
+    delete_user,
 )
 
 __all__ = [
@@ -47,7 +59,18 @@ __all__ = [
     # applications
     "create_application",
     "get_application",
+    "get_application_by_job_and_candidate",
     "list_applications_by_job",
     "list_applications_by_candidate",
     "update_application_status",
+    # users
+    "create_user",
+    "get_user",
+    "get_user_by_email",
+    "get_user_by_external_id",
+    "list_users",
+    "list_users_by_org",
+    "update_user",
+    "deactivate_user",
+    "delete_user",
 ]

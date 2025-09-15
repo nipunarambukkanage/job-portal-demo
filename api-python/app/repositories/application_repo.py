@@ -47,13 +47,21 @@ async def list_applications_by_job(
     session: AsyncSession,
     *,
     job_id: uuid.UUID,
+    status: Optional[ApplicationStatus] = None,
     page: int = 1,
     size: int = 20,
 ) -> Tuple[List[Application], int]:
     page = max(1, page)
     size = max(1, min(200, size))
-    base = select(Application).where(Application.job_id == job_id).order_by(Application.applied_at.desc())
+    
+    base = select(Application).where(Application.job_id == job_id)
     count_q = select(func.count()).select_from(Application).where(Application.job_id == job_id)
+    
+    if status:
+        base = base.where(Application.status == status)
+        count_q = count_q.where(Application.status == status)
+    
+    base = base.order_by(Application.applied_at.desc())
     total = (await session.execute(count_q)).scalar_one()
     items = (await session.execute(base.offset((page - 1) * size).limit(size))).scalars().all()
     return items, total
@@ -63,16 +71,37 @@ async def list_applications_by_candidate(
     session: AsyncSession,
     *,
     candidate_id: uuid.UUID,
+    status: Optional[ApplicationStatus] = None,
     page: int = 1,
     size: int = 20,
 ) -> Tuple[List[Application], int]:
     page = max(1, page)
     size = max(1, min(200, size))
-    base = select(Application).where(Application.candidate_id == candidate_id).order_by(Application.applied_at.desc())
+    
+    base = select(Application).where(Application.candidate_id == candidate_id)
     count_q = select(func.count()).select_from(Application).where(Application.candidate_id == candidate_id)
+    
+    if status:
+        base = base.where(Application.status == status)
+        count_q = count_q.where(Application.status == status)
+    
+    base = base.order_by(Application.applied_at.desc())
     total = (await session.execute(count_q)).scalar_one()
     items = (await session.execute(base.offset((page - 1) * size).limit(size))).scalars().all()
     return items, total
+
+
+async def get_application_by_job_and_candidate(
+    session: AsyncSession, 
+    job_id: uuid.UUID, 
+    candidate_id: uuid.UUID
+) -> Optional[Application]:
+    q: Select[tuple[Application]] = select(Application).where(
+        Application.job_id == job_id,
+        Application.candidate_id == candidate_id
+    )
+    res = await session.execute(q)
+    return res.scalar_one_or_none()
 
 
 async def update_application_status(
@@ -80,7 +109,12 @@ async def update_application_status(
     *,
     application_id: uuid.UUID,
     status: ApplicationStatus,
+    notes: Optional[str] = None,
 ) -> int:
-    q = update(Application).where(Application.id == application_id).values(status=status)
+    values = {"status": status}
+    if notes is not None:
+        values["notes"] = notes
+    
+    q = update(Application).where(Application.id == application_id).values(**values)
     res = await session.execute(q)
     return res.rowcount or 0
